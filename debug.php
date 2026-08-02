@@ -55,7 +55,10 @@ foreach ($paths as $path) {
 // 4. Try loading config.php
 echo "<h2>4. Config Syntax Check</h2>";
 try {
-    $config = require __DIR__ . '/app/Config/config.php';
+    define('APP_ROOT', __DIR__);
+    define('APP_PATH', APP_ROOT . '/app');
+    define('STORAGE_PATH', APP_ROOT . '/storage');
+    $config = require APP_PATH . '/Config/config.php';
     echo "<span style='color:green;'>OK: app/Config/config.php parsed successfully.</span><br>";
 } catch (\Throwable $e) {
     echo "<strong style='color:red;'>ERROR in config.php: " . $e->getMessage() . "</strong><br>";
