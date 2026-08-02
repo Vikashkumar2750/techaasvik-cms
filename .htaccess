@@ -2,8 +2,7 @@
 # TECHAASVIK.COM — MASTER .HTACCESS
 # ============================================================
 
-Options -Indexes -MultiViews
-ServerSignature Off
+Options -Indexes
 
 # ============================================================
 # 1. HTTPS ENFORCEMENT
