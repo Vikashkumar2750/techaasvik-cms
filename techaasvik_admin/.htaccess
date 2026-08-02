@@ -1,3 +1,0 @@
-# Deny ALL direct access to /techaasvik_admin/ directory
-# Access is only granted through the front controller at /techaasvik_admin (URL route)
-Deny from all
