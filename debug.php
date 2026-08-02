@@ -58,6 +58,7 @@ try {
     define('APP_ROOT', __DIR__);
     define('APP_PATH', APP_ROOT . '/app');
     define('STORAGE_PATH', APP_ROOT . '/storage');
+    define('APP_ENV', 'production');
     $config = require APP_PATH . '/Config/config.php';
     echo "<span style='color:green;'>OK: app/Config/config.php parsed successfully.</span><br>";
 } catch (\Throwable $e) {

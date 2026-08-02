@@ -20,6 +20,7 @@ if ($provided !== $SECRET_TOKEN) {
 define('APP_ROOT',   __DIR__);
 define('APP_PATH',   APP_ROOT . '/app');
 define('STORAGE_PATH', APP_ROOT . '/storage');
+define('APP_ENV',    'production');
 
 require_once APP_PATH . '/Config/constants.php';
 
