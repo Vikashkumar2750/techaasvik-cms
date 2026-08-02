@@ -49,24 +49,13 @@ try {
 $schemaFile = APP_ROOT . '/database/schema.sql';
 if (file_exists($schemaFile)) {
     $sql = file_get_contents($schemaFile);
-    // Strip single line comments
-    $sql = preg_replace('/--.*$/m', '', $sql);
-    // Split into individual statements
-    $statements = array_filter(
-        array_map('trim', explode(';', $sql)),
-        fn($s) => !empty($s)
-    );
-
-    foreach ($statements as $stmt) {
-        try {
-            $pdo->exec($stmt);
-        } catch (\PDOException $e) {
-            if (!str_contains($e->getMessage(), 'already exists')) {
-                $errors[] = '⚠️ Schema: ' . $e->getMessage();
-            }
-        }
+    try {
+        // Execute the entire schema file at once
+        $pdo->exec($sql);
+        $success[] = '✅ Database schema created.';
+    } catch (\PDOException $e) {
+        $errors[] = '⚠️ Schema: ' . $e->getMessage();
     }
-    $success[] = '✅ Database schema created.';
 } else {
     $errors[] = '❌ schema.sql not found.';
 }
@@ -91,26 +80,14 @@ $seedFile = APP_ROOT . '/database/seeds/seed_data.sql';
 if (file_exists($seedFile)) {
     $sql = file_get_contents($seedFile);
     // Remove the placeholder admin user line (we already created it correctly above)
-    $sql = preg_replace('/^INSERT INTO `admin_users`.*?;\n/ms', '', $sql);
-
-    // Strip single line comments
-    $sql = preg_replace('/--.*$/m', '', $sql);
+    $sql = preg_replace('/^INSERT INTO `admin_users`.*?;/m', '', $sql);
     
-    $statements = array_filter(
-        array_map('trim', explode(';', $sql)),
-        fn($s) => !empty($s)
-    );
-
-    foreach ($statements as $stmt) {
-        try {
-            $pdo->exec($stmt);
-        } catch (\PDOException $e) {
-            if (!str_contains($e->getMessage(), 'Duplicate')) {
-                $errors[] = '⚠️ Seed: ' . $e->getMessage();
-            }
-        }
+    try {
+        $pdo->exec($sql);
+        $success[] = '✅ Seed data inserted.';
+    } catch (\PDOException $e) {
+        $errors[] = '⚠️ Seed: ' . $e->getMessage();
     }
-    $success[] = '✅ Seed data inserted.';
 }
 
 // ── Step 5: Create storage directories ────────────────────────
