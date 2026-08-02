@@ -38,8 +38,8 @@ spl_autoload_register(function (string $class): void {
     foreach ($map as $namespace => $basePath) {
         if (str_starts_with($class, $namespace)) {
             $file = $basePath . str_replace(
-                ['\\', $namespace],
-                ['/', ''],
+                [$namespace, '\\'],
+                ['', '/'],
                 $class
             ) . '.php';
             if (file_exists($file)) {
