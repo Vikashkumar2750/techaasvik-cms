@@ -49,10 +49,12 @@ try {
 $schemaFile = APP_ROOT . '/database/schema.sql';
 if (file_exists($schemaFile)) {
     $sql = file_get_contents($schemaFile);
+    // Strip single line comments
+    $sql = preg_replace('/--.*$/m', '', $sql);
     // Split into individual statements
     $statements = array_filter(
         array_map('trim', explode(';', $sql)),
-        fn($s) => !empty($s) && !str_starts_with($s, '--')
+        fn($s) => !empty($s)
     );
 
     foreach ($statements as $stmt) {
@@ -91,9 +93,12 @@ if (file_exists($seedFile)) {
     // Remove the placeholder admin user line (we already created it correctly above)
     $sql = preg_replace('/^INSERT INTO `admin_users`.*?;\n/ms', '', $sql);
 
+    // Strip single line comments
+    $sql = preg_replace('/--.*$/m', '', $sql);
+    
     $statements = array_filter(
         array_map('trim', explode(';', $sql)),
-        fn($s) => !empty($s) && !str_starts_with(ltrim($s), '--')
+        fn($s) => !empty($s)
     );
 
     foreach ($statements as $stmt) {
