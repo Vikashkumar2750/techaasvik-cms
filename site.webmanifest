@@ -1,0 +1,21 @@
+{
+  "name": "TechAasvik",
+  "short_name": "TechAasvik",
+  "description": "India's Digital Marketing Authority Platform",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#080d16",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/assets/images/static/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/static/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Block admin panel from crawlers
+Disallow: /techaasvik_admin/
+Disallow: /setup.php
+Disallow: /storage/
+Disallow: /database/
+
+# Block query parameters that create duplicate content
+Disallow: /*?page=
+Disallow: /*?sort=
+Disallow: /*?filter=
+
+# Allow CSS/JS/Images
+Allow: /assets/
+
+# Crawl delay for politeness
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://t1.techaasvik.com/sitemap.xml
