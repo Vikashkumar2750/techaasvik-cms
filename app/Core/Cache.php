@@ -64,8 +64,14 @@ class Cache
             'expires' => $ttl === 0 ? 0 : time() + $ttl,
         ];
 
+        $file = $this->filePath($key);
+        $dir  = dirname($file);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
         return (bool) file_put_contents(
-            $this->filePath($key),
+            $file,
             serialize($data),
             LOCK_EX
         );
