@@ -46,7 +46,7 @@ return [
         'driver'   => 'file',           // 'file' | 'apcu'
         'ttl'      => 3600,             // 1 hour default
         'path'     => STORAGE_PATH . '/cache',
-        'enabled'  => APP_ENV === 'production',
+        'enabled'  => false,            // DISABLED until build is fully tested
     ],
 
     // ── Email (Brevo SMTP) ─────────────────────────────────

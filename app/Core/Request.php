@@ -19,10 +19,11 @@ class Request
     {
         $uri = $_GET['url'] ?? $_SERVER['REQUEST_URI'] ?? '/';
         $uri = parse_url($uri, PHP_URL_PATH) ?? '/';
-        $uri = '/' . trim($uri, '/');
+        // Trim slashes to match the compiled route patterns (which also trim slashes)
+        $uri = trim($uri, '/');
         // Remove double slashes
         $uri = preg_replace('#/+#', '/', $uri);
-        return $uri === '/' ? '' : rtrim($uri, '/');
+        return $uri;
     }
 
     public function uri(): string    { return $this->uri; }
