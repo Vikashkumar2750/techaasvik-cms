@@ -62,8 +62,8 @@ $router->get('/research/{slug}',     'PostController@show',          'research.s
 $router->get('/videos',              'ArchiveController@videos',     'videos');
 
 // Courses
-$router->get('/courses',             'PostController@coursesIndex',  'courses');
-$router->get('/courses/{slug}',      'PostController@course',        'course.show');
+$router->get('/courses',             'ArchiveController@courses',    'courses');
+$router->get('/courses/{slug}',      'ArchiveController@course',     'course.show');
 
 // Authors
 $router->get('/authors',             'AuthorController@index',       'authors');
