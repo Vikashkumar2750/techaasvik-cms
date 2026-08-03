@@ -103,7 +103,7 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 # 9. HOTLINK PROTECTION FOR IMAGES
 # ============================================================
 RewriteCond %{HTTP_REFERER} !^$
-RewriteCond %{HTTP_REFERER} !^https://(www\.)?techaasvik\.com [NC]
+RewriteCond %{HTTP_REFERER} !^https://(.*\.)?techaasvik\.com [NC]
 RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F,NC]
 
 # ============================================================
