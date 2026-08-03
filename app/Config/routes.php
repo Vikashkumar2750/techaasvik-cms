@@ -38,8 +38,8 @@ $router->get('/blog/{slug}',         'PostController@show',        'blog.show');
 
 // Glossary
 $router->get('/glossary',            'GlossaryController@index',   'glossary');
-$router->get('/glossary/{letter}',   'GlossaryController@letter',  'glossary.letter');
 $router->get('/glossary/term/{slug}','GlossaryController@show',    'glossary.show');
+$router->get('/glossary/{letter}',   'GlossaryController@letter',  'glossary.letter');
 
 // Tools
 $router->get('/tools',               'ToolController@index',       'tools');
