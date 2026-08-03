@@ -1,7 +1,6 @@
 <?php
 /**
- * Quick diagnostic — tests blog and admin routes
- * DELETE THIS FILE after debugging
+ * Quick diagnostic v2 — shows config.php content and opcache status
  */
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -12,76 +11,112 @@ define('VIEWS_PATH', APP_ROOT . '/views');
 define('STORAGE_PATH', APP_ROOT . '/storage');
 define('ASSETS_PATH', APP_ROOT . '/assets');
 
-echo "<h2>TechAasvik Diagnostics</h2>";
+echo "<h2>TechAasvik Diagnostics v2</h2>";
 
-// 1. Config load test
-echo "<h3>1. Config Load</h3>";
+// 1. Show config.php lines 28-38 (around line 33)
+echo "<h3>1. config.php lines 28-40</h3><pre>";
+$lines = file(APP_PATH . '/Config/config.php');
+for ($i = 27; $i < min(40, count($lines)); $i++) {
+    $ln = $i + 1;
+    $marker = ($ln == 33) ? ' ◄◄◄ LINE 33' : '';
+    echo sprintf("%3d: %s%s", $ln, htmlspecialchars($lines[$i]), $marker);
+}
+echo "</pre>";
+
+// 2. OPcache status
+echo "<h3>2. OPcache</h3>";
+if (function_exists('opcache_get_status')) {
+    $status = opcache_get_status(false);
+    echo "OPcache enabled: " . ($status['opcache_enabled'] ? 'YES' : 'NO') . "<br>";
+    echo "Cached scripts: " . ($status['opcache_statistics']['num_cached_scripts'] ?? 'N/A') . "<br>";
+    echo "Revalidate freq: " . (ini_get('opcache.revalidate_freq') ?: 'N/A') . "s<br>";
+    
+    // Try to invalidate config.php
+    $configFile = APP_PATH . '/Config/config.php';
+    if (function_exists('opcache_invalidate')) {
+        $result = opcache_invalidate($configFile, true);
+        echo "Invalidated config.php from opcache: " . ($result ? 'YES' : 'NO') . "<br>";
+    }
+} else {
+    echo "OPcache not available<br>";
+}
+
+// 3. Config load test
+echo "<h3>3. Config Load</h3>";
 try {
     require_once APP_PATH . '/Config/constants.php';
     $config = require APP_PATH . '/Config/config.php';
-    echo "✅ Config loaded. DB host: " . ($config['database']['host'] ?? 'MISSING') . "<br>";
-    echo "DB name: " . ($config['database']['name'] ?? 'MISSING') . "<br>";
-    echo "DB user: " . ($config['database']['user'] ?? 'MISSING') . "<br>";
-    echo "DB pass set: " . (!empty($config['database']['pass']) && $config['database']['pass'] !== 'DB_PASSWORD_HERE' ? 'YES' : 'NO (still template!)') . "<br>";
+    echo "✅ Config loaded OK<br>";
+    echo "DB: " . ($config['database']['name'] ?? 'MISSING') . "<br>";
     echo "Cache enabled: " . ($config['cache']['enabled'] ? 'YES' : 'NO') . "<br>";
 } catch (Throwable $e) {
-    echo "❌ Config Error: " . $e->getMessage() . " on line " . $e->getLine() . "<br>";
+    echo "❌ " . $e->getMessage() . "<br>";
 }
 
-// 2. Database connection test
-echo "<h3>2. Database Connection</h3>";
+// 4. DB test
+echo "<h3>4. Database</h3>";
 try {
     $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s',
-        $config['database']['host'],
-        $config['database']['port'],
-        $config['database']['name'],
-        $config['database']['charset']
+        $config['database']['host'], $config['database']['port'],
+        $config['database']['name'], $config['database']['charset']
     );
     $pdo = new PDO($dsn, $config['database']['user'], $config['database']['pass'], [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);
-    $count = $pdo->query("SELECT COUNT(*) FROM content")->fetchColumn();
-    echo "✅ DB connected. Content rows: $count<br>";
+    echo "✅ Connected. Tables: ";
+    $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+    echo count($tables) . " (" . implode(', ', array_slice($tables, 0, 10)) . "...)<br>";
 } catch (Throwable $e) {
-    echo "❌ DB Error: " . $e->getMessage() . "<br>";
+    echo "❌ " . $e->getMessage() . "<br>";
 }
 
-// 3. Session test
-echo "<h3>3. Session</h3>";
+// 5. Simulate index.php loading
+echo "<h3>5. Simulate Blog Load</h3>";
 try {
-    session_start();
-    echo "✅ Session started. ID: " . session_id() . "<br>";
+    // Load same way index.php does
+    require APP_PATH . '/Helpers/string.php';
+    require APP_PATH . '/Helpers/url.php';
+    require APP_PATH . '/Helpers/date.php';
+    require APP_PATH . '/Helpers/seo.php';
+    
+    // Load config again (same as index.php line 61)
+    require APP_PATH . '/Config/config.php';
+    echo "✅ Config re-loaded via require (like index.php)<br>";
+    
+    // Try autoloading
+    spl_autoload_register(function (string $class): void {
+        $map = [
+            'Core\\'        => APP_PATH . '/Core/',
+            'Models\\'      => APP_PATH . '/Models/',
+            'Controllers\\' => APP_PATH . '/Controllers/',
+            'Services\\'    => APP_PATH . '/Services/',
+        ];
+        foreach ($map as $namespace => $basePath) {
+            if (str_starts_with($class, $namespace)) {
+                $file = $basePath . str_replace([$namespace, '\\'], ['', '/'], $class) . '.php';
+                if (file_exists($file)) { require_once $file; return; }
+            }
+        }
+    });
+    
+    $content = new \Models\Content();
+    $posts = $content->getPublished('post', 5, 0, 'en');
+    echo "✅ Content model works. Posts found: " . count($posts) . "<br>";
 } catch (Throwable $e) {
-    echo "❌ Session Error: " . $e->getMessage() . "<br>";
+    echo "❌ Error: " . $e->getMessage() . " in " . $e->getFile() . " line " . $e->getLine() . "<br>";
 }
 
-// 4. Check critical view files
-echo "<h3>4. View Files</h3>";
-$views = ['blog-index', 'admin-login', 'home', 'post', 'about'];
-foreach ($views as $v) {
-    $file = VIEWS_PATH . '/pages/' . $v . '.php';
-    echo (file_exists($file) ? "✅" : "❌") . " $v.php " . (file_exists($file) ? "exists" : "MISSING") . "<br>";
-}
-
-// 5. Check layouts
-echo "<h3>5. Layouts</h3>";
-$layouts = ['main', 'minimal', 'admin'];
-foreach ($layouts as $l) {
-    $file = VIEWS_PATH . '/layouts/' . $l . '.php';
-    echo (file_exists($file) ? "✅" : "❌") . " $l.php " . (file_exists($file) ? "exists" : "MISSING") . "<br>";
-}
-
-// 6. Check config.local.php presence
-echo "<h3>6. Config.local.php</h3>";
-$localFile = APP_PATH . '/Config/config.local.php';
-echo (file_exists($localFile) ? "✅ config.local.php exists" : "❌ config.local.php MISSING") . "<br>";
-
-// 7. Check storage directories
-echo "<h3>7. Storage Dirs</h3>";
+// 6. Storage dirs
+echo "<h3>6. Storage Directories</h3>";
 $dirs = ['storage/logs', 'storage/cache', 'storage/cache/fragments', 'storage/cache/pages'];
 foreach ($dirs as $d) {
-    $path = APP_ROOT . '/' . $d;
-    echo (is_dir($path) ? "✅" : "❌") . " $d " . (is_dir($path) ? "exists" : "MISSING") . "<br>";
+    $p = APP_ROOT . '/' . $d;
+    if (!is_dir($p)) {
+        @mkdir($p, 0755, true);
+        echo "📁 Created: $d<br>";
+    } else {
+        echo "✅ $d exists<br>";
+    }
 }
 
-echo "<hr><small>Delete this file when done: diagnostics.php</small>";
+echo "<hr><small>Delete this file when done</small>";
