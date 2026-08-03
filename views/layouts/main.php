@@ -39,6 +39,11 @@ $gtmId  = $config['analytics']['gtm_id'] ?? '';
 <link rel="icon"             type="image/png"    sizes="16x16" href="/assets/images/static/favicon-16x16.png">
 <link rel="manifest"         href="/site.webmanifest">
 
+<!-- ── AI / LLM Discovery ── -->
+<link rel="llms-txt"      href="/llms.txt"      type="text/plain">
+<link rel="llms-full-txt" href="/llms-full.txt"  type="text/plain">
+<link rel="sitemap"       href="/sitemap.xml"    type="application/xml">
+
 <!-- ── Hreflang for multilingual ── -->
 <?php if (!empty($seo['hreflang'])): ?>
   <?php foreach ($seo['hreflang'] as $lang => $href): ?>

@@ -1,26 +1,72 @@
 User-agent: *
 Allow: /
 
-# Block admin panel from crawlers
+# Block admin panel and sensitive paths
 Disallow: /techaasvik_admin/
 Disallow: /setup.php
 Disallow: /database/
+Disallow: /app/
+Disallow: /vendor/
 
-# Block query parameters that create duplicate content
+# Block duplicate content from query params
 Disallow: /*?page=
 Disallow: /*?sort=
 Disallow: /*?filter=
+Disallow: /*?utm_
 
-# Allow CSS/JS/Images/Uploads
+# Allow static resources
 Allow: /assets/
 Allow: /storage/uploads/
 
-# Crawl delay for politeness
+# Crawl delay
 Crawl-delay: 1
 
-# Sitemaps
-Sitemap: https://t1.techaasvik.com/sitemap.xml
+# ── AI Bot Specific Rules ─────────────────────────────────
+# OpenAI GPTBot — Allow for AI training & ChatGPT citations
+User-agent: GPTBot
+Allow: /
+Disallow: /techaasvik_admin/
+Crawl-delay: 2
 
-# LLM Content Files (https://llmstxt.org)
+# OpenAI ChatGPT browsing plugin
+User-agent: ChatGPT-User
+Allow: /
+
+# Google Gemini / AI Overviews
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic Claude
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 2
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 2
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+# Microsoft Copilot / Bing AI
+User-agent: Bingbot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+
+# ── Sitemaps ──────────────────────────────────────────────
+Sitemap: https://t1.techaasvik.com/sitemap.xml
+Sitemap: https://t1.techaasvik.com/sitemap-posts.xml
+Sitemap: https://t1.techaasvik.com/sitemap-pages.xml
+Sitemap: https://t1.techaasvik.com/sitemap-glossary.xml
+Sitemap: https://t1.techaasvik.com/sitemap-tools.xml
+Sitemap: https://t1.techaasvik.com/sitemap-courses.xml
+
+# ── LLM Content Files (https://llmstxt.org) ──────────────
+# These files help AI systems discover and index our content
 LLMs-Txt: https://t1.techaasvik.com/llms.txt
 LLMs-Full-Txt: https://t1.techaasvik.com/llms-full.txt
