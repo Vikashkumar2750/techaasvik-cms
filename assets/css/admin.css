@@ -640,3 +640,146 @@ a { color: var(--admin-brand); text-decoration: none; }
   border-color: var(--admin-brand);
 }
 
+/* ── Quill Dark Theme Overrides ──────────────────────────── */
+.ql-toolbar.ql-snow {
+  background: var(--admin-elevated);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px 10px 0 0;
+  padding: 8px 10px;
+}
+.ql-toolbar.ql-snow .ql-stroke { stroke: var(--admin-secondary); }
+.ql-toolbar.ql-snow .ql-fill   { fill: var(--admin-secondary); }
+.ql-toolbar.ql-snow .ql-picker-label { color: var(--admin-secondary); }
+.ql-toolbar.ql-snow button:hover .ql-stroke,
+.ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke { stroke: var(--admin-text); }
+.ql-toolbar.ql-snow button:hover .ql-fill { fill: var(--admin-text); }
+.ql-toolbar.ql-snow button.ql-active .ql-stroke { stroke: var(--admin-brand); }
+.ql-toolbar.ql-snow button.ql-active .ql-fill { fill: var(--admin-brand); }
+
+.ql-container.ql-snow {
+  border: 1px solid var(--admin-border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: 'Inter', sans-serif;
+}
+.ql-editor { font-size: 15px; line-height: 1.75; min-height: 400px; }
+.ql-editor.ql-blank::before { color: var(--admin-muted); font-style: normal; }
+
+/* Quill Tooltip (link input) — CRITICAL for dark theme */
+.ql-snow .ql-tooltip {
+  background: var(--admin-surface) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  color: var(--admin-text) !important;
+  padding: 10px 14px !important;
+  z-index: 100;
+}
+.ql-snow .ql-tooltip input[type="text"] {
+  background: var(--admin-elevated) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: 6px !important;
+  color: var(--admin-text) !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+  width: 260px !important;
+  outline: none !important;
+}
+.ql-snow .ql-tooltip input[type="text"]:focus {
+  border-color: var(--admin-brand) !important;
+}
+.ql-snow .ql-tooltip a {
+  color: var(--admin-brand) !important;
+  margin: 0 6px;
+}
+.ql-snow .ql-tooltip a.ql-preview {
+  color: var(--admin-secondary) !important;
+  max-width: 220px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ql-snow .ql-tooltip::before { color: var(--admin-muted) !important; }
+
+/* Quill Dropdowns (font, size, header, color pickers) */
+.ql-snow .ql-picker-options {
+  background: var(--admin-surface) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+  padding: 6px !important;
+}
+.ql-snow .ql-picker-item { color: var(--admin-text) !important; }
+.ql-snow .ql-picker-item:hover { background: var(--admin-elevated) !important; }
+.ql-snow .ql-color-picker .ql-picker-options { padding: 4px !important; }
+
+/* Quill Image Sizing */
+.ql-editor img {
+  max-width: 100%;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: outline 0.15s;
+}
+.ql-editor img:hover { outline: 2px solid var(--admin-brand); outline-offset: 2px; }
+.ql-editor img.img-small  { max-width: 300px; }
+.ql-editor img.img-medium { max-width: 500px; }
+.ql-editor img.img-full   { max-width: 100%; }
+
+/* ── SEO/GEO Score Panel ─────────────────────────────────── */
+.seo-score-panel {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.seo-score-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.seo-score-header h3 { font-size: 13px; font-weight: 700; margin: 0; }
+.seo-score-circle {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px;
+  border: 3px solid;
+  flex-shrink: 0;
+}
+.seo-score-circle.score-good  { border-color: #22c55e; color: #22c55e; }
+.seo-score-circle.score-ok    { border-color: #f59e0b; color: #f59e0b; }
+.seo-score-circle.score-poor  { border-color: #ef4444; color: #ef4444; }
+
+.seo-check-list { padding: 12px 16px; }
+.seo-check-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 12px; line-height: 1.5;
+}
+.seo-check-item:last-child { border-bottom: none; }
+.seo-check-icon {
+  width: 18px; height: 18px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 10px; margin-top: 1px;
+}
+.seo-check-icon.pass { background: rgba(34,197,94,0.15); color: #22c55e; }
+.seo-check-icon.warn { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.seo-check-icon.fail { background: rgba(239,68,68,0.15);  color: #ef4444; }
+.seo-check-text { flex: 1; color: var(--admin-secondary); }
+.seo-check-text strong { color: var(--admin-text); }
+
+.seo-target-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+.seo-target-badge.target-met  { background: rgba(34,197,94,0.1); color: #22c55e; }
+.seo-target-badge.target-miss { background: rgba(239,68,68,0.1); color: #ef4444; }

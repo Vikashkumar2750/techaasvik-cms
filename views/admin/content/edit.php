@@ -333,10 +333,40 @@ $actionUrl = $isNew ? '/techaasvik_admin/content/store' : "/techaasvik_admin/con
         <div style="display:flex;justify-content:space-between;"><span>Characters</span><strong id="statChars" style="color:var(--admin-text);">0</strong></div>
       </div>
 
+      <!-- SEO Score Panel -->
+      <div class="seo-score-panel" id="seoScorePanel">
+        <div class="seo-score-header">
+          <h3>🔍 SEO Score</h3>
+          <div class="seo-score-circle score-poor" id="seoScoreCircle">0</div>
+        </div>
+        <div class="seo-check-list" id="seoCheckList"></div>
+      </div>
+
+      <!-- GEO Score Panel -->
+      <div class="seo-score-panel" id="geoScorePanel" style="margin-top:14px;">
+        <div class="seo-score-header">
+          <h3>🌐 GEO Score</h3>
+          <div class="seo-score-circle score-poor" id="geoScoreCircle">0</div>
+        </div>
+        <div class="seo-check-list" id="geoCheckList"></div>
+      </div>
+
     </div>
 
   </div>
 </form>
+
+<!-- Image Resize Context Menu -->
+<div id="imgResizeMenu" style="display:none;position:fixed;background:var(--admin-surface);border:1px solid var(--admin-border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:500;padding:6px;min-width:140px;">
+  <div onclick="resizeImg('25%')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">📐 25% width</div>
+  <div onclick="resizeImg('50%')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">📐 50% width</div>
+  <div onclick="resizeImg('75%')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">📐 75% width</div>
+  <div onclick="resizeImg('100%')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">📐 Full width</div>
+  <div style="height:1px;background:var(--admin-border);margin:4px 0;"></div>
+  <div onclick="resizeImg('left')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">⬅️ Float left</div>
+  <div onclick="resizeImg('right')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">➡️ Float right</div>
+  <div onclick="resizeImg('none')" style="padding:6px 12px;cursor:pointer;font-size:12px;border-radius:4px;color:var(--admin-text);" onmouseover="this.style.background='var(--admin-elevated)'" onmouseout="this.style.background=''">↩️ No float</div>
+</div>
 
 <script>
 // ── Slug auto-generation ──────────────────────────────────────
@@ -597,3 +627,260 @@ if (quillEditor) quillEditor.getModule('toolbar').addHandler('image', function()
     </div>
   </div>
 </div>
+
+<script>
+// ── Image Resize (right-click on images in editor) ───────────
+let selectedImg = null;
+if (quillEditor) {
+  quillEditor.root.addEventListener('contextmenu', function(e) {
+    if (e.target.tagName === 'IMG') {
+      e.preventDefault();
+      selectedImg = e.target;
+      const menu = document.getElementById('imgResizeMenu');
+      menu.style.display = 'block';
+      menu.style.left = e.clientX + 'px';
+      menu.style.top = e.clientY + 'px';
+    }
+  });
+}
+document.addEventListener('click', () => {
+  document.getElementById('imgResizeMenu').style.display = 'none';
+});
+
+function resizeImg(val) {
+  if (!selectedImg) return;
+  if (['left','right','none'].includes(val)) {
+    selectedImg.style.float = val === 'none' ? '' : val;
+    if (val !== 'none') selectedImg.style.margin = val === 'left' ? '0 16px 10px 0' : '0 0 10px 16px';
+    else selectedImg.style.margin = '';
+  } else {
+    selectedImg.style.width = val;
+    selectedImg.style.height = 'auto';
+  }
+  document.getElementById('imgResizeMenu').style.display = 'none';
+}
+
+// ── SEO/GEO Real-time Scoring Engine ─────────────────────────
+function runSeoGeoAnalysis() {
+  const title = document.getElementById('title')?.value || '';
+  const slug = document.getElementById('slug')?.value || '';
+  const excerpt = document.getElementById('excerpt')?.value || '';
+  const metaTitle = document.getElementById('meta_title')?.value || '';
+  const metaDesc = document.getElementById('meta_description')?.value || '';
+  const body = quillEditor ? quillEditor.root.innerHTML : (document.getElementById('htmlSource')?.value || '');
+  const bodyText = quillEditor ? quillEditor.getText() : body.replace(/<[^>]+>/g, '');
+  const wordCount = bodyText.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const canonical = document.getElementById('canonical_url')?.value || '';
+  const ogTitle = document.getElementById('og_title')?.value || '';
+  const ogDesc = document.getElementById('og_description')?.value || '';
+  const schemaType = document.getElementById('schema_type')?.value || '';
+  const featuredImg = document.getElementById('featured_image')?.value || '';
+  const authorId = document.getElementById('author_id')?.value || '';
+
+  // Count elements in body
+  const imgCount = (body.match(/<img /gi) || []).length;
+  const linkCount = (body.match(/<a /gi) || []).length;
+  const h2Count = (body.match(/<h2/gi) || []).length;
+  const h3Count = (body.match(/<h3/gi) || []).length;
+  const hasAltMissing = /<img(?![^>]*alt=["'][^"']+["'])/i.test(body);
+
+  // ── SEO CHECKS ──────────────────────────────────────────
+  const seoChecks = [
+    {
+      name: 'Title length',
+      pass: title.length >= 30 && title.length <= 70,
+      warn: title.length >= 15 && title.length < 30,
+      msg: title.length === 0 ? 'Add a title (30-70 chars)' :
+           title.length < 30 ? `Title too short: <strong>${title.length}</strong>/30 min` :
+           title.length > 70 ? `Title too long: <strong>${title.length}</strong>/70 max` :
+           `Title length: <strong>${title.length}</strong> chars ✓`,
+      target: '30-70 characters'
+    },
+    {
+      name: 'Meta description',
+      pass: metaDesc.length >= 120 && metaDesc.length <= 160,
+      warn: metaDesc.length >= 50 && metaDesc.length < 120,
+      msg: metaDesc.length === 0 ? 'Add meta description (120-160 chars)' :
+           metaDesc.length < 120 ? `Too short: <strong>${metaDesc.length}</strong>/120 min` :
+           metaDesc.length > 160 ? `Too long: <strong>${metaDesc.length}</strong>/160 max` :
+           `Length: <strong>${metaDesc.length}</strong> chars ✓`,
+      target: '120-160 characters'
+    },
+    {
+      name: 'Content length',
+      pass: wordCount >= 1000,
+      warn: wordCount >= 300,
+      msg: wordCount < 300 ? `Only <strong>${wordCount}</strong> words. Need 1000+ for SEO` :
+           wordCount < 1000 ? `<strong>${wordCount}</strong> words. Aim for 1000+` :
+           `<strong>${wordCount}</strong> words ✓`,
+      target: '1000+ words'
+    },
+    {
+      name: 'URL slug',
+      pass: slug.length > 0 && slug.length <= 60 && !slug.includes('_'),
+      warn: slug.length > 60,
+      msg: slug.length === 0 ? 'Add URL slug' :
+           slug.length > 60 ? `Slug too long: <strong>${slug.length}</strong> chars` :
+           'Clean URL slug ✓',
+      target: 'Under 60 chars, hyphens only'
+    },
+    {
+      name: 'Headings (H2/H3)',
+      pass: h2Count >= 2 && h3Count >= 1,
+      warn: h2Count >= 1,
+      msg: h2Count === 0 ? 'Add H2 subheadings for structure' :
+           h3Count === 0 ? `${h2Count} H2 found. Add H3 for deeper structure` :
+           `${h2Count} H2 + ${h3Count} H3 headings ✓`,
+      target: '2+ H2, 1+ H3'
+    },
+    {
+      name: 'Images',
+      pass: imgCount >= 1 && !hasAltMissing,
+      warn: imgCount >= 1,
+      msg: imgCount === 0 ? 'Add at least 1 image' :
+           hasAltMissing ? `${imgCount} image(s) but missing alt text` :
+           `${imgCount} image(s) with alt text ✓`,
+      target: '1+ images with alt text'
+    },
+    {
+      name: 'Featured image',
+      pass: featuredImg.length > 0,
+      warn: false,
+      msg: featuredImg ? 'Featured image set ✓' : 'Add a featured image',
+      target: 'Required for social sharing'
+    },
+    {
+      name: 'Internal links',
+      pass: linkCount >= 2,
+      warn: linkCount >= 1,
+      msg: linkCount === 0 ? 'Add internal links to other pages' :
+           linkCount < 2 ? `Only ${linkCount} link. Add 2+ internal links` :
+           `${linkCount} links found ✓`,
+      target: '2+ internal links'
+    },
+    {
+      name: 'Excerpt / Summary',
+      pass: excerpt.length >= 100 && excerpt.length <= 320,
+      warn: excerpt.length >= 30,
+      msg: excerpt.length === 0 ? 'Add excerpt for listings & AI feeds' :
+           excerpt.length < 100 ? `Excerpt short: <strong>${excerpt.length}</strong>/100 min` :
+           `Excerpt: <strong>${excerpt.length}</strong> chars ✓`,
+      target: '100-320 characters'
+    },
+    {
+      name: 'Canonical URL',
+      pass: true, // Auto-generated if empty
+      warn: false,
+      msg: canonical ? `Set to: ${canonical.substring(0,40)}...` : 'Auto-generated ✓',
+      target: 'Auto or custom'
+    }
+  ];
+
+  // ── GEO CHECKS (Generative Engine Optimization) ─────────
+  const geoChecks = [
+    {
+      name: 'Author attribution',
+      pass: authorId.length > 0 && authorId !== '',
+      warn: false,
+      msg: authorId ? 'Author assigned ✓ (E-E-A-T signal)' : 'Assign an author for E-E-A-T credibility',
+      target: 'Required for E-E-A-T'
+    },
+    {
+      name: 'Schema markup',
+      pass: schemaType.length > 0,
+      warn: false,
+      msg: schemaType ? `Schema: <strong>${schemaType}</strong> ✓` : 'Select schema type for AI indexing',
+      target: 'Article, BlogPosting, etc.'
+    },
+    {
+      name: 'OG tags for AI sharing',
+      pass: (ogTitle.length > 0 || metaTitle.length > 0) && (ogDesc.length > 0 || metaDesc.length > 0),
+      warn: metaTitle.length > 0 || metaDesc.length > 0,
+      msg: ogTitle || metaTitle ? 'Social/AI sharing tags set ✓' : 'Add OG title & description',
+      target: 'Title + Description + Image'
+    },
+    {
+      name: 'Structured content',
+      pass: h2Count >= 3 && h3Count >= 2,
+      warn: h2Count >= 2,
+      msg: h2Count < 2 ? 'Need more headings for AI parsing' :
+           `${h2Count}×H2 + ${h3Count}×H3 — ${h2Count >= 3 ? 'Well structured ✓' : 'Add more subheadings'}`,
+      target: '3+ H2, 2+ H3 for AI parsing'
+    },
+    {
+      name: 'Content depth',
+      pass: wordCount >= 1500,
+      warn: wordCount >= 800,
+      msg: wordCount < 800 ? `<strong>${wordCount}</strong> words — AI prefers 1500+` :
+           wordCount < 1500 ? `<strong>${wordCount}</strong> words — aim for 1500+ for AI citations` :
+           `<strong>${wordCount}</strong> words — deep content ✓`,
+      target: '1500+ words for AI citation'
+    },
+    {
+      name: 'Listicles & formatting',
+      pass: (body.match(/<li/gi) || []).length >= 3,
+      warn: (body.match(/<li/gi) || []).length >= 1,
+      msg: (body.match(/<li/gi) || []).length === 0 ? 'Add bullet/numbered lists for AI extraction' :
+           `${(body.match(/<li/gi) || []).length} list items ✓`,
+      target: '3+ list items for AI snippets'
+    },
+    {
+      name: 'Quotable statements',
+      pass: (body.match(/<blockquote/gi) || []).length >= 1,
+      warn: false,
+      msg: (body.match(/<blockquote/gi) || []).length > 0 ? 'Has quotable content ✓' : 'Add blockquotes — AI loves citable statements',
+      target: '1+ blockquote for AI citation'
+    },
+    {
+      name: 'Concise intro paragraph',
+      pass: bodyText.length > 0 && bodyText.substring(0, 300).includes('.'),
+      warn: bodyText.length > 0,
+      msg: bodyText.length === 0 ? 'Write content with a clear intro' :
+           bodyText.substring(0, 300).includes('.') ? 'Has clear intro paragraph ✓' : 'Start with a concise, direct answer',
+      target: 'Answer query in first 200 chars'
+    }
+  ];
+
+  // Render panels
+  renderScorePanel('seoCheckList', 'seoScoreCircle', seoChecks);
+  renderScorePanel('geoCheckList', 'geoScoreCircle', geoChecks);
+}
+
+function renderScorePanel(listId, circleId, checks) {
+  let passed = 0;
+  const total = checks.length;
+  let html = '';
+
+  checks.forEach(c => {
+    const status = c.pass ? 'pass' : (c.warn ? 'warn' : 'fail');
+    const icon = c.pass ? '✓' : (c.warn ? '!' : '✕');
+    if (c.pass) passed++;
+    else if (c.warn) passed += 0.5;
+
+    html += `<div class="seo-check-item">
+      <div class="seo-check-icon ${status}">${icon}</div>
+      <div class="seo-check-text">
+        <strong>${c.name}</strong><br>${c.msg}
+        <span class="seo-target-badge ${c.pass ? 'target-met' : 'target-miss'}">Target: ${c.target}</span>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById(listId).innerHTML = html;
+
+  const score = Math.round((passed / total) * 100);
+  const circle = document.getElementById(circleId);
+  circle.textContent = score;
+  circle.className = 'seo-score-circle ' +
+    (score >= 70 ? 'score-good' : score >= 40 ? 'score-ok' : 'score-poor');
+}
+
+// Run analysis on load and on changes
+runSeoGeoAnalysis();
+if (quillEditor) quillEditor.on('text-change', runSeoGeoAnalysis);
+['title','slug','excerpt','meta_title','meta_description','canonical_url','og_title','og_description','author_id','schema_type','featured_image'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', runSeoGeoAnalysis);
+  if (el) el.addEventListener('change', runSeoGeoAnalysis);
+});
+</script>
