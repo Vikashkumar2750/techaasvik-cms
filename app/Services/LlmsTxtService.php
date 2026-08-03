@@ -22,8 +22,8 @@ class LlmsTxtService
     {
         $this->db = Database::getInstance();
         $config = require APP_PATH . '/Config/config.php';
-        $this->baseUrl  = rtrim($config['app']['url'] ?? 'https://t1.techaasvik.com', '/');
-        $this->siteName = $config['app']['name'] ?? 'TechAasvik';
+        $this->baseUrl  = rtrim($config['site']['url'] ?? 'https://t1.techaasvik.com', '/');
+        $this->siteName = $config['site']['name'] ?? 'TechAasvik';
         $this->siteDesc = $config['seo']['description'] ?? 'Digital Marketing Knowledge Platform — Expert Guides, Tools & Strategies';
         $this->cachePath = APP_ROOT . '/storage/cache';
 

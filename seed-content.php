@@ -11,6 +11,7 @@ ini_set('display_errors', 1);
 
 define('APP_ROOT', __DIR__);
 define('APP_PATH', __DIR__ . '/app');
+define('STORAGE_PATH', __DIR__ . '/storage');
 define('ASSET_VERSION', date('ymd'));
 
 require APP_PATH . '/Config/config.php';
