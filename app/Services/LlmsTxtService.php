@@ -21,14 +21,22 @@ class LlmsTxtService
     public function __construct()
     {
         $this->db = Database::getInstance();
-        $config = require APP_PATH . '/Config/config.php';
+        
+        // Use a fresh include to get config array (require_once may return true on 2nd call)
+        $configFile = APP_PATH . '/Config/config.php';
+        $config = (function($file) { return include $file; })($configFile);
+        if (!is_array($config)) {
+            // Fallback if config include fails
+            $config = ['site' => ['url' => 'https://t1.techaasvik.com', 'name' => 'TechAasvik'], 'seo' => []];
+        }
+        
         $this->baseUrl  = rtrim($config['site']['url'] ?? 'https://t1.techaasvik.com', '/');
         $this->siteName = $config['site']['name'] ?? 'TechAasvik';
         $this->siteDesc = $config['seo']['description'] ?? 'Digital Marketing Knowledge Platform — Expert Guides, Tools & Strategies';
         $this->cachePath = APP_ROOT . '/storage/cache';
 
         if (!is_dir($this->cachePath)) {
-            mkdir($this->cachePath, 0755, true);
+            @mkdir($this->cachePath, 0755, true);
         }
     }
 

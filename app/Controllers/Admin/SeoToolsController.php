@@ -136,20 +136,36 @@ class SeoToolsController extends Controller
         Auth::requireAdmin();
         $this->verifyCsrf();
 
-        $svc = new SitemapService();
-        file_put_contents(APP_ROOT . '/sitemap.xml', $svc->generateIndex());
-        file_put_contents(APP_ROOT . '/sitemap-posts.xml', $svc->generateForType('post', '/blog/', 'weekly', 0.8));
-        file_put_contents(APP_ROOT . '/sitemap-pages.xml', $svc->generatePages());
-        file_put_contents(APP_ROOT . '/sitemap-glossary.xml', $svc->generateForType('glossary_term', '/glossary/term/', 'monthly', 0.6));
-        file_put_contents(APP_ROOT . '/sitemap-tools.xml', $svc->generateForType('tool', '/tools/', 'monthly', 0.7));
-        file_put_contents(APP_ROOT . '/sitemap-courses.xml', $svc->generateForType('course', '/courses/', 'monthly', 0.8));
+        $errors = [];
 
-        $llms = new LlmsTxtService();
-        $llms->generateLlmsTxt();
-        $llms->generateLlmsFullTxt();
-        $llms->markSitemapUpdated();
+        // Sitemap
+        try {
+            $svc = new SitemapService();
+            @file_put_contents(APP_ROOT . '/sitemap.xml', $svc->generateIndex());
+            @file_put_contents(APP_ROOT . '/sitemap-posts.xml', $svc->generateForType('post', '/blog/', 'weekly', 0.8));
+            @file_put_contents(APP_ROOT . '/sitemap-pages.xml', $svc->generatePages());
+            @file_put_contents(APP_ROOT . '/sitemap-glossary.xml', $svc->generateForType('glossary_term', '/glossary/term/', 'monthly', 0.6));
+            @file_put_contents(APP_ROOT . '/sitemap-tools.xml', $svc->generateForType('tool', '/tools/', 'monthly', 0.7));
+            @file_put_contents(APP_ROOT . '/sitemap-courses.xml', $svc->generateForType('course', '/courses/', 'monthly', 0.8));
+        } catch (\Throwable $e) {
+            $errors[] = 'Sitemap: ' . $e->getMessage();
+        }
 
-        $this->flash('success', '🚀 All regenerated: sitemap.xml, llms.txt, llms-full.txt');
+        // LLMs
+        try {
+            $llms = new LlmsTxtService();
+            $llms->generateLlmsTxt();
+            $llms->generateLlmsFullTxt();
+            $llms->markSitemapUpdated();
+        } catch (\Throwable $e) {
+            $errors[] = 'LLMs: ' . $e->getMessage();
+        }
+
+        if (empty($errors)) {
+            $this->flash('success', '🚀 All regenerated: sitemap.xml, llms.txt, llms-full.txt');
+        } else {
+            $this->flash('error', '⚠️ Partial success. Errors: ' . implode(' | ', $errors));
+        }
         View::redirect('/techaasvik_admin/seo');
     }
 
