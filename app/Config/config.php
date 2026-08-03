@@ -134,12 +134,20 @@ $config = [
 ];
 
 // ── Local overrides (never committed to Git) ──────────
-// If config.local.php exists, it deep-merges over the above.
-// This lets you set DB credentials, API keys, etc. without Git overwriting them.
-$localConfigFile = __DIR__ . '/config.local.php';
-if (file_exists($localConfigFile)) {
-    $local  = require $localConfigFile;
-    $config = array_replace_recursive($config, $local);
+// Checks OUTSIDE the git-deployed directory first (safe from deploy overwrites),
+// then falls back to the Config/ directory.
+$localPaths = [
+    '/home/u375939934/config.local.php',           // Outside git root — deploy-safe
+    dirname(APP_ROOT) . '/config.local.php',        // One level above project
+    __DIR__ . '/config.local.php',                  // Inside Config/ (dev fallback)
+];
+
+foreach ($localPaths as $localConfigFile) {
+    if (file_exists($localConfigFile)) {
+        $local  = require $localConfigFile;
+        $config = array_replace_recursive($config, $local);
+        break;
+    }
 }
 
 return $config;
