@@ -76,6 +76,14 @@ class ArchiveController extends Controller
         $this->view('tag', ['seo' => $seo, 'tag' => $tag, 'posts' => $posts, 'page' => $page, 'perPage' => $perPage]);
     }
 
+    // ── Topic archive (same as pillar redirect) ──────────
+    public function topic(array $params = []): void
+    {
+        $slug = $params['slug'] ?? '';
+        // Topics redirect to the learn section
+        View::redirect('/learn/' . $slug, 301);
+    }
+
     // ── Resource archives ─────────────────────────────────
 
 

@@ -158,3 +158,8 @@ $router->post('/techaasvik_admin/menus/item/{id}/delete', 'Admin\MenuController@
 $router->post('/techaasvik_admin/menus/{id}/reorder',     'Admin\MenuController@reorder',    'admin.menus.reorder');
 $router->post('/techaasvik_admin/menus/{id}/delete',      'Admin\MenuController@deleteMenu', 'admin.menus.delete');
 
+// SEO Tools
+$router->get('/techaasvik_admin/seo',                        'Admin\SeoToolsController@index',                'admin.seo');
+$router->post('/techaasvik_admin/seo/generate-titles',       'Admin\SeoToolsController@generateTitles',       'admin.seo.titles');
+$router->post('/techaasvik_admin/seo/generate-descriptions', 'Admin\SeoToolsController@generateDescriptions', 'admin.seo.desc');
+
