@@ -31,6 +31,7 @@ function adminIsActive(string $path): string {
 <link rel="icon" href="/assets/images/static/favicon.ico">
 <!-- Quill.js WYSIWYG Editor -->
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 </head>
 <body>
 <div class="admin-layout">
@@ -191,7 +192,7 @@ const flash = document.querySelector('.admin-flash');
 if (flash) setTimeout(() => flash.style.display = 'none', 4000);
 </script>
 
-<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
 <script src="/assets/js/admin.js?v=<?= ASSET_VERSION ?>"></script>
 </body>
 </html>

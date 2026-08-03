@@ -14,7 +14,7 @@ class MediaController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->uploadDir = STORAGE_PATH . '/uploads';
+        $this->uploadDir = APP_ROOT . '/assets/images/uploads';
         if (!is_dir($this->uploadDir)) {
             mkdir($this->uploadDir, 0755, true);
         }
@@ -39,6 +39,15 @@ class MediaController extends Controller
             'perPage'   => $perPage,
             'flash'     => $this->getFlash(),
         ]);
+    }
+
+    public function api(array $params = []): void
+    {
+        $this->requireAdmin();
+        $items = $this->db->fetchAll(
+            "SELECT id, filename, filepath, mime_type, filesize, alt_text FROM media ORDER BY created_at DESC LIMIT 100"
+        );
+        View::json(['success' => true, 'items' => $items]);
     }
 
     public function upload(array $params = []): void
@@ -81,7 +90,7 @@ class MediaController extends Controller
             [$width, $height] = @getimagesize($destPath) ?: [null, null];
         }
 
-        $webPath = '/storage/uploads/' . $yearMonth . '/' . $filename;
+        $webPath = '/assets/images/uploads/' . $yearMonth . '/' . $filename;
 
         // Insert into DB
         $mediaId = $this->db->insert('media', [
@@ -112,7 +121,7 @@ class MediaController extends Controller
         $media = $this->db->fetchOne("SELECT * FROM media WHERE id = ?", [$id]);
 
         if ($media) {
-            $path = STORAGE_PATH . '/uploads' . str_replace('/storage/uploads', '', $media['filepath']);
+            $path = APP_ROOT . '/assets/images/uploads' . str_replace('/assets/images/uploads', '', $media['filepath']);
             if (file_exists($path)) unlink($path);
             $this->db->delete('media', 'id = ?', [$id]);
         }

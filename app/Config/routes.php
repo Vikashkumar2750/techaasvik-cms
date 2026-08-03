@@ -121,6 +121,7 @@ $router->post('/techaasvik_admin/content/{id}/publish',   'Admin\ContentControll
 
 // Media
 $router->get('/techaasvik_admin/media',                   'Admin\MediaController@index',   'admin.media');
+$router->get('/techaasvik_admin/media/api',                'Admin\MediaController@api',     'admin.media.api');
 $router->post('/techaasvik_admin/media/upload',           'Admin\MediaController@upload',  'admin.media.upload');
 $router->post('/techaasvik_admin/media/{id}/delete',      'Admin\MediaController@delete',  'admin.media.delete');
 

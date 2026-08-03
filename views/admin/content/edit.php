@@ -8,6 +8,7 @@ $status  = $item['status'] ?? 'draft';
 $lang    = $item['lang'] ?? 'en';
 $excerpt = $item['excerpt'] ?? '';
 $body    = $item['content'] ?? '';
+$featuredImage = $item['featured_image'] ?? '';
 $metaTitle = $item['meta_title'] ?? '';
 $metaDesc  = $item['meta_description'] ?? '';
 $canonical = $item['canonical_url'] ?? '';
@@ -266,6 +267,34 @@ $actionUrl = $isNew ? '/techaasvik_admin/content/store' : "/techaasvik_admin/con
         </select>
       </div>
 
+      <!-- Featured Image -->
+      <div style="background:var(--admin-surface);border:1px solid var(--admin-border);border-radius:12px;padding:16px;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:12px;">Featured Image</div>
+        <input type="hidden" id="featured_image" name="featured_image" value="<?= e($featuredImage) ?>">
+        <div id="featuredImagePreview" style="border-radius:8px;overflow:hidden;margin-bottom:10px;background:var(--admin-elevated);min-height:60px;display:flex;align-items:center;justify-content:center;">
+          <?php if ($featuredImage): ?>
+            <img src="<?= e($featuredImage) ?>" style="width:100%;display:block;border-radius:8px;" alt="Featured">
+          <?php else: ?>
+            <div style="padding:24px;text-align:center;color:var(--admin-muted);font-size:12px;">No image selected</div>
+          <?php endif; ?>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button type="button" class="admin-btn admin-btn-secondary admin-btn-sm" style="flex:1;justify-content:center;font-size:12px;" onclick="openMediaPicker()">
+            📷 Select Image
+          </button>
+          <button type="button" class="admin-btn admin-btn-ghost admin-btn-sm" style="font-size:12px;" onclick="removeFeaturedImage()" title="Remove">
+            ✕
+          </button>
+        </div>
+        <!-- Quick Upload -->
+        <div style="margin-top:8px;">
+          <label style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border:1px dashed var(--admin-border);border-radius:8px;cursor:pointer;font-size:11px;color:var(--admin-muted);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--admin-brand)'" onmouseout="this.style.borderColor='var(--admin-border)'">
+            ⬆️ Upload New
+            <input type="file" id="featuredImageUpload" accept="image/*" style="display:none;" onchange="uploadFeaturedImage(this)">
+          </label>
+        </div>
+      </div>
+
       <!-- Categories -->
       <div style="background:var(--admin-surface);border:1px solid var(--admin-border);border-radius:12px;padding:16px;">
         <div style="font-weight:700;font-size:13px;margin-bottom:12px;">Categories</div>
@@ -351,12 +380,16 @@ const quillEditor = new Quill('#quillEditor', {
   placeholder: 'Start writing your content…',
   modules: {
     toolbar: [
-      [{ 'header': [2, 3, 4, false] }],
+      [{ 'header': [1, 2, 3, 4, 5, false] }],
+      [{ 'font': [] }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
       ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }, { 'align': [] }],
       ['blockquote', 'code-block'],
       ['link', 'image', 'video'],
-      [{ 'align': [] }],
       ['clean']
     ]
   }
@@ -442,5 +475,114 @@ function filterTags(q) {
     el.style.display = el.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
   });
 }
+
+// ── Featured Image ───────────────────────────────────────────
+function uploadFeaturedImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const fd = new FormData();
+  fd.append('file', file);
+
+  const preview = document.getElementById('featuredImagePreview');
+  preview.innerHTML = '<div style="padding:16px;text-align:center;color:var(--admin-muted);font-size:12px;">⏳ Uploading...</div>';
+
+  fetch('/techaasvik_admin/media/upload', {
+    method: 'POST',
+    body: fd
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById('featured_image').value = data.url;
+      preview.innerHTML = '<img src="' + data.url + '" style="width:100%;display:block;border-radius:8px;" alt="Featured">';
+    } else {
+      preview.innerHTML = '<div style="padding:16px;text-align:center;color:#f87171;font-size:12px;">❌ ' + data.message + '</div>';
+    }
+  })
+  .catch(err => {
+    preview.innerHTML = '<div style="padding:16px;text-align:center;color:#f87171;font-size:12px;">❌ Upload failed</div>';
+  });
+
+  input.value = '';
+}
+
+function removeFeaturedImage() {
+  document.getElementById('featured_image').value = '';
+  document.getElementById('featuredImagePreview').innerHTML =
+    '<div style="padding:24px;text-align:center;color:var(--admin-muted);font-size:12px;">No image selected</div>';
+}
+
+function openMediaPicker() {
+  document.getElementById('mediaPickerModal').style.display = 'flex';
+  loadMediaLibrary();
+}
+
+function closeMediaPicker() {
+  document.getElementById('mediaPickerModal').style.display = 'none';
+}
+
+function loadMediaLibrary() {
+  fetch('/techaasvik_admin/media/api')
+    .then(r => r.json())
+    .then(data => {
+      const grid = document.getElementById('mediaPickerGrid');
+      if (!data.items || data.items.length === 0) {
+        grid.innerHTML = '<p style="color:var(--admin-muted);text-align:center;padding:40px;">No images yet. Upload one above.</p>';
+        return;
+      }
+      grid.innerHTML = data.items.map(item =>
+        '<div onclick="selectMedia(\'' + item.filepath + '\')" style="cursor:pointer;border-radius:8px;overflow:hidden;aspect-ratio:1;background:var(--admin-elevated);border:2px solid transparent;transition:border 0.15s;" onmouseover="this.style.borderColor=\'var(--admin-brand)\'" onmouseout="this.style.borderColor=\'transparent\'">' +
+        '<img src="' + item.filepath + '" style="width:100%;height:100%;object-fit:cover;" alt="' + (item.alt_text||'') + '">' +
+        '</div>'
+      ).join('');
+    })
+    .catch(() => {
+      document.getElementById('mediaPickerGrid').innerHTML = '<p style="color:#f87171;text-align:center;">Failed to load media</p>';
+    });
+}
+
+function selectMedia(url) {
+  document.getElementById('featured_image').value = url;
+  document.getElementById('featuredImagePreview').innerHTML =
+    '<img src="' + url + '" style="width:100%;display:block;border-radius:8px;" alt="Featured">';
+  closeMediaPicker();
+}
+
+// ── Quill Image Handler (insert from URL or upload) ──────────
+quillEditor.getModule('toolbar').addHandler('image', function() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function() {
+    const file = input.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fetch('/techaasvik_admin/media/upload', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          const range = quillEditor.getSelection(true);
+          quillEditor.insertEmbed(range.index, 'image', data.url);
+        }
+      });
+  };
+  input.click();
+});
 </script>
 
+<!-- Media Picker Modal -->
+<div id="mediaPickerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:var(--admin-bg);border-radius:16px;width:100%;max-width:800px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--admin-border);display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;font-size:16px;">Select from Media Library</h3>
+      <button onclick="closeMediaPicker()" style="background:none;border:none;color:var(--admin-muted);cursor:pointer;font-size:20px;">&times;</button>
+    </div>
+    <div style="padding:16px 20px;overflow-y:auto;flex:1;">
+      <div id="mediaPickerGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;">
+        <p style="color:var(--admin-muted);text-align:center;">Loading...</p>
+      </div>
+    </div>
+  </div>
+</div>

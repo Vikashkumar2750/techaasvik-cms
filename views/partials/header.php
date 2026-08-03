@@ -8,6 +8,7 @@ $currentPath = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) 
 $navItems = [
     ['Learn',        '/learn'],
     ['Blog',         '/blog'],
+    ['Services',     '/services'],
     ['Tools',        '/tools'],
     ['Glossary',     '/glossary'],
     ['Case Studies', '/case-studies'],

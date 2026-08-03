@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `content` (
   `author_id`         INT UNSIGNED    NULL,
   `parent_id`         INT UNSIGNED    NULL,
   `featured_image_id` INT UNSIGNED    NULL,
+  `featured_image`    VARCHAR(500)    NULL COMMENT 'URL of featured image',
   `menu_order`        SMALLINT        NOT NULL DEFAULT 0,
   `comment_status`    TINYINT(1)      NOT NULL DEFAULT 0,
   `word_count`        INT             NULL,
