@@ -4,7 +4,6 @@ Allow: /
 # Block admin panel from crawlers
 Disallow: /techaasvik_admin/
 Disallow: /setup.php
-Disallow: /storage/
 Disallow: /database/
 
 # Block query parameters that create duplicate content
@@ -12,11 +11,16 @@ Disallow: /*?page=
 Disallow: /*?sort=
 Disallow: /*?filter=
 
-# Allow CSS/JS/Images
+# Allow CSS/JS/Images/Uploads
 Allow: /assets/
+Allow: /storage/uploads/
 
 # Crawl delay for politeness
 Crawl-delay: 1
 
 # Sitemaps
 Sitemap: https://t1.techaasvik.com/sitemap.xml
+
+# LLM Content Files (https://llmstxt.org)
+LLMs-Txt: https://t1.techaasvik.com/llms.txt
+LLMs-Full-Txt: https://t1.techaasvik.com/llms-full.txt
