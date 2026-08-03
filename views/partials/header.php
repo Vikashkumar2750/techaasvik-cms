@@ -4,7 +4,7 @@
  * Navigation items & search
  */
 
-$currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+$currentPath = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/');
 $navItems = [
     ['Learn',        '/learn'],
     ['Blog',         '/blog'],
@@ -14,10 +14,12 @@ $navItems = [
     ['Courses',      '/courses'],
 ];
 
-function navClass(string $path): string {
-    global $currentPath;
-    $cp = rtrim((string)$currentPath, '/');
-    return str_starts_with($cp, $path) ? 'site-nav-link active' : 'site-nav-link';
+if (!function_exists('navClass')) {
+    function navClass(string $path): string {
+        global $currentPath;
+        $cp = rtrim($currentPath ?? '/', '/');
+        return str_starts_with($cp, $path) ? 'site-nav-link active' : 'site-nav-link';
+    }
 }
 ?>
 
