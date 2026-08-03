@@ -97,6 +97,10 @@ $router->get('/sitemap-glossary.xml', 'SitemapController@glossary', 'sitemap.glo
 $router->get('/sitemap-tools.xml',    'SitemapController@tools',    'sitemap.tools');
 $router->get('/sitemap-courses.xml',  'SitemapController@courses',  'sitemap.courses');
 
+// LLMs.txt — serve via PHP fallback if static file not found
+$router->get('/llms.txt',             'SeoController@llmsTxt',      'llms.txt');
+$router->get('/llms-full.txt',        'SeoController@llmsFullTxt',  'llms-full.txt');
+
 // ─────────────────────────────────────────────────────────────
 // ADMIN ROUTES (/techaasvik_admin/*)
 // ─────────────────────────────────────────────────────────────
