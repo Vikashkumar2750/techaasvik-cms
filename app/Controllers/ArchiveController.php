@@ -200,10 +200,10 @@ class ArchiveController extends Controller
         $page    = $this->page();
         $perPage = POSTS_PER_PAGE;
         $items   = $this->db->fetchAll(
-            "SELECT * FROM content WHERE type = ? AND status = 'published' ORDER BY published_at DESC LIMIT ? OFFSET ?",
+            "SELECT * FROM content WHERE type = ? AND status = 'published' AND lang = 'en' ORDER BY published_at DESC LIMIT ? OFFSET ?",
             [$type, $perPage, ($page - 1) * $perPage]
         );
-        $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM content WHERE type = ? AND status = 'published'", [$type]);
+        $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM content WHERE type = ? AND status = 'published' AND lang = 'en'", [$type]);
 
         $seoSvc = new SeoService();
         $seo    = $seoSvc->buildStatic($title . ' — TechAasvik', $desc, 'https://t1.techaasvik.com/' . $path);

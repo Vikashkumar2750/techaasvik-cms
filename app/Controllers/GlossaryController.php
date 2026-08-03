@@ -18,12 +18,12 @@ class GlossaryController extends Controller
         // A-Z index with counts
         $letters = $this->db->fetchAll(
             "SELECT UPPER(LEFT(title,1)) AS letter, COUNT(*) AS cnt
-             FROM content WHERE type = 'glossary_term' AND status = 'published'
+             FROM content WHERE type = 'glossary_term' AND status = 'published' AND lang = 'en'
              GROUP BY letter ORDER BY letter"
         );
 
         $recentTerms = $this->db->fetchAll(
-            "SELECT title, slug FROM content WHERE type = 'glossary_term' AND status = 'published'
+            "SELECT title, slug FROM content WHERE type = 'glossary_term' AND status = 'published' AND lang = 'en'
              ORDER BY published_at DESC LIMIT 12"
         );
 
@@ -54,7 +54,7 @@ class GlossaryController extends Controller
 
         $terms = $this->db->fetchAll(
             "SELECT title, slug, excerpt FROM content
-             WHERE type = 'glossary_term' AND status = 'published'
+             WHERE type = 'glossary_term' AND status = 'published' AND lang = 'en'
              AND UPPER(LEFT(title,1)) = ?
              ORDER BY title",
             [$letter]
