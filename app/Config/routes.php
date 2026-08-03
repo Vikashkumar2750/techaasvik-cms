@@ -163,4 +163,8 @@ $router->post('/techaasvik_admin/menus/{id}/delete',      'Admin\MenuController@
 $router->get('/techaasvik_admin/seo',                        'Admin\SeoToolsController@index',                'admin.seo');
 $router->post('/techaasvik_admin/seo/generate-titles',       'Admin\SeoToolsController@generateTitles',       'admin.seo.titles');
 $router->post('/techaasvik_admin/seo/generate-descriptions', 'Admin\SeoToolsController@generateDescriptions', 'admin.seo.desc');
+$router->post('/techaasvik_admin/seo/regenerate-sitemap',    'Admin\SeoToolsController@regenerateSitemap',    'admin.seo.regen.sitemap');
+$router->post('/techaasvik_admin/seo/regenerate-llms',       'Admin\SeoToolsController@regenerateLlms',       'admin.seo.regen.llms');
+$router->post('/techaasvik_admin/seo/regenerate-llms-full',  'Admin\SeoToolsController@regenerateLlmsFull',   'admin.seo.regen.llmsfull');
+$router->post('/techaasvik_admin/seo/regenerate-all',        'Admin\SeoToolsController@regenerateAll',        'admin.seo.regen.all');
 

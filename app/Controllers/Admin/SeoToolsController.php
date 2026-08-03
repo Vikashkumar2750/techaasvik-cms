@@ -5,9 +5,11 @@ use Core\Controller;
 use Core\Auth;
 use Core\View;
 use Core\Database;
+use Services\SitemapService;
+use Services\LlmsTxtService;
 
 /**
- * Admin SEO Tools Controller — SEO audit, sitemap, robots.txt management.
+ * Admin SEO Tools Controller — SEO audit, sitemap, robots.txt, llms.txt management.
  */
 class SeoToolsController extends Controller
 {
@@ -17,7 +19,6 @@ class SeoToolsController extends Controller
 
         $db = Database::getInstance();
 
-        // Content without meta title
         $missingTitle = $db->fetchAll(
             "SELECT c.id, c.type, c.title, c.slug, c.status
              FROM content c
@@ -27,7 +28,6 @@ class SeoToolsController extends Controller
              ORDER BY c.updated_at DESC LIMIT 50"
         );
 
-        // Content without meta description
         $missingDesc = $db->fetchAll(
             "SELECT c.id, c.type, c.title, c.slug, c.status
              FROM content c
@@ -37,7 +37,6 @@ class SeoToolsController extends Controller
              ORDER BY c.updated_at DESC LIMIT 50"
         );
 
-        // Content with noindex
         $noindexed = $db->fetchAll(
             "SELECT c.id, c.type, c.title, c.slug
              FROM content c
@@ -46,7 +45,6 @@ class SeoToolsController extends Controller
              ORDER BY c.title LIMIT 50"
         );
 
-        // Content without excerpt
         $missingExcerpt = $db->fetchAll(
             "SELECT c.id, c.type, c.title, c.slug
              FROM content c
@@ -55,13 +53,21 @@ class SeoToolsController extends Controller
              ORDER BY c.updated_at DESC LIMIT 50"
         );
 
-        // SEO stats
         $stats = [
             'total_published'   => (int)$db->fetchColumn("SELECT COUNT(*) FROM content WHERE status = 'published'"),
             'with_meta_title'   => (int)$db->fetchColumn("SELECT COUNT(*) FROM content c INNER JOIN content_seo s ON s.content_id = c.id WHERE c.status = 'published' AND s.meta_title IS NOT NULL AND s.meta_title != ''"),
             'with_meta_desc'    => (int)$db->fetchColumn("SELECT COUNT(*) FROM content c INNER JOIN content_seo s ON s.content_id = c.id WHERE c.status = 'published' AND s.meta_description IS NOT NULL AND s.meta_description != ''"),
             'with_excerpt'      => (int)$db->fetchColumn("SELECT COUNT(*) FROM content WHERE status = 'published' AND excerpt IS NOT NULL AND excerpt != ''"),
             'noindexed'         => count($noindexed),
+        ];
+
+        // Last update timestamps
+        $llmsService = new LlmsTxtService();
+        $lastUpdated = $llmsService->getLastUpdated();
+        $fileStatus = [
+            'sitemap'   => true,
+            'llms'      => file_exists(APP_ROOT . '/llms.txt'),
+            'llms_full' => file_exists(APP_ROOT . '/llms-full.txt'),
         ];
 
         View::admin('seo/index', [
@@ -71,8 +77,80 @@ class SeoToolsController extends Controller
             'missingDesc'    => $missingDesc,
             'missingExcerpt' => $missingExcerpt,
             'noindexed'      => $noindexed,
+            'lastUpdated'    => $lastUpdated,
+            'fileStatus'     => $fileStatus,
             'flash'          => $this->getFlash(),
         ]);
+    }
+
+    // ── Regenerate Sitemap ───────────────────────────────
+    public function regenerateSitemap(array $params = []): void
+    {
+        Auth::requireAdmin();
+        $this->verifyCsrf();
+
+        $svc = new SitemapService();
+        file_put_contents(APP_ROOT . '/sitemap.xml', $svc->generateIndex());
+        file_put_contents(APP_ROOT . '/sitemap-posts.xml', $svc->generateForType('post', '/blog/', 'weekly', 0.8));
+        file_put_contents(APP_ROOT . '/sitemap-pages.xml', $svc->generatePages());
+        file_put_contents(APP_ROOT . '/sitemap-glossary.xml', $svc->generateForType('glossary_term', '/glossary/term/', 'monthly', 0.6));
+        file_put_contents(APP_ROOT . '/sitemap-tools.xml', $svc->generateForType('tool', '/tools/', 'monthly', 0.7));
+        file_put_contents(APP_ROOT . '/sitemap-courses.xml', $svc->generateForType('course', '/courses/', 'monthly', 0.8));
+
+        $llms = new LlmsTxtService();
+        $llms->markSitemapUpdated();
+
+        $this->flash('success', '🗺️ Sitemap regenerated successfully!');
+        View::redirect('/techaasvik_admin/seo');
+    }
+
+    // ── Regenerate llms.txt ──────────────────────────────
+    public function regenerateLlms(array $params = []): void
+    {
+        Auth::requireAdmin();
+        $this->verifyCsrf();
+
+        $svc = new LlmsTxtService();
+        $svc->generateLlmsTxt();
+
+        $this->flash('success', '🤖 llms.txt regenerated successfully!');
+        View::redirect('/techaasvik_admin/seo');
+    }
+
+    // ── Regenerate llms-full.txt ─────────────────────────
+    public function regenerateLlmsFull(array $params = []): void
+    {
+        Auth::requireAdmin();
+        $this->verifyCsrf();
+
+        $svc = new LlmsTxtService();
+        $svc->generateLlmsFullTxt();
+
+        $this->flash('success', '📄 llms-full.txt regenerated successfully!');
+        View::redirect('/techaasvik_admin/seo');
+    }
+
+    // ── Regenerate ALL ───────────────────────────────────
+    public function regenerateAll(array $params = []): void
+    {
+        Auth::requireAdmin();
+        $this->verifyCsrf();
+
+        $svc = new SitemapService();
+        file_put_contents(APP_ROOT . '/sitemap.xml', $svc->generateIndex());
+        file_put_contents(APP_ROOT . '/sitemap-posts.xml', $svc->generateForType('post', '/blog/', 'weekly', 0.8));
+        file_put_contents(APP_ROOT . '/sitemap-pages.xml', $svc->generatePages());
+        file_put_contents(APP_ROOT . '/sitemap-glossary.xml', $svc->generateForType('glossary_term', '/glossary/term/', 'monthly', 0.6));
+        file_put_contents(APP_ROOT . '/sitemap-tools.xml', $svc->generateForType('tool', '/tools/', 'monthly', 0.7));
+        file_put_contents(APP_ROOT . '/sitemap-courses.xml', $svc->generateForType('course', '/courses/', 'monthly', 0.8));
+
+        $llms = new LlmsTxtService();
+        $llms->generateLlmsTxt();
+        $llms->generateLlmsFullTxt();
+        $llms->markSitemapUpdated();
+
+        $this->flash('success', '🚀 All regenerated: sitemap.xml, llms.txt, llms-full.txt');
+        View::redirect('/techaasvik_admin/seo');
     }
 
     // ── Bulk generate meta titles ────────────────────────
@@ -97,7 +175,6 @@ class SeoToolsController extends Controller
 
         foreach ($rows as $row) {
             $metaTitle = $row['title'] . $sep . $suffix;
-            // Truncate to 60 chars
             if (strlen($metaTitle) > 60) {
                 $metaTitle = substr($row['title'], 0, 60 - strlen($sep . $suffix)) . $sep . $suffix;
             }

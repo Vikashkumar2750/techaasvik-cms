@@ -47,6 +47,106 @@
   </div>
 </div>
 
+<!-- Sitemap & LLMs Management -->
+<div class="admin-card" style="padding:20px;margin-bottom:24px;">
+  <h3 style="font-size:14px;font-weight:600;margin-bottom:16px;">🚀 Sitemap & AI Files Management</h3>
+
+  <!-- Regenerate All Button -->
+  <div style="margin-bottom:20px;">
+    <form method="POST" action="/techaasvik_admin/seo/regenerate-all" style="display:inline;">
+      <input type="hidden" name="_csrf_token" value="<?= Auth::csrfToken() ?>">
+      <button type="submit" class="admin-btn admin-btn-primary" style="padding:10px 20px;font-size:14px;" onclick="return confirm('Regenerate ALL files (sitemap + llms.txt + llms-full.txt)?')">
+        🔄 Regenerate All Files
+      </button>
+    </form>
+    <span style="font-size:11px;color:var(--admin-muted);margin-left:12px;">Regenerates sitemap.xml, llms.txt, and llms-full.txt at once</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+    <!-- Sitemap Card -->
+    <div style="background:var(--admin-elevated);border-radius:10px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:20px;">🗺️</span>
+        <div>
+          <div style="font-weight:600;font-size:13px;">sitemap.xml</div>
+          <div style="font-size:11px;color:var(--admin-muted);">Search engine index</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--admin-muted);margin-bottom:10px;">
+        Last updated: <strong style="color:var(--admin-text);"><?= $lastUpdated['sitemap'] ?></strong>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <form method="POST" action="/techaasvik_admin/seo/regenerate-sitemap" style="flex:1;">
+          <input type="hidden" name="_csrf_token" value="<?= Auth::csrfToken() ?>">
+          <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm" style="width:100%;justify-content:center;">🔄 Regenerate</button>
+        </form>
+        <a href="/sitemap.xml" target="_blank" class="admin-btn admin-btn-ghost admin-btn-sm">View</a>
+      </div>
+    </div>
+
+    <!-- llms.txt Card -->
+    <div style="background:var(--admin-elevated);border-radius:10px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:20px;">🤖</span>
+        <div>
+          <div style="font-weight:600;font-size:13px;">llms.txt</div>
+          <div style="font-size:11px;color:var(--admin-muted);">AI/LLM site index</div>
+        </div>
+        <?php if ($fileStatus['llms']): ?>
+          <span style="font-size:9px;padding:2px 6px;background:rgba(34,197,94,0.1);color:#22c55e;border-radius:4px;font-weight:600;margin-left:auto;">LIVE</span>
+        <?php else: ?>
+          <span style="font-size:9px;padding:2px 6px;background:rgba(239,68,68,0.1);color:#ef4444;border-radius:4px;font-weight:600;margin-left:auto;">NOT GENERATED</span>
+        <?php endif; ?>
+      </div>
+      <div style="font-size:11px;color:var(--admin-muted);margin-bottom:10px;">
+        Last updated: <strong style="color:var(--admin-text);"><?= $lastUpdated['llms'] ?></strong>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <form method="POST" action="/techaasvik_admin/seo/regenerate-llms" style="flex:1;">
+          <input type="hidden" name="_csrf_token" value="<?= Auth::csrfToken() ?>">
+          <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm" style="width:100%;justify-content:center;">🔄 Regenerate</button>
+        </form>
+        <?php if ($fileStatus['llms']): ?>
+          <a href="/llms.txt" target="_blank" class="admin-btn admin-btn-ghost admin-btn-sm">View</a>
+        <?php endif; ?>
+      </div>
+    </div>
+
+    <!-- llms-full.txt Card -->
+    <div style="background:var(--admin-elevated);border-radius:10px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:20px;">📄</span>
+        <div>
+          <div style="font-weight:600;font-size:13px;">llms-full.txt</div>
+          <div style="font-size:11px;color:var(--admin-muted);">Full content for AI</div>
+        </div>
+        <?php if ($fileStatus['llms_full']): ?>
+          <span style="font-size:9px;padding:2px 6px;background:rgba(34,197,94,0.1);color:#22c55e;border-radius:4px;font-weight:600;margin-left:auto;">LIVE</span>
+        <?php else: ?>
+          <span style="font-size:9px;padding:2px 6px;background:rgba(239,68,68,0.1);color:#ef4444;border-radius:4px;font-weight:600;margin-left:auto;">NOT GENERATED</span>
+        <?php endif; ?>
+      </div>
+      <div style="font-size:11px;color:var(--admin-muted);margin-bottom:10px;">
+        Last updated: <strong style="color:var(--admin-text);"><?= $lastUpdated['llms_full'] ?></strong>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <form method="POST" action="/techaasvik_admin/seo/regenerate-llms-full" style="flex:1;">
+          <input type="hidden" name="_csrf_token" value="<?= Auth::csrfToken() ?>">
+          <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm" style="width:100%;justify-content:center;">🔄 Regenerate</button>
+        </form>
+        <?php if ($fileStatus['llms_full']): ?>
+          <a href="/llms-full.txt" target="_blank" class="admin-btn admin-btn-ghost admin-btn-sm">View</a>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;font-size:11px;color:var(--admin-muted);display:flex;align-items:center;gap:6px;">
+    <span>💡</span>
+    <span>Files auto-regenerate when content is published. Use buttons above for manual refresh.</span>
+  </div>
+</div>
+
 <!-- Missing Meta Titles -->
 <?php if (!empty($missingTitle)): ?>
 <div class="admin-card" style="padding:20px;margin-bottom:24px;">

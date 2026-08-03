@@ -6,6 +6,8 @@ use Core\Auth;
 use Core\View;
 use Models\Content;
 use Services\SeoService;
+use Services\LlmsTxtService;
+use Services\SitemapService;
 
 /**
  * Admin Content Controller — CRUD for all content types.
@@ -148,6 +150,7 @@ class ContentController extends Controller
         ]);
 
         $this->flash('success', "Content \"$title\" created successfully.");
+        if ($status === 'published') $this->autoRegenerate();
         View::redirect("/techaasvik_admin/content/{$id}/edit");
     }
 
@@ -252,6 +255,7 @@ class ContentController extends Controller
         ]);
 
         $this->flash('success', "\"$title\" updated successfully.");
+        if ($status === 'published') $this->autoRegenerate();
         View::redirect("/techaasvik_admin/content/{$id}/edit");
     }
 
@@ -278,6 +282,7 @@ class ContentController extends Controller
         Auth::requireAdmin();
         $id = (int)($params['id'] ?? 0);
         $this->content->update($id, ['status' => 'published', 'published_at' => date('Y-m-d H:i:s')]);
+        $this->autoRegenerate();
         $this->flash('success', 'Content published.');
         View::redirect('/techaasvik_admin/content');
     }
@@ -319,5 +324,24 @@ class ContentController extends Controller
     {
         $words = $this->countWords($html);
         return max(1, (int)ceil($words / 200));
+    }
+
+    /**
+     * Auto-regenerate sitemap + llms files after content changes.
+     */
+    private function autoRegenerate(): void
+    {
+        try {
+            $svc = new SitemapService();
+            @file_put_contents(APP_ROOT . '/sitemap.xml', $svc->generateIndex());
+
+            $llms = new LlmsTxtService();
+            $llms->generateLlmsTxt();
+            $llms->generateLlmsFullTxt();
+            $llms->markSitemapUpdated();
+        } catch (\Throwable $e) {
+            // Silently fail — don't break content save
+            error_log('Auto-regenerate failed: ' . $e->getMessage());
+        }
     }
 }
