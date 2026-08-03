@@ -375,7 +375,15 @@ function updateCharCount(fieldId, counterId, max) {
 });
 
 // ── Quill.js WYSIWYG Initialization ──────────────────────────
-const quillEditor = new Quill('#quillEditor', {
+if (typeof Quill === 'undefined') {
+  console.error('Quill.js failed to load. Check CSP headers and CDN access.');
+  document.getElementById('tab-editor').innerHTML =
+    '<div style="padding:20px;color:#f87171;">❌ Rich text editor failed to load. Please check your browser console for errors.<br>Using HTML Source tab instead.</div>';
+  // Fallback: switch to HTML source tab
+  document.querySelector('.editor-tab:nth-child(3)')?.click();
+}
+
+const quillEditor = typeof Quill !== 'undefined' ? new Quill('#quillEditor', {
   theme: 'snow',
   placeholder: 'Start writing your content…',
   modules: {
@@ -393,18 +401,20 @@ const quillEditor = new Quill('#quillEditor', {
       ['clean']
     ]
   }
-});
+}) : null;
 
 // Load existing content into Quill
 const initialHtml = document.getElementById('bodyContent').value;
-if (initialHtml) {
+if (quillEditor && initialHtml) {
   quillEditor.root.innerHTML = initialHtml;
 }
 
 // ── Sync Quill → hidden textarea on form submit ──────────────
 document.getElementById('contentForm').addEventListener('submit', function() {
-  const html = quillEditor.root.innerHTML;
-  document.getElementById('bodyContent').value = (html === '<p><br></p>') ? '' : html;
+  if (quillEditor) {
+    const html = quillEditor.root.innerHTML;
+    document.getElementById('bodyContent').value = (html === '<p><br></p>') ? '' : html;
+  }
 });
 
 // Track last active source so we can sync between tabs
@@ -418,22 +428,20 @@ function switchTab(name, tabId, btn) {
   document.getElementById(tabId).style.display = '';
   btn.classList.add('active');
 
-  if (name === 'editor') {
-    // If user was editing raw HTML, push it into Quill
+  if (name === 'editor' && quillEditor) {
     if (lastEditedIn === 'html') {
       quillEditor.root.innerHTML = document.getElementById('htmlSource').value;
     }
     lastEditedIn = 'visual';
   }
   if (name === 'preview') {
-    const html = lastEditedIn === 'html'
+    const html = (lastEditedIn === 'html' || !quillEditor)
       ? document.getElementById('htmlSource').value
       : quillEditor.root.innerHTML;
     document.getElementById('previewContent').innerHTML = html;
   }
   if (name === 'html') {
-    // Sync Quill → HTML source textarea
-    if (lastEditedIn === 'visual') {
+    if (lastEditedIn === 'visual' && quillEditor) {
       document.getElementById('htmlSource').value = quillEditor.root.innerHTML;
     }
     lastEditedIn = 'html';
@@ -450,6 +458,7 @@ document.getElementById('contentForm').addEventListener('submit', function() {
 
 // ── Word count (Quill-aware) ─────────────────────────────────
 function updateWordCount() {
+  if (!quillEditor) return;
   const text  = quillEditor.getText();
   const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
   const rt    = Math.max(1, Math.ceil(words / 200));
@@ -466,8 +475,10 @@ function updateWordCount() {
   const disp = document.getElementById('wordCountDisplay');
   if (disp) disp.textContent = words.toLocaleString() + ' words · ' + rt + ' min read';
 }
-quillEditor.on('text-change', updateWordCount);
-updateWordCount();
+if (quillEditor) {
+  quillEditor.on('text-change', updateWordCount);
+  updateWordCount();
+}
 
 // ── Tag filter ───────────────────────────────────────────────
 function filterTags(q) {
@@ -550,7 +561,7 @@ function selectMedia(url) {
 }
 
 // ── Quill Image Handler (insert from URL or upload) ──────────
-quillEditor.getModule('toolbar').addHandler('image', function() {
+if (quillEditor) quillEditor.getModule('toolbar').addHandler('image', function() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';

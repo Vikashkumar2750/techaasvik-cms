@@ -28,6 +28,8 @@ RewriteRule ^(.*)/$ /$1 [R=301,L]
 # 4. BLOCK ACCESS TO SENSITIVE DIRECTORIES & FILES
 # ============================================================
 RewriteRule ^app/ - [F,L]
+# Allow image files from storage/uploads, block everything else in storage
+RewriteRule ^storage/uploads/.*\.(jpe?g|png|gif|webp|svg|pdf)$ - [L]
 RewriteRule ^storage/ - [F,L]
 RewriteRule ^database/ - [F,L]
 RewriteRule ^vendor/ - [F,L]
@@ -59,7 +61,7 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-src https://www.recaptcha.net https://www.youtube.com;"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.quilljs.com https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.quilljs.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-src https://www.recaptcha.net https://www.youtube.com;"
 </IfModule>
 
 # ============================================================
