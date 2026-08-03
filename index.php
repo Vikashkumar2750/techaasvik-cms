@@ -20,8 +20,8 @@ if (APP_ENV === 'development') {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 } else {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);  // TEMP: debug 500 errors — revert after fixing
+    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+    ini_set('display_errors', 0);
     ini_set('log_errors', 1);
     ini_set('error_log', STORAGE_PATH . '/logs/php_errors.log');
 }

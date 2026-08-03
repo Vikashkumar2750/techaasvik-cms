@@ -1,9 +1,18 @@
 /vendor/
 /node_modules/
-/storage/logs/
-/storage/cache/
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
 /storage/exports/
 /assets/images/uploads/
 .env
 .DS_Store
 Thumbs.db
+
+# Server-specific config (never overwrite real credentials)
+app/Config/config.local.php
+
+# Debug/setup files
+debug.php
+setup.php

@@ -5,7 +5,7 @@
  * Copy from config.example.php and fill in real values.
  */
 
-$config = [
+return [
 
     // ── Site ───────────────────────────────────────────────
     'site' => [
@@ -132,14 +132,3 @@ $config = [
     ],
 
 ];
-
-// ── Local overrides (never committed to Git) ──────────
-// If config.local.php exists, it deep-merges over the above.
-// This lets you set DB credentials, API keys, etc. without Git overwriting them.
-$localConfigFile = __DIR__ . '/config.local.php';
-if (file_exists($localConfigFile)) {
-    $local  = require $localConfigFile;
-    $config = array_replace_recursive($config, $local);
-}
-
-return $config;
