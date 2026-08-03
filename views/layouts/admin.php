@@ -29,9 +29,9 @@ function adminIsActive(string $path): string {
 <title><?= htmlspecialchars($pageTitle ?? 'Admin') ?> — TechAasvik CMS</title>
 <link rel="stylesheet" href="/assets/css/admin.css?v=<?= ASSET_VERSION ?>">
 <link rel="icon" href="/assets/images/static/favicon.ico">
-<!-- Quill.js WYSIWYG Editor -->
-<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<!-- Quill.js WYSIWYG Editor (served locally to avoid CSP issues) -->
+<link href="/assets/css/quill.snow.css?v=<?= ASSET_VERSION ?>" rel="stylesheet">
+<script src="/assets/js/quill.min.js?v=<?= ASSET_VERSION ?>"></script>
 </head>
 <body>
 <div class="admin-layout">
