@@ -244,49 +244,4 @@ class SeoToolsController extends Controller
         $this->flash('success', "Auto-generated meta descriptions for {$count} content items.");
         View::redirect('/techaasvik_admin/seo');
     }
-
-    // ── Update Pillar Content (temp) ─────────────────────
-    public function updatePillars(array $params = []): void
-    {
-        Auth::requireAdmin();
-        header('Content-Type: text/plain; charset=utf-8');
-
-        try {
-            $db = \Core\Database::getInstance();
-            $file = APP_ROOT . '/update-seo-content.php';
-            if (!file_exists($file)) { echo "ERROR: update-seo-content.php not found\n"; exit; }
-
-            $updates = require $file;
-            $count = 0;
-
-            foreach ($updates as $slug => $html) {
-                $existing = $db->fetchColumn(
-                    "SELECT id FROM content WHERE slug = ? AND type = 'pillar' LIMIT 1",
-                    [$slug]
-                );
-                if (!$existing) {
-                    echo "SKIP: '$slug' not found in DB\n";
-                    continue;
-                }
-
-                $wordCount = str_word_count(strip_tags($html));
-                $readTime = max(1, (int) ceil($wordCount / 200));
-
-                $db->update('content', [
-                    'content'    => $html,
-                    'word_count' => $wordCount,
-                    'read_time'  => $readTime,
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ], 'id = ?', [$existing]);
-
-                echo "OK: '$slug' updated (ID: $existing, words: $wordCount)\n";
-                $count++;
-            }
-
-            echo "\nDone! Updated: $count pillars\n";
-        } catch (\Throwable $e) {
-            echo "ERROR: " . $e->getMessage() . "\n";
-        }
-        exit;
-    }
 }

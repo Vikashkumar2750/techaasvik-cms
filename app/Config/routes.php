@@ -171,6 +171,3 @@ $router->post('/techaasvik_admin/seo/regenerate-sitemap',    'Admin\SeoToolsCont
 $router->post('/techaasvik_admin/seo/regenerate-llms',       'Admin\SeoToolsController@regenerateLlms',       'admin.seo.regen.llms');
 $router->post('/techaasvik_admin/seo/regenerate-llms-full',  'Admin\SeoToolsController@regenerateLlmsFull',   'admin.seo.regen.llmsfull');
 $router->post('/techaasvik_admin/seo/regenerate-all',        'Admin\SeoToolsController@regenerateAll',        'admin.seo.regen.all');
-
-// Temp: update pillar content (remove after use)
-$router->get('/techaasvik_admin/update-pillars',             'Admin\SeoToolsController@updatePillars',        'admin.update.pillars');
