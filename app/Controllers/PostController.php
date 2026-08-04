@@ -119,6 +119,17 @@ class PostController extends Controller
     public function pillar(array $params = []): void
     {
         $slug   = $params['topic'] ?? '';
+
+        // Redirect old slugs to current ones
+        $redirects = [
+            'seo-complete-guide' => 'seo',
+            'seo-pillar'         => 'seo',
+        ];
+        if (isset($redirects[$slug])) {
+            View::redirect('/learn/' . $redirects[$slug], 301);
+            return;
+        }
+
         $pillar = $this->content->getBySlug($slug, 'pillar');
 
         if (!$pillar) {

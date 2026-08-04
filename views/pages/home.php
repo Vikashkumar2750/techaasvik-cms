@@ -64,7 +64,7 @@
 
     <?php
     $topics = [
-      ['SEO', '/learn/seo-complete-guide', '🔍', 'From technical to off-page. Rank higher on Google.', 'bg: rgba(99,102,241,0.1)'],
+      ['SEO', '/learn/seo', '🔍', 'From technical to off-page. Rank higher on Google.', 'bg: rgba(99,102,241,0.1)'],
       ['AEO', '/learn/aeo-complete-guide', '💬', 'Answer Engine Optimization. Win featured snippets & AI answers.', ''],
       ['GEO', '/learn/geo-complete-guide', '🤖', 'Get cited by ChatGPT, Gemini & Perplexity.', ''],
       ['Google Ads', '/learn/google-ads-complete-guide', '📢', 'Search, Shopping, Display & YouTube campaigns.', ''],
