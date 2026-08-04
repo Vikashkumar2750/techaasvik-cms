@@ -135,6 +135,24 @@ class PostController extends Controller
             [$pillar['id']]
         );
 
+        // Get related pillar pages (other pillars, excluding current)
+        $relatedPillars = $this->db->fetchAll(
+            "SELECT title, slug FROM content
+             WHERE type = 'pillar' AND status = 'published' AND lang = 'en' AND id != ?
+             ORDER BY RAND() LIMIT 3",
+            [$pillar['id']]
+        );
+
+        // Get author info
+        if (!empty($pillar['author_id'])) {
+            $author = $this->db->fetchOne("SELECT name, bio, short_bio, credentials FROM authors WHERE id = ?", [$pillar['author_id']]);
+            if ($author) {
+                $pillar['author_name'] = $author['name'];
+                $pillar['author_bio'] = $author['short_bio'] ?: $author['bio'] ?: '';
+                $pillar['author_credentials'] = $author['credentials'] ?: '';
+            }
+        }
+
         $seo     = $this->seoSvc->buildForContent($pillar);
         $schemas = [
             $this->schemaSvc->article($pillar, $seo, 'Article'),
@@ -146,11 +164,12 @@ class PostController extends Controller
         ];
 
         $this->view('pillar', [
-            'seo'      => $seo,
-            'pillar'   => $pillar,
-            'clusters' => $clusters,
-            'schemas'  => $schemas,
-            'schemaSvc'=> $this->schemaSvc,
+            'seo'            => $seo,
+            'pillar'         => $pillar,
+            'clusters'       => $clusters,
+            'relatedPillars' => $relatedPillars,
+            'schemas'        => $schemas,
+            'schemaSvc'      => $this->schemaSvc,
         ]);
     }
 

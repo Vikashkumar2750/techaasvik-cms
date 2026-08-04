@@ -20,23 +20,23 @@
 
   <!-- Pillar Page Grid -->
   <?php
-  // Hardcoded pillar topics for visual richness even if DB is empty
+  // Hardcoded pillar topics for visual richness — slugs MUST match DB
   $defaultPillars = [
-    ['seo-complete-guide',       '🔍', 'Complete SEO Guide 2025',        'Technical SEO, on-page, off-page, link building, Core Web Vitals — everything from zero to hero.',               'beginner'],
-    ['aeo-complete-guide',       '💬', 'Answer Engine Optimization (AEO)','Win featured snippets, People Also Ask, and AI answer boxes. The future of search visibility.',               'intermediate'],
-    ['geo-complete-guide',       '🤖', 'Generative Engine Optimization', 'Get cited by ChatGPT, Gemini, Claude, and Perplexity. The definitive GEO strategy guide.',                      'advanced'],
-    ['google-ads-complete-guide','📢', 'Google Ads Mastery Guide',       'Search, Shopping, Display, YouTube, and Performance Max campaigns. From setup to scaling.',                     'intermediate'],
-    ['meta-ads-complete-guide',  '📱', 'Meta Ads Complete Guide',        'Facebook and Instagram advertising — audience research, creative strategy, campaign structure, and scaling.',    'intermediate'],
-    ['content-marketing',        '✍️', 'Content Marketing Strategy',     'Content strategy, creation frameworks, distribution channels, repurposing, and performance measurement.',         'beginner'],
-    ['analytics',                '📊', 'Google Analytics 4 & GTM',       'GA4 setup, reports, explorations, conversions, attribution modeling, and Looker Studio dashboards.',             'intermediate'],
-    ['ai-marketing',             '⚡', 'AI Marketing & Automation',      'Prompt engineering for marketing, AI tools, ChatGPT SEO, content automation, and AI ad creative.',               'advanced'],
-    ['email-marketing',          '📧', 'Email Marketing Mastery',        'List building, segmentation, automation sequences, deliverability, and revenue-driven campaigns.',               'beginner'],
-    ['local-seo',                '📍', 'Local SEO Guide',                'Google Business Profile, local citations, review strategy, and local link building for Indian businesses.',       'beginner'],
-    ['ecommerce-marketing',      '🛒', 'E-commerce Marketing',           'Google Shopping, Meta Catalog, conversion rate optimization, retention marketing, and ROAS scaling.',            'intermediate'],
-    ['social-media-marketing',   '💙', 'Social Media Marketing',         'Platform strategy for Instagram, YouTube, LinkedIn, and Twitter/X. Content calendars, growth, and analytics.',   'beginner'],
-    ['cro-guide',                '🎯', 'Conversion Rate Optimization',   'CRO frameworks, A/B testing, landing page optimization, heatmaps, and user behavior analysis.',                  'intermediate'],
-    ['link-building',            '🔗', 'Link Building & Digital PR',     'White-hat link acquisition, outreach templates, HARO, digital PR campaigns, and authority building.',            'advanced'],
-    ['video-marketing',          '🎬', 'Video Marketing & YouTube SEO',  'YouTube channel strategy, video SEO, shorts strategy, YouTube Ads, and video content repurposing.',              'beginner'],
+    ['seo',                      '🔍', 'Complete SEO Guide 2026',        'Technical SEO, on-page, off-page, link building, Core Web Vitals, AI Overviews — everything from zero to hero.',  'beginner'],
+    ['aeo-complete-guide',       '💬', 'Answer Engine Optimization (AEO)','Win featured snippets, People Also Ask, and AI answer boxes. The future of search visibility.',                   'intermediate'],
+    ['geo-complete-guide',       '🤖', 'Generative Engine Optimization', 'Get cited by ChatGPT, Gemini, Claude, and Perplexity. The definitive GEO strategy guide for 2026.',                'advanced'],
+    ['google-ads-complete-guide','📢', 'Google Ads Mastery Guide 2026',  'Search, Shopping, Display, YouTube, and Performance Max campaigns. From setup to scaling.',                         'intermediate'],
+    ['meta-ads-complete-guide',  '📱', 'Meta Ads Complete Guide 2026',   'Facebook and Instagram advertising — audience research, creative strategy, campaign structure, and scaling.',        'intermediate'],
+    ['content-marketing',        '✍️', 'Content Marketing Strategy 2026','Content strategy, creation frameworks, distribution channels, repurposing, and performance measurement.',            'beginner'],
+    ['analytics',                '📊', 'Google Analytics 4 & GTM 2026', 'GA4 setup, reports, explorations, conversions, attribution modeling, and Looker Studio dashboards.',                  'intermediate'],
+    ['ai-marketing',             '⚡', 'AI Marketing & Automation 2026', 'Prompt engineering for marketing, AI tools, ChatGPT SEO, content automation, and AI ad creative.',                   'advanced'],
+    ['email-marketing',          '📧', 'Email Marketing Mastery 2026',   'List building, segmentation, automation sequences, deliverability, and revenue-driven campaigns.',                   'beginner'],
+    ['local-seo',                '📍', 'Local SEO Guide 2026',           'Google Business Profile, local citations, review strategy, and local link building for Indian businesses.',           'beginner'],
+    ['ecommerce-marketing',      '🛒', 'E-commerce Marketing 2026',     'Google Shopping, Meta Catalog, conversion rate optimization, retention marketing, and ROAS scaling.',                 'intermediate'],
+    ['social-media-marketing',   '💙', 'Social Media Marketing 2026',   'Platform strategy for Instagram, YouTube, LinkedIn, and Twitter/X. Content calendars, growth, and analytics.',        'beginner'],
+    ['cro-guide',                '🎯', 'Conversion Rate Optimization',  'CRO frameworks, A/B testing, landing page optimization, heatmaps, and user behavior analysis.',                      'intermediate'],
+    ['link-building',            '🔗', 'Link Building & Digital PR',    'White-hat link acquisition, outreach templates, HARO, digital PR campaigns, and authority building.',                 'advanced'],
+    ['video-marketing',          '🎬', 'Video Marketing & YouTube SEO', 'YouTube channel strategy, video SEO, shorts strategy, YouTube Ads, and video content repurposing.',                   'beginner'],
   ];
 
   $pillarData = !empty($pillars) ? $pillars : [];
