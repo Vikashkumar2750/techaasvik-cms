@@ -290,18 +290,28 @@ class SeoToolsController extends Controller
                     continue;
                 }
 
-                $db->execute(
-                    "INSERT INTO content (type, lang, title, slug, content, excerpt, status, author_id, word_count, read_time, difficulty, published_at)
-                     VALUES ('pillar', 'en', ?, ?, ?, ?, 'published', ?, ?, ?, ?, NOW())",
-                    [$p['title'], $p['slug'], $p['content'], $p['excerpt'], $authorId, $p['word_count'], $p['read_time'], $p['difficulty']]
-                );
-                $contentId = $db->lastInsertId();
+                $contentId = $db->insert('content', [
+                    'type'         => 'pillar',
+                    'lang'         => 'en',
+                    'title'        => $p['title'],
+                    'slug'         => $p['slug'],
+                    'content'      => $p['content'],
+                    'excerpt'      => $p['excerpt'],
+                    'status'       => 'published',
+                    'author_id'    => $authorId,
+                    'word_count'   => $p['word_count'],
+                    'read_time'    => $p['read_time'],
+                    'difficulty'   => $p['difficulty'],
+                    'published_at' => date('Y-m-d H:i:s'),
+                ]);
 
-                $db->execute(
-                    "INSERT INTO content_seo (content_id, meta_title, meta_description, canonical_url, focus_keyword)
-                     VALUES (?, ?, ?, ?, ?)",
-                    [$contentId, $p['seo_title'], $p['seo_desc'], "https://t1.techaasvik.com/learn/{$p['slug']}", $p['slug']]
-                );
+                $db->insert('content_seo', [
+                    'content_id'       => $contentId,
+                    'meta_title'       => $p['seo_title'],
+                    'meta_description' => $p['seo_desc'],
+                    'canonical_url'    => "https://t1.techaasvik.com/learn/{$p['slug']}",
+                    'focus_keyword'    => $p['slug'],
+                ]);
 
                 echo "OK: '{$p['slug']}' inserted (ID: $contentId)\n";
                 $inserted++;
