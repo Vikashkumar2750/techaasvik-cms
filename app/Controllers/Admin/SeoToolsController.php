@@ -244,4 +244,66 @@ class SeoToolsController extends Controller
         $this->flash('success', "Auto-generated meta descriptions for {$count} content items.");
         View::redirect('/techaasvik_admin/seo');
     }
+
+    // ── Seed Pillar Pages (temporary) ────────────────────
+    public function seedPillars(array $params = []): void
+    {
+        Auth::requireAdmin();
+
+        $db = \Core\Database::getInstance();
+        $authorId = $db->fetchColumn("SELECT id FROM authors WHERE is_active = 1 ORDER BY id ASC LIMIT 1");
+        if (!$authorId) {
+            echo "ERROR: No active author found.\n";
+            return;
+        }
+
+        $pillars = $this->getPillarData();
+        $inserted = 0;
+        $skipped  = 0;
+        $output   = '';
+
+        foreach ($pillars as $p) {
+            $exists = $db->fetchColumn(
+                "SELECT id FROM content WHERE slug = ? AND type = 'pillar' AND lang = 'en' LIMIT 1",
+                [$p['slug']]
+            );
+            if ($exists) {
+                $output .= "SKIP: '{$p['slug']}' already exists (ID: $exists)\n";
+                $skipped++;
+                continue;
+            }
+
+            $db->execute(
+                "INSERT INTO content (type, lang, title, slug, content, excerpt, status, author_id, word_count, read_time, difficulty, published_at)
+                 VALUES ('pillar', 'en', ?, ?, ?, ?, 'published', ?, ?, ?, ?, NOW())",
+                [$p['title'], $p['slug'], $p['content'], $p['excerpt'], $authorId, $p['word_count'], $p['read_time'], $p['difficulty']]
+            );
+            $contentId = $db->lastInsertId();
+
+            $db->execute(
+                "INSERT INTO content_seo (content_id, meta_title, meta_description, canonical_url, focus_keyword)
+                 VALUES (?, ?, ?, ?, ?)",
+                [$contentId, $p['seo_title'], $p['seo_desc'], "https://t1.techaasvik.com/learn/{$p['slug']}", $p['slug']]
+            );
+
+            $output .= "OK: '{$p['slug']}' inserted (ID: $contentId)\n";
+            $inserted++;
+        }
+
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $output;
+        echo "\nDone! Inserted: $inserted, Skipped: $skipped\n";
+        exit;
+    }
+
+    private function getPillarData(): array
+    {
+        // Include the seed data file which returns the pillar array
+        $seedFile = APP_ROOT . '/seed-pillars-data.php';
+        if (file_exists($seedFile)) {
+            return require $seedFile;
+        }
+        // Fallback inline data
+        return [];
+    }
 }

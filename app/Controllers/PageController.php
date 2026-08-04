@@ -86,7 +86,7 @@ class PageController extends Controller
 
         if (!$page) {
             // Try a static fallback
-            $staticServices = ['seo', 'google-ads', 'meta-ads', 'content-marketing', 'analytics'];
+            $staticServices = ['seo', 'google-ads', 'meta-ads', 'social-media', 'content-marketing', 'email-marketing', 'analytics'];
             if (!in_array($slug, $staticServices)) {
                 $this->notFound();
                 return;

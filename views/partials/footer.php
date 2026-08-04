@@ -54,11 +54,10 @@
           <li><a href="/glossary">Glossary</a></li>
           <li><a href="/tools">Free Tools</a></li>
           <li><a href="/calculators">Calculators</a></li>
-          <li><a href="/templates">Templates</a></li>
           <li><a href="/case-studies">Case Studies</a></li>
-          <li><a href="/statistics">Statistics</a></li>
-          <li><a href="/research">Research</a></li>
           <li><a href="/courses">Free Courses</a></li>
+          <li><a href="/search">Search</a></li>
+          <li><a href="/sitemap">Site Map</a></li>
         </ul>
       </div>
 
