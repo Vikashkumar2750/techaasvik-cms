@@ -249,50 +249,70 @@ class SeoToolsController extends Controller
     public function seedPillars(array $params = []): void
     {
         Auth::requireAdmin();
+        header('Content-Type: text/plain; charset=utf-8');
 
-        $db = \Core\Database::getInstance();
-        $authorId = $db->fetchColumn("SELECT id FROM authors WHERE is_active = 1 ORDER BY id ASC LIMIT 1");
-        if (!$authorId) {
-            echo "ERROR: No active author found.\n";
-            return;
-        }
-
-        $pillars = $this->getPillarData();
-        $inserted = 0;
-        $skipped  = 0;
-        $output   = '';
-
-        foreach ($pillars as $p) {
-            $exists = $db->fetchColumn(
-                "SELECT id FROM content WHERE slug = ? AND type = 'pillar' AND lang = 'en' LIMIT 1",
-                [$p['slug']]
-            );
-            if ($exists) {
-                $output .= "SKIP: '{$p['slug']}' already exists (ID: $exists)\n";
-                $skipped++;
-                continue;
+        try {
+            $db = \Core\Database::getInstance();
+            $authorId = $db->fetchColumn("SELECT id FROM authors WHERE is_active = 1 ORDER BY id ASC LIMIT 1");
+            if (!$authorId) {
+                echo "ERROR: No active author found.\n";
+                return;
             }
 
-            $db->execute(
-                "INSERT INTO content (type, lang, title, slug, content, excerpt, status, author_id, word_count, read_time, difficulty, published_at)
-                 VALUES ('pillar', 'en', ?, ?, ?, ?, 'published', ?, ?, ?, ?, NOW())",
-                [$p['title'], $p['slug'], $p['content'], $p['excerpt'], $authorId, $p['word_count'], $p['read_time'], $p['difficulty']]
-            );
-            $contentId = $db->lastInsertId();
+            $seedFile = APP_ROOT . '/seed-pillars-data.php';
+            echo "Seed file: $seedFile\n";
+            echo "File exists: " . (file_exists($seedFile) ? 'YES' : 'NO') . "\n\n";
 
-            $db->execute(
-                "INSERT INTO content_seo (content_id, meta_title, meta_description, canonical_url, focus_keyword)
-                 VALUES (?, ?, ?, ?, ?)",
-                [$contentId, $p['seo_title'], $p['seo_desc'], "https://t1.techaasvik.com/learn/{$p['slug']}", $p['slug']]
-            );
+            if (!file_exists($seedFile)) {
+                echo "ERROR: seed-pillars-data.php not found at APP_ROOT\n";
+                return;
+            }
 
-            $output .= "OK: '{$p['slug']}' inserted (ID: $contentId)\n";
-            $inserted++;
+            $pillars = require $seedFile;
+            if (!is_array($pillars) || empty($pillars)) {
+                echo "ERROR: seed-pillars-data.php did not return a valid array\n";
+                return;
+            }
+
+            echo "Found " . count($pillars) . " pillars to seed\n\n";
+
+            $inserted = 0;
+            $skipped  = 0;
+
+            foreach ($pillars as $p) {
+                $exists = $db->fetchColumn(
+                    "SELECT id FROM content WHERE slug = ? AND type = 'pillar' AND lang = 'en' LIMIT 1",
+                    [$p['slug']]
+                );
+                if ($exists) {
+                    echo "SKIP: '{$p['slug']}' already exists (ID: $exists)\n";
+                    $skipped++;
+                    continue;
+                }
+
+                $db->execute(
+                    "INSERT INTO content (type, lang, title, slug, content, excerpt, status, author_id, word_count, read_time, difficulty, published_at)
+                     VALUES ('pillar', 'en', ?, ?, ?, ?, 'published', ?, ?, ?, ?, NOW())",
+                    [$p['title'], $p['slug'], $p['content'], $p['excerpt'], $authorId, $p['word_count'], $p['read_time'], $p['difficulty']]
+                );
+                $contentId = $db->lastInsertId();
+
+                $db->execute(
+                    "INSERT INTO content_seo (content_id, meta_title, meta_description, canonical_url, focus_keyword)
+                     VALUES (?, ?, ?, ?, ?)",
+                    [$contentId, $p['seo_title'], $p['seo_desc'], "https://t1.techaasvik.com/learn/{$p['slug']}", $p['slug']]
+                );
+
+                echo "OK: '{$p['slug']}' inserted (ID: $contentId)\n";
+                $inserted++;
+            }
+
+            echo "\nDone! Inserted: $inserted, Skipped: $skipped\n";
+        } catch (\Throwable $e) {
+            echo "FATAL ERROR: " . $e->getMessage() . "\n";
+            echo "File: " . $e->getFile() . " Line: " . $e->getLine() . "\n";
+            echo "Trace: " . $e->getTraceAsString() . "\n";
         }
-
-        header('Content-Type: text/plain; charset=utf-8');
-        echo $output;
-        echo "\nDone! Inserted: $inserted, Skipped: $skipped\n";
         exit;
     }
 
