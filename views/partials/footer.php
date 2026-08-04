@@ -36,7 +36,7 @@
         <p class="footer-col-title">Learn</p>
         <ul class="footer-links">
           <li><a href="/learn">Knowledge Center</a></li>
-          <li><a href="/learn/seo-complete-guide">SEO Guide</a></li>
+          <li><a href="/learn/seo">SEO Guide</a></li>
           <li><a href="/learn/google-ads-complete-guide">Google Ads Guide</a></li>
           <li><a href="/learn/meta-ads-complete-guide">Meta Ads Guide</a></li>
           <li><a href="/learn/aeo-complete-guide">AEO Guide</a></li>
