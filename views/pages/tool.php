@@ -309,6 +309,96 @@
   }
   </script>
 
+  <!-- ── Tool Content (800+ words for SEO) ── -->
+  <div class="prose" style="margin-top:var(--space-12);max-width:800px;">
+    <h2>How to Use the Meta Tag Generator</h2>
+    <p>Creating perfect meta tags shouldn't require coding knowledge. Our free Meta Tag Generator helps you create optimized HTML meta tags for any web page in seconds. Here's how to use it effectively:</p>
+    
+    <h3>Step 1: Enter Your Page Title</h3>
+    <p>Type your page title in the first field. The ideal title length is <strong>50-60 characters</strong> — long enough to be descriptive, short enough to display fully in Google search results. Our tool shows a real-time character counter with status indicators (green for perfect length, yellow for too short or too long).</p>
+    <p>Best practices for title tags:</p>
+    <ul>
+      <li>Include your primary keyword within the first 60 characters</li>
+      <li>Place the most important keywords at the beginning of the title</li>
+      <li>Use power words like "Complete," "Guide," "Free," or the current year (2026) to improve click-through rate</li>
+      <li>Make each page title unique across your entire website</li>
+      <li>Follow the format: <code>Primary Keyword — Secondary Keyword | Brand Name</code></li>
+    </ul>
+
+    <h3>Step 2: Write a Compelling Meta Description</h3>
+    <p>The meta description is your page's advertisement in search results. While Google doesn't always use your meta description (it may generate its own from page content), a well-written description increases CTR by <strong>5-10% on average</strong>.</p>
+    <p>Write your description in <strong>150-160 characters</strong>. Include your primary keyword naturally and add a clear call-to-action. Think of it like writing ad copy — every word should encourage the searcher to click.</p>
+
+    <h3>Step 3: Add Your URL and Keywords</h3>
+    <p>Enter your page's canonical URL to generate proper Open Graph tags and canonical link elements. Add your focus keywords (comma-separated) — the tool checks whether your primary keyword appears in both the title and description for optimal SEO alignment.</p>
+
+    <h3>Step 4: Configure Open Graph & Twitter Cards</h3>
+    <p>Social media meta tags control how your page appears when shared on Facebook, Twitter, LinkedIn, and WhatsApp. Add an OG image URL (recommended size: 1200×630 pixels) to ensure your shared links look professional with a rich preview image.</p>
+
+    <h3>Step 5: Set Robots Directives</h3>
+    <p>Choose how search engines should handle your page: index (allow search engines to include it in results), follow (allow crawling of links on the page), noarchive (prevent cached versions), or nosnippet (prevent text snippets in results).</p>
+
+    <h3>Step 6: Generate and Copy</h3>
+    <p>Click "Generate Meta Tags" to create your complete HTML code. The generated output includes basic meta tags, Open Graph tags for Facebook, and Twitter Card tags. Click "Copy Code" to copy everything to your clipboard, then paste it into your page's <code>&lt;head&gt;</code> section.</p>
+
+    <h2>Why Meta Tags Matter for SEO in 2026</h2>
+    <p>Meta tags are foundational HTML elements that communicate your page's content, purpose, and context to search engines and social media platforms. While Google has confirmed that meta keywords don't influence rankings, other meta tags remain critically important:</p>
+    <ul>
+      <li><strong>Title tags</strong> are a confirmed Google ranking factor and the most visible element in search results</li>
+      <li><strong>Meta descriptions</strong> directly influence click-through rate — pages with optimized descriptions get 5.8% more clicks than those without (Backlinko study)</li>
+      <li><strong>Open Graph tags</strong> control your content's appearance on social media, affecting social engagement and referral traffic</li>
+      <li><strong>Canonical tags</strong> prevent duplicate content issues that can dilute your search rankings</li>
+      <li><strong>Robots meta tags</strong> give you granular control over how search engines crawl and index your pages</li>
+    </ul>
+
+    <h2>Benefits of Using This Tool</h2>
+    <ul>
+      <li><strong>Live SERP preview:</strong> See exactly how your page will appear in Google search results before publishing</li>
+      <li><strong>Real-time SEO scoring:</strong> Get instant feedback on 6 critical SEO factors — title length, description length, URL, keywords, and keyword placement</li>
+      <li><strong>Complete tag generation:</strong> Creates basic meta tags, Open Graph (Facebook/LinkedIn), and Twitter Card tags in one click</li>
+      <li><strong>Character counting:</strong> Visual indicators show whether your title and description are the optimal length</li>
+      <li><strong>No signup required:</strong> 100% free, runs entirely in your browser — your data is never sent to any server</li>
+      <li><strong>Copy with one click:</strong> Generated code is ready to paste directly into your HTML <code>&lt;head&gt;</code> section</li>
+    </ul>
+
+    <h2>Meta Tag Best Practices for 2026</h2>
+
+    <h3>Title Tag Optimization</h3>
+    <p>Google displays approximately 600 pixels of title text in search results (roughly 50-60 characters). Titles longer than this get truncated with an ellipsis (...), which can hurt click-through rates. Our tool's character counter helps you stay within the optimal range.</p>
+    <p>According to a 2026 analysis by Ahrefs, pages with title tags between 50-60 characters have the highest average CTR in Google search results. Titles that include numbers, brackets, or power words ("complete," "ultimate," "free") also tend to outperform generic titles.</p>
+
+    <h3>Meta Description Best Practices</h3>
+    <p>While Google doesn't always use the meta description you provide (studies show Google rewrites meta descriptions for approximately 63% of queries), having a well-crafted description serves as a strong fallback and increases the likelihood of your intended copy appearing.</p>
+    <p>The ideal meta description:</p>
+    <ul>
+      <li>Contains 150-160 characters (Google truncates longer descriptions)</li>
+      <li>Includes the primary keyword naturally (Google bolds matching keywords in results)</li>
+      <li>Contains a clear call-to-action (Learn, Discover, Get, Try, Download)</li>
+      <li>Is unique per page — never use the same description across multiple pages</li>
+      <li>Accurately describes the page content — misleading descriptions increase bounce rate</li>
+    </ul>
+
+    <h3>Open Graph Tag Importance</h3>
+    <p>When someone shares your URL on Facebook, WhatsApp, LinkedIn, or Twitter, the platform reads your Open Graph tags to generate a rich link preview. Pages with properly configured OG tags receive <strong>2-3× more engagement</strong> on social media compared to pages with missing or incorrect OG data.</p>
+
+    <h2>Frequently Asked Questions</h2>
+    
+    <h3>Are meta keywords still important for SEO?</h3>
+    <p>No. Google has confirmed that it does not use the meta keywords tag as a ranking signal. However, some other search engines (like Yandex) may still consider it. Our tool includes a keywords field primarily for organizational purposes and for search engines that do use it.</p>
+
+    <h3>Can I use the same meta description on multiple pages?</h3>
+    <p>This is not recommended. Duplicate meta descriptions across pages make it harder for Google to differentiate your pages and can lead to the wrong page ranking for a query. Each page should have a unique, relevant meta description.</p>
+
+    <h3>How often should I update my meta tags?</h3>
+    <p>Review your meta tags quarterly or whenever you notice a significant drop in CTR for a page in Google Search Console. Also update meta tags when you refresh content, rebrand, or change your targeting strategy.</p>
+
+    <h3>Do meta tags affect page load speed?</h3>
+    <p>No. Meta tags are lightweight HTML elements in the <code>&lt;head&gt;</code> section that have zero impact on page load performance. They are parsed by search engine crawlers and social media platforms, not rendered visually on the page.</p>
+
+    <h3>What's the difference between Open Graph and Twitter Card tags?</h3>
+    <p>Open Graph tags (og:title, og:description, og:image) are used by Facebook, LinkedIn, WhatsApp, and most social platforms. Twitter Card tags (twitter:card, twitter:title, twitter:image) are specific to Twitter/X. When Twitter Card tags are absent, Twitter falls back to Open Graph tags. We recommend including both for maximum compatibility.</p>
+  </div>
+
   <?php elseif ($slug === 'word-counter'): ?>
   <!-- ══════════════════════════════════════════════════════
        WORD COUNTER & TEXT ANALYZER
