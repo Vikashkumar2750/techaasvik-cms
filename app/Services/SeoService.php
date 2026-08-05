@@ -137,7 +137,7 @@ class SeoService
     private function getOgType(string $type): string
     {
         return match($type) {
-            'post', 'pillar', 'news_article' => 'article',
+            'post', 'pillar', 'cluster', 'news_article' => 'article',
             'course'                         => 'website',
             'video'                          => 'video.other',
             default                          => 'website',
@@ -150,6 +150,7 @@ class SeoService
         return match($contentType) {
             'post'            => 'BlogPosting',
             'pillar'          => 'Article',
+            'cluster'         => 'Article',
             'news_article'    => 'NewsArticle',
             'glossary_term'   => 'DefinedTerm',
             'course'          => 'Course',
