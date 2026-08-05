@@ -266,9 +266,23 @@ class SeoToolsController extends Controller
 
             // Insert clusters
             foreach ($data['clusters'] as $cluster) {
+                // Delete any existing row with same slug and empty type
+                $oldId = $db->fetchColumn("SELECT id FROM content WHERE slug = ? AND (type IS NULL OR type = '') LIMIT 1", [$cluster['slug']]);
+                if ($oldId) {
+                    $db->query("DELETE FROM content WHERE id = ?", [$oldId]);
+                    echo "DELETED old empty-type row ID: $oldId for '{$cluster['slug']}'\n";
+                }
+
+                // Check if cluster type already exists
                 $existing = $db->fetchColumn("SELECT id FROM content WHERE slug = ? AND type = 'cluster' LIMIT 1", [$cluster['slug']]);
                 if ($existing) {
-                    echo "SKIP cluster: '{$cluster['slug']}' already exists (ID: $existing)\n";
+                    // Update existing
+                    $db->query(
+                        "UPDATE content SET title = ?, excerpt = ?, content = ?, parent_id = ?, difficulty = ?, menu_order = ?, word_count = ?, read_time = ?, status = 'published', updated_at = NOW() WHERE id = ?",
+                        [$cluster['title'], $cluster['excerpt'], $cluster['content'], $seoId, $cluster['difficulty'], $cluster['menu_order'], str_word_count(strip_tags($cluster['content'])), max(1, (int)ceil(str_word_count(strip_tags($cluster['content']))/200)), $existing]
+                    );
+                    echo "UPDATED cluster: '{$cluster['slug']}' (ID: $existing)\n";
+                    $count++;
                     continue;
                 }
 
@@ -320,9 +334,10 @@ class SeoToolsController extends Controller
                 $count++;
             }
 
-            echo "\nDone! Inserted: $count items\n";
+            echo "\nDone! Processed: $count items\n";
         } catch (\Throwable $e) {
             echo "ERROR: " . $e->getMessage() . "\n";
+            echo "Trace: " . $e->getTraceAsString() . "\n";
         }
         exit;
     }
