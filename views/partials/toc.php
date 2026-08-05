@@ -7,7 +7,7 @@
   </ol>
 </nav>
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   const content = document.getElementById('articleBody');
   const list    = document.getElementById('tocList');
   if (!content || !list) return;
@@ -39,6 +39,6 @@
   }, { rootMargin: '-80px 0px -70% 0px' });
 
   headings.forEach(h => observer.observe(h));
-})();
+});
 </script>
 <?php endif; ?>

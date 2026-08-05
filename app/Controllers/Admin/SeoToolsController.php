@@ -244,4 +244,61 @@ class SeoToolsController extends Controller
         $this->flash('success', "Auto-generated meta descriptions for {$count} content items.");
         View::redirect('/techaasvik_admin/seo');
     }
+
+    // ── Fix Content (one-time migration) ─────────────────
+    public function fixContent(array $params = []): void
+    {
+        Auth::requireAdmin();
+        header('Content-Type: text/plain; charset=utf-8');
+        $db = \Core\Database::getInstance();
+        $fixes = 0;
+
+        // Fix SEO Glossary
+        $row = $db->fetchOne("SELECT id FROM content WHERE slug = 'seo-glossary' AND type = 'glossary_term' LIMIT 1");
+        if ($row) {
+            $html = '<h2 id="section-1">What is SEO?</h2>'
+                . '<p>Search Engine Optimization (SEO) is the process of improving a website\'s visibility in organic (non-paid) search engine results. SEO involves optimizing content, HTML source code, and the site\'s authority to help search engines understand and rank pages for relevant queries.</p>'
+                . '<p>In 2026, SEO has expanded beyond traditional link-based ranking. Google now evaluates <strong>content quality, user experience, entity relevance, and E-E-A-T signals</strong> (Experience, Expertise, Authoritativeness, Trustworthiness).</p>'
+                . '<h2 id="section-2">Types of SEO</h2>'
+                . '<h3>On-Page SEO</h3><p>Optimizing content, title tags, meta descriptions, headings, and internal links on individual pages to improve relevance.</p>'
+                . '<h3>Off-Page SEO</h3><p>Building backlinks and external signals that increase a site\'s authority — link building, digital PR, brand mentions, social signals.</p>'
+                . '<h3>Technical SEO</h3><p>Improving site speed, mobile-friendliness, crawlability, and indexation. Covers Core Web Vitals, structured data, XML sitemaps.</p>'
+                . '<h3>Local SEO</h3><p>Optimizing for location-based searches — Google Business Profile, NAP consistency, local citations, review management.</p>'
+                . '<h3>Voice Search SEO</h3><p>Optimizing content for voice queries from smart speakers and mobile assistants — conversational keywords, FAQ schema.</p>'
+                . '<h2 id="section-3">How Search Engines Work</h2>'
+                . '<p>Search engines operate in three phases:</p>'
+                . '<ol><li><strong>Crawling:</strong> Bots (like Googlebot) discover pages by following links and sitemaps</li>'
+                . '<li><strong>Indexing:</strong> Pages are analyzed, processed, and stored in the search index</li>'
+                . '<li><strong>Ranking:</strong> Algorithms determine which pages best match a user\'s query</li></ol>'
+                . '<p>Google uses over <strong>200 ranking factors</strong> including content relevance, backlink quality, page experience, E-E-A-T signals.</p>'
+                . '<h2 id="section-4">Key SEO Ranking Factors in 2026</h2>'
+                . '<ul><li><strong>Content Quality &amp; Depth:</strong> Comprehensive content satisfying search intent</li>'
+                . '<li><strong>E-E-A-T:</strong> Demonstrated experience, expertise, authoritativeness, trustworthiness</li>'
+                . '<li><strong>Backlinks:</strong> Quality links from authoritative domains</li>'
+                . '<li><strong>Core Web Vitals:</strong> LCP, INP, and CLS performance metrics</li>'
+                . '<li><strong>Mobile Experience:</strong> Mobile-first indexing</li>'
+                . '<li><strong>Structured Data:</strong> Schema markup for rich results</li></ul>'
+                . '<h2 id="section-5">SEO Best Practices</h2>'
+                . '<ul><li>Create high-quality, original content addressing user search intent</li>'
+                . '<li>Optimize title tags and meta descriptions for CTR</li>'
+                . '<li>Use proper heading hierarchy (H1, H2, H3)</li>'
+                . '<li>Build strong internal linking architecture</li>'
+                . '<li>Earn quality backlinks through digital PR</li>'
+                . '<li>Ensure fast page load and strong Core Web Vitals</li>'
+                . '<li>Implement structured data markup</li>'
+                . '<li>Monitor with Google Search Console and analytics</li></ul>'
+                . '<h2 id="section-6">SEO vs SEM vs PPC</h2>'
+                . '<p><strong>SEO</strong> focuses on organic (unpaid) visibility. <strong>SEM</strong> (Search Engine Marketing) encompasses SEO + paid search. <strong>PPC</strong> (Pay-Per-Click) is paid advertising where you pay per click.</p>'
+                . '<p>While PPC provides immediate traffic, SEO builds sustainable long-term visibility. The best strategies combine both.</p>';
+
+            $wc = str_word_count(strip_tags($html));
+            $db->query("UPDATE content SET content = ?, word_count = ?, read_time = ?, updated_at = NOW() WHERE id = ?",
+                [$html, $wc, max(1, (int)ceil($wc / 200)), $row['id']]);
+            echo "FIXED seo-glossary (ID: {$row['id']}, words: $wc)\n";
+            $fixes++;
+        }
+
+        echo "\nDone! Fixed $fixes items.\n";
+        exit;
+    }
 }
