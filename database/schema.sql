@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `media` (
 -- ── Content (universal content table) ───────────────────────
 CREATE TABLE IF NOT EXISTS `content` (
   `id`                INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  `type`              ENUM('post','page','pillar','glossary_term','case_study',
+  `type`              ENUM('post','page','pillar','cluster','glossary_term','case_study',
                           'statistics','tool','calculator','template','course',
                           'course_module','course_lesson','research_report',
                           'news_article','video','podcast_episode')

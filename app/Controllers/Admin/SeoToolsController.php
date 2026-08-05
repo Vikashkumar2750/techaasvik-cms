@@ -259,6 +259,27 @@ class SeoToolsController extends Controller
             $data = require $file;
             $count = 0;
 
+            // Step 1: ALTER TABLE to add 'cluster' to ENUM if not present
+            echo "=== Step 1: ALTER TABLE ===\n";
+            try {
+                $db->query("ALTER TABLE `content` MODIFY `type` ENUM('post','page','pillar','cluster','glossary_term','case_study','statistics','tool','calculator','template','course','course_module','course_lesson','research_report','news_article','video','podcast_episode') NOT NULL DEFAULT 'post'");
+                echo "OK: Added 'cluster' to ENUM\n\n";
+            } catch (\Throwable $e) {
+                echo "ALTER note: " . $e->getMessage() . "\n\n";
+            }
+
+            // Step 2: Delete all broken rows (empty type) that match our slugs
+            echo "=== Step 2: Clean broken rows ===\n";
+            $brokenSlugs = array_column($data['clusters'], 'slug');
+            foreach ($brokenSlugs as $bs) {
+                $broken = $db->fetchAll("SELECT id, type, slug FROM content WHERE slug = ? AND (type = '' OR type = 'post')", [$bs]);
+                foreach ($broken as $b) {
+                    $db->query("DELETE FROM content WHERE id = ?", [$b['id']]);
+                    echo "DELETED broken row ID:{$b['id']} slug:'{$b['slug']}' type:'{$b['type']}'\n";
+                }
+            }
+            echo "\n";
+
             // Find SEO pillar ID
             $seoId = $db->fetchColumn("SELECT id FROM content WHERE slug = 'seo' AND type = 'pillar' LIMIT 1");
             if (!$seoId) { echo "ERROR: SEO pillar not found\n"; exit; }
