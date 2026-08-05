@@ -149,28 +149,42 @@ $relatedPillars = $relatedPillars ?? [];
       </div>
       <?php endif; ?>
 
-      <!-- ── Cluster Articles (In-Depth Articles) ── -->
+      <!-- ── Sub-Topic Learning Cards ── -->
       <?php if (!empty($clusters)): ?>
       <div style="margin-top:var(--space-12);padding-top:var(--space-8);border-top:2px solid var(--border-subtle);">
-        <h2 style="font-size:var(--text-xl);margin-bottom:var(--space-2);">📖 Deep-Dive Articles</h2>
-        <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:var(--space-6);">Continue learning with our in-depth articles on specific subtopics.</p>
-        <div style="display:grid;gap:var(--space-4);">
-          <?php foreach ($clusters as $ci => $cluster): ?>
-          <a href="/learn/<?= e($pillar['slug']) ?>/<?= e($cluster['slug']) ?>" class="card card-interactive" style="text-decoration:none;padding:var(--space-5);display:flex;align-items:center;gap:var(--space-4);">
-            <div style="width:44px;height:44px;border-radius:var(--radius-lg);background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.08));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <span style="font-size:16px;font-weight:700;color:var(--brand-primary);"><?= $ci + 1 ?></span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-6);flex-wrap:wrap;gap:8px;">
+          <div>
+            <h2 style="font-size:var(--text-xl);margin-bottom:var(--space-1);">🎓 Explore Sub-Topics</h2>
+            <p style="font-size:var(--text-sm);color:var(--text-muted);margin:0;">Click any topic to start your deep-dive learning journey</p>
+          </div>
+          <span style="font-size:var(--text-xs);color:var(--text-muted);background:var(--bg-elevated);padding:6px 12px;border-radius:var(--radius-full);"><?= count($clusters) ?> sub-topics</span>
+        </div>
+        <div class="grid grid-2 gap-4" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+          <?php
+          $clusterDiffMap = ['beginner' => ['🟢','#4ade80'], 'intermediate' => ['🟡','#fbbf24'], 'advanced' => ['🔴','#f87171']];
+          foreach ($clusters as $ci => $clusterItem):
+            $cDiff = $clusterDiffMap[$clusterItem['difficulty'] ?? 'beginner'] ?? $clusterDiffMap['beginner'];
+          ?>
+          <a href="/learn/<?= e($pillar['slug']) ?>/<?= e($clusterItem['slug']) ?>" class="card card-interactive" style="text-decoration:none;padding:var(--space-5);display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.1));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span style="font-size:15px;font-weight:800;color:var(--brand-primary);"><?= $ci + 1 ?></span>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-primary);line-height:1.3;"><?= e($clusterItem['title']) ?></div>
+              </div>
             </div>
-            <div style="flex:1;">
-              <div style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-primary);margin-bottom:2px;"><?= e($cluster['title']) ?></div>
-              <?php if (!empty($cluster['excerpt'])): ?>
-              <div style="font-size:var(--text-xs);color:var(--text-muted);line-height:1.5;"><?= str_truncate($cluster['excerpt'], 120) ?></div>
-              <?php endif; ?>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-              <?php if (!empty($cluster['read_time'])): ?>
-              <span style="font-size:10px;color:var(--text-muted);"><?= $cluster['read_time'] ?> min</span>
-              <?php endif; ?>
-              <span style="color:var(--brand-400);font-size:var(--text-sm);">→</span>
+            <?php if (!empty($clusterItem['excerpt'])): ?>
+            <p style="font-size:var(--text-xs);color:var(--text-muted);line-height:1.6;margin:0;"><?= str_truncate($clusterItem['excerpt'], 120) ?></p>
+            <?php endif; ?>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;border-top:1px solid var(--border-subtle);">
+              <span style="font-size:10px;font-weight:700;color:<?= $cDiff[1] ?>;"><?= $cDiff[0] ?> <?= ucfirst($clusterItem['difficulty'] ?? 'beginner') ?></span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <?php if (!empty($clusterItem['read_time'])): ?>
+                <span style="font-size:10px;color:var(--text-muted);">⏱ <?= $clusterItem['read_time'] ?>m</span>
+                <?php endif; ?>
+                <span style="color:var(--brand-400);font-size:var(--text-sm);font-weight:600;">→</span>
+              </div>
             </div>
           </a>
           <?php endforeach; ?>

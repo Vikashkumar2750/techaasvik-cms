@@ -56,26 +56,49 @@ class PostController extends Controller
     }
 
     // ── Single Post ───────────────────────────────────────
+    // Serves: /blog/{slug}, /case-studies/{slug}, /templates/{slug},
+    //         /statistics/{slug}, /research/{slug}
     public function show(array $params = []): void
     {
         $slug = $params['slug'] ?? '';
-        $post = $this->content->getBySlug($slug, 'post');
+
+        // Try specific type first based on request URI, then fallback to any
+        $type = 'post';
+        $uri  = $_SERVER['REQUEST_URI'] ?? '';
+        if (str_starts_with($uri, '/case-studies')) $type = 'case_study';
+        elseif (str_starts_with($uri, '/templates'))    $type = 'template';
+        elseif (str_starts_with($uri, '/statistics'))   $type = 'statistics';
+        elseif (str_starts_with($uri, '/research'))     $type = 'research';
+
+        $post = $this->content->getBySlug($slug, $type);
+        // Fallback: try without type filter
+        if (!$post) $post = $this->content->getBySlug($slug);
 
         if (!$post) {
             $this->notFound('Article not found.');
             return;
         }
 
+        $actualType = $post['type'] ?? 'post';
         $seo      = $this->seoSvc->buildForContent($post);
-        $related  = $this->content->getRelated($post['id'], 'post', 4);
+        $related  = $this->content->getRelated($post['id'], $actualType, 4);
         $faqs     = $this->extractFaqs($post['content'] ?? '');
 
-        // Build schemas
+        // Build breadcrumbs based on actual content type
+        $typeMap = [
+            'post'        => ['Blog', '/blog'],
+            'case_study'  => ['Case Studies', '/case-studies'],
+            'template'    => ['Templates', '/templates'],
+            'statistics'  => ['Statistics', '/statistics'],
+            'research'    => ['Research', '/research'],
+        ];
+        $bc = $typeMap[$actualType] ?? ['Blog', '/blog'];
+
         $schemas = [
             $this->schemaSvc->article($post, $seo, 'BlogPosting'),
             $this->schemaSvc->breadcrumbs([
                 ['name' => 'Home', 'url' => '/'],
-                ['name' => 'Blog', 'url' => '/blog'],
+                ['name' => $bc[0], 'url' => $bc[1]],
                 ['name' => $post['title']],
             ]),
         ];
@@ -184,22 +207,34 @@ class PostController extends Controller
         ]);
     }
 
-    // ── Cluster Page ──────────────────────────────────────
+    // ── Cluster Page (Learn Sub-Topic) ─────────────────────
     public function cluster(array $params = []): void
     {
         $topic  = $params['topic'] ?? '';
         $slug   = $params['slug']  ?? '';
 
         $pillar  = $this->content->getBySlug($topic, 'pillar');
-        $cluster = $this->content->getBySlug($slug, 'post');
 
-        if (!$cluster) {
-            $cluster = $this->content->getBySlug($slug, 'pillar');
-        }
+        // Try cluster type first, then post, then pillar
+        $cluster = $this->content->getBySlug($slug, 'cluster');
+        if (!$cluster) $cluster = $this->content->getBySlug($slug, 'post');
+        if (!$cluster) $cluster = $this->content->getBySlug($slug, 'pillar');
 
         if (!$cluster) {
             $this->notFound();
             return;
+        }
+
+        // Fetch all sibling sub-topics under same pillar for sidebar navigation
+        $siblings = [];
+        if ($pillar) {
+            $siblings = $this->db->fetchAll(
+                "SELECT c.title, c.slug, c.difficulty, c.read_time
+                 FROM content c
+                 WHERE c.parent_id = ? AND c.status = 'published'
+                 ORDER BY c.menu_order, c.published_at",
+                [$pillar['id']]
+            );
         }
 
         $seo     = $this->seoSvc->buildForContent($cluster);
@@ -216,10 +251,16 @@ class PostController extends Controller
         ];
         if ($faqs) $schemas[] = $this->schemaSvc->faqPage($faqs);
 
-        $this->view('post', [
+        // Use cluster template if siblings exist (sub-topic learning view),
+        // otherwise fallback to regular post template
+        $viewTemplate = (!empty($siblings) && $cluster['type'] === 'cluster') ? 'cluster' : 'post';
+
+        $this->view($viewTemplate, [
             'seo'      => $seo,
             'post'     => $cluster,
             'pillar'   => $pillar,
+            'siblings' => $siblings,
+            'topic'    => $topic,
             'related'  => $related,
             'faqs'     => $faqs,
             'schemas'  => $schemas,

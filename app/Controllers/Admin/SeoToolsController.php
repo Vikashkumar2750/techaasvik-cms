@@ -244,4 +244,86 @@ class SeoToolsController extends Controller
         $this->flash('success', "Auto-generated meta descriptions for {$count} content items.");
         View::redirect('/techaasvik_admin/seo');
     }
+
+    // ── Seed Clusters (temp) ─────────────────────
+    public function seedClusters(array $params = []): void
+    {
+        Auth::requireAdmin();
+        header('Content-Type: text/plain; charset=utf-8');
+
+        try {
+            $db = \Core\Database::getInstance();
+            $file = APP_ROOT . '/seed-clusters.php';
+            if (!file_exists($file)) { echo "ERROR: seed-clusters.php not found\n"; exit; }
+
+            $data = require $file;
+            $count = 0;
+
+            // Find SEO pillar ID
+            $seoId = $db->fetchColumn("SELECT id FROM content WHERE slug = 'seo' AND type = 'pillar' LIMIT 1");
+            if (!$seoId) { echo "ERROR: SEO pillar not found\n"; exit; }
+            echo "SEO Pillar ID: $seoId\n\n";
+
+            // Insert clusters
+            foreach ($data['clusters'] as $cluster) {
+                $existing = $db->fetchColumn("SELECT id FROM content WHERE slug = ? AND type = 'cluster' LIMIT 1", [$cluster['slug']]);
+                if ($existing) {
+                    echo "SKIP cluster: '{$cluster['slug']}' already exists (ID: $existing)\n";
+                    continue;
+                }
+
+                $wordCount = str_word_count(strip_tags($cluster['content']));
+                $readTime  = max(1, (int) ceil($wordCount / 200));
+
+                $db->insert('content', [
+                    'type'         => 'cluster',
+                    'title'        => $cluster['title'],
+                    'slug'         => $cluster['slug'],
+                    'excerpt'      => $cluster['excerpt'],
+                    'content'      => $cluster['content'],
+                    'parent_id'    => $seoId,
+                    'difficulty'   => $cluster['difficulty'],
+                    'menu_order'   => $cluster['menu_order'],
+                    'word_count'   => $wordCount,
+                    'read_time'    => $readTime,
+                    'status'       => 'published',
+                    'lang'         => 'en',
+                    'author_id'    => 1,
+                    'published_at' => date('Y-m-d H:i:s'),
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ]);
+                echo "OK cluster: '{$cluster['slug']}' inserted (words: $wordCount)\n";
+                $count++;
+            }
+
+            // Insert site pages
+            foreach ($data['pages'] as $page) {
+                $existing = $db->fetchColumn("SELECT id FROM content WHERE slug = ? AND type = 'page' LIMIT 1", [$page['slug']]);
+                if ($existing) {
+                    echo "SKIP page: '{$page['slug']}' already exists (ID: $existing)\n";
+                    continue;
+                }
+
+                $db->insert('content', [
+                    'type'         => 'page',
+                    'title'        => $page['title'],
+                    'slug'         => $page['slug'],
+                    'content'      => $page['content'],
+                    'status'       => 'published',
+                    'lang'         => 'en',
+                    'published_at' => date('Y-m-d H:i:s'),
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ]);
+                echo "OK page: '{$page['slug']}' inserted\n";
+                $count++;
+            }
+
+            echo "\nDone! Inserted: $count items\n";
+        } catch (\Throwable $e) {
+            echo "ERROR: " . $e->getMessage() . "\n";
+        }
+        exit;
+    }
 }

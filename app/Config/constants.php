@@ -84,6 +84,7 @@ if (!defined('CONTENT_TYPES')) {
     define('CONTENT_TYPES', [
         'post'            => '📝 Blog Post',
         'pillar'          => '📚 Pillar Page',
+        'cluster'         => '📑 Learn Sub-Topic',
         'glossary_term'   => '📖 Glossary Term',
         'case_study'      => '📊 Case Study',
         'statistics'      => '📈 Statistics Page',
@@ -96,6 +97,6 @@ if (!defined('CONTENT_TYPES')) {
         'news_article'    => '📰 News Article',
         'video'           => '🎬 Video',
         'podcast_episode' => '🎙 Podcast Episode',
-        'page'            => '🗒 Static Page',
+        'page'            => '🗒 Site Page',
     ]);
 }
