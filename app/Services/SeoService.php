@@ -101,9 +101,21 @@ class SeoService
         $slug = $content['slug'];
         $type = $content['type'];
 
+        // Cluster pages need parent pillar slug
+        if ($type === 'cluster' && !empty($content['parent_id'])) {
+            $parentSlug = $this->db->fetchColumn(
+                "SELECT slug FROM content WHERE id = ? LIMIT 1",
+                [$content['parent_id']]
+            );
+            if ($parentSlug) {
+                return $base . '/learn/' . $parentSlug . '/' . $slug;
+            }
+        }
+
         $typeToPath = [
             'post'            => '/blog/',
             'pillar'          => '/learn/',
+            'cluster'         => '/learn/',
             'glossary_term'   => '/glossary/term/',
             'case_study'      => '/case-studies/',
             'statistics'      => '/statistics/',

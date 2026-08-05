@@ -285,50 +285,39 @@ class SeoToolsController extends Controller
             if (!$seoId) { echo "ERROR: SEO pillar not found\n"; exit; }
             echo "SEO Pillar ID: $seoId\n\n";
 
-            // Insert clusters
+            echo "=== Step 3: Insert clusters ===\n";
             foreach ($data['clusters'] as $cluster) {
-                // Delete any existing row with same slug and empty type
-                $oldId = $db->fetchColumn("SELECT id FROM content WHERE slug = ? AND (type IS NULL OR type = '') LIMIT 1", [$cluster['slug']]);
-                if ($oldId) {
-                    $db->query("DELETE FROM content WHERE id = ?", [$oldId]);
-                    echo "DELETED old empty-type row ID: $oldId for '{$cluster['slug']}'\n";
-                }
-
-                // Check if cluster type already exists
-                $existing = $db->fetchColumn("SELECT id FROM content WHERE slug = ? AND type = 'cluster' LIMIT 1", [$cluster['slug']]);
-                if ($existing) {
-                    // Update existing
-                    $db->query(
-                        "UPDATE content SET title = ?, excerpt = ?, content = ?, parent_id = ?, difficulty = ?, menu_order = ?, word_count = ?, read_time = ?, status = 'published', updated_at = NOW() WHERE id = ?",
-                        [$cluster['title'], $cluster['excerpt'], $cluster['content'], $seoId, $cluster['difficulty'], $cluster['menu_order'], str_word_count(strip_tags($cluster['content'])), max(1, (int)ceil(str_word_count(strip_tags($cluster['content']))/200)), $existing]
-                    );
-                    echo "UPDATED cluster: '{$cluster['slug']}' (ID: $existing)\n";
-                    $count++;
-                    continue;
-                }
+                // Always delete any existing row with this slug
+                $db->query("DELETE FROM content WHERE slug = ? AND (type = 'cluster' OR type = '' OR type = 'post')", [$cluster['slug']]);
 
                 $wordCount = str_word_count(strip_tags($cluster['content']));
                 $readTime  = max(1, (int) ceil($wordCount / 200));
 
-                $db->insert('content', [
-                    'type'         => 'cluster',
-                    'title'        => $cluster['title'],
-                    'slug'         => $cluster['slug'],
-                    'excerpt'      => $cluster['excerpt'],
-                    'content'      => $cluster['content'],
-                    'parent_id'    => $seoId,
-                    'difficulty'   => $cluster['difficulty'],
-                    'menu_order'   => $cluster['menu_order'],
-                    'word_count'   => $wordCount,
-                    'read_time'    => $readTime,
-                    'status'       => 'published',
-                    'lang'         => 'en',
-                    'author_id'    => 1,
-                    'published_at' => date('Y-m-d H:i:s'),
-                    'created_at'   => date('Y-m-d H:i:s'),
-                    'updated_at'   => date('Y-m-d H:i:s'),
-                ]);
-                echo "OK cluster: '{$cluster['slug']}' inserted (words: $wordCount)\n";
+                // Verify HTML is present
+                $hasH2 = substr_count($cluster['content'], '<h2');
+                $hasP  = substr_count($cluster['content'], '<p>');
+                echo "Content check '{$cluster['slug']}': {$hasH2} h2 tags, {$hasP} p tags, " . strlen($cluster['content']) . " chars\n";
+
+                // Use raw SQL to preserve HTML content
+                $db->query(
+                    "INSERT INTO content (`type`, `title`, `slug`, `excerpt`, `content`, `parent_id`, `difficulty`, `menu_order`, `word_count`, `read_time`, `status`, `lang`, `author_id`, `published_at`, `created_at`, `updated_at`) VALUES ('cluster', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', 'en', 1, NOW(), NOW(), NOW())",
+                    [
+                        $cluster['title'],
+                        $cluster['slug'],
+                        $cluster['excerpt'],
+                        $cluster['content'],
+                        $seoId,
+                        $cluster['difficulty'],
+                        $cluster['menu_order'],
+                        $wordCount,
+                        $readTime,
+                    ]
+                );
+
+                // Verify what was stored
+                $stored = $db->fetchColumn("SELECT LEFT(content, 100) FROM content WHERE slug = ? AND type = 'cluster' LIMIT 1", [$cluster['slug']]);
+                echo "Stored: " . ($stored ?: 'EMPTY') . "\n\n";
+
                 $count++;
             }
 
