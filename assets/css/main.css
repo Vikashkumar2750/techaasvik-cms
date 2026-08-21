@@ -1723,10 +1723,13 @@ h1, h2, h3, h4 {
     grid-template-columns: 1fr !important;
     gap: var(--space-5) !important;
   }
-  /* Sidebar (chapters) ABOVE article on mobile */
+  /* Hide entire aside sidebar on mobile — CHAPTERS, Author, Quick Links */
+  /* User sees article content only; TOC shown inline in article */
   .layout-content-sidebar > aside,
-  .layout-sticky-sidebar { order: 1 !important; position: static !important; max-height: none !important; overflow: visible !important; }
-  .layout-content-sidebar > article { order: 2 !important; }
+  .layout-sticky-sidebar {
+    display: none !important;
+  }
+  .layout-content-sidebar > article { order: 1 !important; }
 
   /* ── MOBILE MENU: no scrollbar ───────────────────────────── */
   .site-nav.is-open {
@@ -1736,6 +1739,22 @@ h1, h2, h3, h4 {
     max-height: none !important;
     border-bottom: 1px solid var(--border-subtle);
     box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
+
+  /* ── AUTHOR BOX (in-article, below content) padding fix ───── */
+  #author-box {
+    padding: var(--space-4) !important;
+    margin-top: var(--space-8) !important;
+  }
+  #author-box > div {
+    flex-direction: column !important;
+    gap: var(--space-3) !important;
+    align-items: flex-start !important;
+  }
+  #author-box > div > div:first-child {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 20px !important;
   }
 
 
