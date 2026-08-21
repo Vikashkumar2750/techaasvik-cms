@@ -18,7 +18,7 @@
 
     <!-- Contact Form -->
     <div>
-      <div class="card" style="padding:var(--space-7);">
+      <div class="card" style="padding:var(--space-8);">
         <h2 style="font-size:var(--text-xl);margin-bottom:var(--space-6);">Send a Message</h2>
         <form method="post" action="/contact" novalidate>
 
@@ -31,22 +31,22 @@
           <?php endif; ?>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
-            <div>
+            <div style="min-width:0;">
               <label style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-secondary);display:block;margin-bottom:6px;" for="name">Full Name *</label>
               <input type="text" id="name" name="name" class="form-input" placeholder="Your name" required value="<?= e($_POST['name'] ?? '') ?>">
             </div>
-            <div>
+            <div style="min-width:0;">
               <label style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-secondary);display:block;margin-bottom:6px;" for="email">Email Address *</label>
               <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required value="<?= e($_POST['email'] ?? '') ?>">
             </div>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-4);">
-            <div>
+            <div style="min-width:0;">
               <label style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-secondary);display:block;margin-bottom:6px;" for="phone">Phone (optional)</label>
               <input type="tel" id="phone" name="phone" class="form-input" placeholder="+91 98765 43210" value="<?= e($_POST['phone'] ?? '') ?>">
             </div>
-            <div>
+            <div style="min-width:0;">
               <label style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-secondary);display:block;margin-bottom:6px;" for="company">Company (optional)</label>
               <input type="text" id="company" name="company" class="form-input" placeholder="Your company" value="<?= e($_POST['company'] ?? '') ?>">
             </div>

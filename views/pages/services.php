@@ -289,7 +289,7 @@
       </div>
       <div class="svc-card-tagline"><?= $svc['tagline'] ?></div>
       <h3 class="svc-card-title">
-        <a href="/contact?service=<?= $svc['slug'] ?>"><?= $svc['title'] ?></a>
+        <a href="/services/<?= $svc['slug'] ?>"><?= $svc['title'] ?></a>
       </h3>
       <p class="svc-card-desc"><?= $svc['desc'] ?></p>
       <ul class="svc-card-features" aria-label="Key features">
@@ -301,8 +301,8 @@
         <?php endforeach; ?>
       </ul>
       <div class="svc-card-footer">
-        <a href="/contact?service=<?= $svc['slug'] ?>" class="svc-card-cta">Get Started →</a>
-        <?php if ($svc['learn'] !== '/contact'): ?>
+        <a href="/services/<?= $svc['slug'] ?>" class="svc-card-cta">Explore Service →</a>
+        <?php if (!empty($svc['learn']) && $svc['learn'] !== '/contact'): ?>
         <a href="<?= $svc['learn'] ?>" class="svc-card-learn">Free Guide ↗</a>
         <?php endif; ?>
       </div>
