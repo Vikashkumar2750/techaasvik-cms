@@ -288,7 +288,7 @@
   <?php endif; ?>
 
   <!-- CTA Section -->
-  <div style="display:grid;grid-template-columns:1fr 300px;gap:var(--space-10);align-items:start;margin-top:var(--space-8);">
+  <div class="layout-content-sidebar" style="margin-top:var(--space-8);">
     <div class="card" style="padding:var(--space-8);text-align:center;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.04));border-color:rgba(99,102,241,0.15);">
       <h2 style="font-size:var(--text-2xl);margin-bottom:var(--space-3);">Ready to Get Started?</h2>
       <p style="color:var(--text-secondary);margin-bottom:var(--space-6);max-width:500px;margin-left:auto;margin-right:auto;">

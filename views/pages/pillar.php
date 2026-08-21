@@ -139,7 +139,7 @@ $relatedPillars = $relatedPillars ?? [];
   <?php endif; ?>
 
   <!-- ── Main Content + Sidebar Grid ── -->
-  <div style="display:grid;grid-template-columns:1fr 280px;gap:var(--space-10);align-items:start;">
+  <div class="layout-content-sidebar">
 
     <!-- Article Body -->
     <article>
@@ -229,7 +229,7 @@ $relatedPillars = $relatedPillars ?? [];
     </article>
 
     <!-- ── Sticky Sidebar ── -->
-    <aside style="position:sticky;top:90px;">
+    <aside class="layout-sticky-sidebar">
 
       <!-- TOC Sidebar -->
       <?php if (count($tocItems) >= 3): ?>

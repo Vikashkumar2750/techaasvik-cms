@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-10);align-items:start;">
+  <div class="layout-content-sidebar">
 
     <!-- Course Content -->
     <div>

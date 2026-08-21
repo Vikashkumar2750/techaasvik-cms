@@ -31,7 +31,7 @@
   <!-- ══════════════════════════════════════════════════════
        META TAG GENERATOR — Interactive SERP Preview Tool
   ══════════════════════════════════════════════════════ -->
-  <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-8);align-items:start;">
+  <div class="layout-content-sidebar">
     <div>
       <!-- Input Form -->
       <div class="card" style="padding:var(--space-6);margin-bottom:var(--space-6);">
@@ -464,7 +464,7 @@
   <!-- ══════════════════════════════════════════════════════
        DEFAULT TOOL VIEW (DB content + info sidebar)
   ══════════════════════════════════════════════════════ -->
-  <div style="display:grid;grid-template-columns:1fr 300px;gap:var(--space-10);align-items:start;">
+  <div class="layout-content-sidebar">
     <div>
       <?php if (!empty($tool['content'])): ?>
       <div class="prose"><?= $tool['content'] ?></div>

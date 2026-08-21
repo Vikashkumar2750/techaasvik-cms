@@ -11,7 +11,7 @@
   \Core\View::partial('breadcrumb', ['crumbs' => $crumbs]);
   ?>
 
-  <div style="display:grid;grid-template-columns:1fr 280px;gap:var(--space-12);align-items:start;">
+  <div class="layout-content-sidebar">
 
     <!-- ── Main Content ── -->
     <article id="mainArticle">
@@ -152,7 +152,7 @@
     </article>
 
     <!-- ── Sidebar ── -->
-    <aside style="position:sticky;top:calc(var(--header-height) + 24px);">
+    <aside class="layout-sticky-sidebar">
 
       <!-- Newsletter CTA -->
       <div style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.05));border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-xl);padding:var(--space-5);margin-bottom:var(--space-5);">
