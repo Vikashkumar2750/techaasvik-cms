@@ -18,7 +18,7 @@
       <div class="audit-hero-copy">
         <div class="audit-badge">
           <span class="audit-badge-dot"></span>
-          Free · No Credit Card · 24hr Response
+          Free Digital Marketing Audit — Limited Slots
         </div>
 
         <h1 id="audit-hero-heading" class="audit-hero-title">

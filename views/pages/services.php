@@ -399,7 +399,7 @@
             Talk to an Expert
           </a>
         </div>
-        <p class="svc-cta-note">✅ Free · No credit card · Response within 24 hours</p>
+
       </div>
     </div>
   </div>
