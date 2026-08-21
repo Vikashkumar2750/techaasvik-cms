@@ -30,7 +30,12 @@ $gtmId  = $config['analytics']['gtm_id'] ?? '';
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 
 <!-- ── Stylesheets ── -->
-<link rel="stylesheet" href="/assets/css/main.css?v=<?= ASSET_VERSION ?>">
+<?php
+  // Dynamic cache-bust: version = file mod time (auto-updates on deploy)
+  $_cssV = @filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/main.css') ?: ASSET_VERSION;
+  $_jsV  = @filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/js/main.js')   ?: ASSET_VERSION;
+?>
+<link rel="stylesheet" href="/assets/css/main.css?v=<?= $_cssV ?>">
 
 <!-- ── Critical Mobile CSS (inline for cache-bypass) ── -->
 <style>
@@ -175,7 +180,7 @@ $gtmId  = $config['analytics']['gtm_id'] ?? '';
 <!-- ══════════════════════════════
      SCRIPTS
 ════════════════════════════════ -->
-<script src="/assets/js/main.js?v=<?= ASSET_VERSION ?>" defer></script>
+<script src="/assets/js/main.js?v=<?= $_jsV ?>" defer></script>
 
 <?php if ($gaId): ?>
 <script async src="https://www.googletagmanager.com/gtag/js?id=<?= $gaId ?>"></script>
