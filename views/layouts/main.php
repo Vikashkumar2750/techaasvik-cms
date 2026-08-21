@@ -32,6 +32,74 @@ $gtmId  = $config['analytics']['gtm_id'] ?? '';
 <!-- ── Stylesheets ── -->
 <link rel="stylesheet" href="/assets/css/main.css?v=<?= ASSET_VERSION ?>">
 
+<!-- ── Critical Mobile CSS (inline for cache-bypass) ── -->
+<style>
+/* === MOBILE NAV — new element outside header === */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: var(--header-height, 64px);
+  left: 0; right: 0;
+  z-index: 999;
+  background: var(--bg-surface, #0d1117);
+  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  flex-direction: column;
+  padding: 0;
+}
+.mobile-nav.is-open { display: flex; }
+.mobile-nav-inner { display: flex; flex-direction: column; width: 100%; }
+.mobile-nav-link {
+  display: block;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary, #94a3b8);
+  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+.mobile-nav-link:last-of-type { border-bottom: none; }
+.mobile-nav-link:hover, .mobile-nav-link.active { color: var(--brand-400, #818cf8); background: var(--bg-elevated, rgba(255,255,255,0.04)); }
+.mobile-nav-footer { padding: 12px 24px 16px; }
+.mobile-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: var(--header-height, 64px);
+  background: rgba(0,0,0,0.5);
+  z-index: 998;
+}
+.mobile-nav-backdrop.is-visible { display: block; }
+
+@media (max-width: 768px) {
+  /* Hide desktop site-nav on mobile */
+  .site-nav { display: none !important; }
+  .menu-toggle { display: flex !important; }
+
+  /* Hide entire aside sidebar on mobile (CHAPTERS, author card, quick links) */
+  .layout-content-sidebar > aside,
+  .layout-sticky-sidebar { display: none !important; }
+
+  /* Full width article on mobile */
+  .layout-content-sidebar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  .layout-content-sidebar > article { width: 100% !important; }
+
+  /* Author box inside article — responsive padding */
+  #author-box {
+    padding: 20px !important;
+    margin-top: 32px !important;
+  }
+  #author-box > div { flex-direction: column !important; gap: 12px !important; }
+  #author-box > div > div:first-child { width: 48px !important; height: 48px !important; }
+}
+</style>
+
+
 <!-- ── Favicon ── -->
 <link rel="icon"             type="image/x-icon" href="/assets/images/static/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180"     href="/assets/images/static/apple-touch-icon.png">

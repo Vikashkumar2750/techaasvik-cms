@@ -100,9 +100,6 @@ if (!function_exists('navClass')) {
     <?php $isActive = str_starts_with(rtrim($currentPath, '/'), $path); ?>
     <a href="<?= $path ?>" class="mobile-nav-link<?= $isActive ? ' active' : '' ?>"><?= $label ?></a>
     <?php endforeach; ?>
-    <div class="mobile-nav-footer">
-      <a href="/free-audit" class="btn btn-gradient" style="width:100%;justify-content:center;margin-top:var(--space-2);">🚀 Get Free Audit</a>
-    </div>
   </div>
 </nav>
 <!-- Mobile nav backdrop -->
