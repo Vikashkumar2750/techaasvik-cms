@@ -229,7 +229,7 @@ $relatedPillars = $relatedPillars ?? [];
     </article>
 
     <!-- ── Sticky Sidebar ── -->
-    <aside class="layout-sticky-sidebar">
+    <aside class="layout-sticky-sidebar" id="pillar-sidebar">
 
       <!-- TOC Sidebar -->
       <?php if (count($tocItems) >= 3): ?>

@@ -152,7 +152,7 @@
     </article>
 
     <!-- ── Sidebar ── -->
-    <aside class="layout-sticky-sidebar">
+    <aside class="layout-sticky-sidebar" id="post-sidebar">
 
       <!-- Newsletter CTA -->
       <div style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.05));border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-xl);padding:var(--space-5);margin-bottom:var(--space-5);">

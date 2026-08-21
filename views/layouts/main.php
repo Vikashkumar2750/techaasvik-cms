@@ -78,8 +78,12 @@ $gtmId  = $config['analytics']['gtm_id'] ?? '';
   .menu-toggle { display: flex !important; }
 
   /* Hide entire aside sidebar on mobile (CHAPTERS, author card, quick links) */
+  /* Targeting by class, ID, and universal aside inside grid */
   .layout-content-sidebar > aside,
-  .layout-sticky-sidebar { display: none !important; }
+  .layout-sticky-sidebar,
+  #pillar-sidebar,
+  #post-sidebar,
+  aside.layout-sticky-sidebar { display: none !important; }
 
   /* Full width article on mobile */
   .layout-content-sidebar {
