@@ -1286,6 +1286,54 @@ blockquote {
   .header-actions { gap: var(--space-2); }
   .header-actions .btn-primary { font-size: 11px; padding: 6px 10px; }
 
+  /* ── MOBILE NAV (outside header — viewport positioning) ── */
+  .mobile-nav {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+    flex-direction: column;
+    padding: var(--space-2) 0 var(--space-3);
+    animation: mobileNavSlide 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .mobile-nav.is-open { display: flex; }
+  .mobile-nav-inner { display: flex; flex-direction: column; }
+  .mobile-nav-link {
+    display: block;
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-base);
+    font-weight: var(--fw-medium);
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: color 0.15s, background 0.15s;
+  }
+  .mobile-nav-link:last-of-type { border-bottom: none; }
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active { color: var(--brand-400); background: var(--bg-elevated); }
+  .mobile-nav-footer { padding: var(--space-3) var(--space-5) 0; }
+
+  /* Backdrop overlay */
+  .mobile-nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: var(--header-height);
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+  }
+  .mobile-nav-backdrop.is-visible { display: block; }
+
+  @keyframes mobileNavSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+
   /* Mobile nav — NO scrollbar, full content visible */
   .site-nav.is-open {
     display: flex;

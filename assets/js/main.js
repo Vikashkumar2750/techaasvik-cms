@@ -60,48 +60,52 @@
     }, { passive: true });
   }
 
-  // ── Mobile Menu ─────────────────────────────────────────────
-  const menuToggle = document.getElementById('menuToggle');
-  const siteNav    = document.getElementById('siteNav');
-  if (menuToggle && siteNav) {
-    menuToggle.addEventListener('click', () => {
-      const isOpen = siteNav.classList.toggle('is-open');
-      menuToggle.setAttribute('aria-expanded', String(isOpen));
+  // ── Mobile Menu (targets #mobileNav which is OUTSIDE header) ──
+  const menuToggle  = document.getElementById('menuToggle');
+  const mobileNav   = document.getElementById('mobileNav');
+  const navBackdrop = document.getElementById('mobileNavBackdrop');
 
-      // Lock body scroll when menu is open
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+  function openMenu() {
+    mobileNav.classList.add('is-open');
+    mobileNav.setAttribute('aria-hidden', 'false');
+    menuToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    if (navBackdrop) navBackdrop.classList.add('is-visible');
+    const bars = menuToggle.querySelectorAll('span');
+    bars[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+    bars[1].style.opacity   = '0';
+    bars[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+  }
 
-      // Animate toggle bars → X
-      const bars = menuToggle.querySelectorAll('span');
-      if (isOpen) {
-        bars[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-        bars[1].style.opacity   = '0';
-        bars[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
-      } else {
-        bars.forEach(b => { b.style.transform = ''; b.style.opacity = ''; });
-      }
+  function closeMenu() {
+    mobileNav.classList.remove('is-open');
+    mobileNav.setAttribute('aria-hidden', 'true');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    if (navBackdrop) navBackdrop.classList.remove('is-visible');
+    menuToggle.querySelectorAll('span').forEach(b => { b.style.transform = ''; b.style.opacity = ''; });
+  }
+
+  if (menuToggle && mobileNav) {
+    menuToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      mobileNav.classList.contains('is-open') ? closeMenu() : openMenu();
     });
 
-    // Close on outside click
-    document.addEventListener('click', e => {
-      if (!menuToggle.contains(e.target) && !siteNav.contains(e.target)) {
-        siteNav.classList.remove('is-open');
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuToggle.querySelectorAll('span').forEach(b => { b.style.transform = ''; b.style.opacity = ''; });
-        document.body.style.overflow = '';
-      }
+    // Close on backdrop click
+    if (navBackdrop) navBackdrop.addEventListener('click', closeMenu);
+
+    // Close on nav link click
+    mobileNav.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
     });
 
-    // Close on nav link click (navigate away)
-    siteNav.querySelectorAll('.site-nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        siteNav.classList.remove('is-open');
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuToggle.querySelectorAll('span').forEach(b => { b.style.transform = ''; b.style.opacity = ''; });
-        document.body.style.overflow = '';
-      });
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeMenu();
     });
   }
+
 
   // ── Search Overlay ──────────────────────────────────────────
   const headerSearch  = document.getElementById('headerSearch');
