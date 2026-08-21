@@ -96,8 +96,15 @@ class PageController extends Controller
         $page = (new Content())->getBySlug($slug, 'page');
 
         if (!$page) {
-            // Try a static fallback
-            $staticServices = ['seo', 'google-ads', 'meta-ads', 'social-media', 'content-marketing', 'email-marketing', 'analytics'];
+            // Static fallback — all 12 services (6 core + 6 emerging)
+            $staticServices = [
+                // Core
+                'seo', 'google-ads', 'meta-ads', 'social-media',
+                'content-marketing', 'email-marketing', 'analytics',
+                // Emerging / 2026
+                'geo', 'aeo', 'ai-marketing',
+                'video-marketing', 'cro', 'programmatic',
+            ];
             if (!in_array($slug, $staticServices)) {
                 $this->notFound();
                 return;
