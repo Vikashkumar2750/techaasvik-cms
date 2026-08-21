@@ -1286,38 +1286,43 @@ blockquote {
   .header-actions { gap: var(--space-2); }
   .header-actions .btn-primary { font-size: 11px; padding: 6px 10px; }
 
-  /* Mobile nav overlay with slide-in animation */
+  /* Mobile nav — NO scrollbar, full content visible */
   .site-nav.is-open {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     position: fixed;
     top: var(--header-height);
     left: 0;
     right: 0;
-    bottom: 0;
+    /* NO bottom:0 — height is auto based on content */
     background: var(--bg-surface);
-    padding: var(--space-6);
+    padding: var(--space-3) var(--space-4) var(--space-4);
     z-index: var(--z-overlay);
-    overflow-y: auto;
-    gap: var(--space-2);
-    animation: slideDown 0.25s cubic-bezier(0.4,0,0.2,1);
+    overflow: visible;  /* NO scrollbar */
+    gap: 0;
+    animation: slideDown 0.2s cubic-bezier(0.4,0,0.2,1);
     border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
   }
   .site-nav.is-open .site-nav-link {
     width: 100%;
-    padding: var(--space-4) var(--space-3);
+    padding: var(--space-3) var(--space-3);
     font-size: var(--text-base);
-    border-radius: var(--radius-lg);
+    border-radius: 0;
     border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
   }
+  .site-nav.is-open .site-nav-link:last-child { border-bottom: none; }
   @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
+    from { opacity: 0; transform: translateY(-8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
   /* ── ARTICLE / PILLAR PAGE LAYOUT ─────────────────────── */
-  /* Stack sidebar below content on mobile */
+  /* Stack sidebar ABOVE content on mobile (sidebar = chapters, should come first) */
   [style*="grid-template-columns:minmax(0,1fr)"],
   [style*="grid-template-columns:1fr 300px"],
   [style*="grid-template-columns:1fr 320px"],
@@ -1329,11 +1334,19 @@ blockquote {
     grid-template-columns: 1fr !important;
   }
 
+  /* Sidebar first (chapters on top), article below */
+  .layout-content-sidebar > aside,
+  .layout-content-sidebar > .layout-sticky-sidebar { order: 1; }
+  .layout-content-sidebar > article,
+  .layout-content-sidebar > div:not(.layout-sticky-sidebar) { order: 2; }
+
   /* Make sticky sidebar non-sticky on mobile */
   aside[style*="position:sticky"],
-  [style*="position:sticky;top"] {
+  [style*="position:sticky;top"],
+  .layout-sticky-sidebar {
     position: static !important;
     top: auto !important;
+    max-height: none !important;
   }
 
   /* ── TABLE OF CONTENTS ─────────────────────────────────── */
@@ -1654,6 +1667,29 @@ h1, h2, h3, h4 {
   .section    { padding: var(--space-12) 0; }
   .section-sm { padding: var(--space-8) 0; }
   .section-lg { padding: var(--space-16) 0; }
+
+  /* ── LAYOUT: Content+Sidebar stacking ─────────────────────── */
+  /* Define layout class HERE (guaranteed live) */
+  .layout-content-sidebar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--space-5) !important;
+  }
+  /* Sidebar (chapters) ABOVE article on mobile */
+  .layout-content-sidebar > aside,
+  .layout-sticky-sidebar { order: 1 !important; position: static !important; max-height: none !important; overflow: visible !important; }
+  .layout-content-sidebar > article { order: 2 !important; }
+
+  /* ── MOBILE MENU: no scrollbar ───────────────────────────── */
+  .site-nav.is-open {
+    overflow: visible !important;
+    bottom: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
+
 
   /* Section header: stack on mobile */
   .section-header { margin-bottom: var(--space-6); }
