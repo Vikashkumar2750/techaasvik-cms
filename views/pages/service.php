@@ -36,6 +36,21 @@
       'process' => ['Account Audit & Strategy', 'Keyword Research & Planning', 'Campaign Setup & Structuring', 'Ad Copy & Creative Development', 'Bid & Budget Optimization', 'A/B Testing & Scaling'],
       'stats' => [['value' => '5.2x', 'label' => 'Average ROAS'], ['value' => '42%', 'label' => 'Lower CPA vs Industry'], ['value' => '₹10Cr+', 'label' => 'Ad Spend Managed'], ['value' => '150+', 'label' => 'Campaigns Optimized']],
     ],
+    'meta-ads' => [
+      'icon' => '📱',
+      'title' => 'Meta Ads — Facebook & Instagram Advertising',
+      'subtitle' => 'Find Your Ideal Customer with Hyper-Targeted Facebook & Instagram Campaigns Powered by Meta\'s AI.',
+      'features' => [
+        ['icon' => '🎯', 'title' => 'Audience Research & Targeting', 'desc' => 'Deep audience research using Meta\'s interest targeting, behavioral segments, demographic layers, and custom audiences built from your CRM, website visitors, and app users.'],
+        ['icon' => '🤖', 'title' => 'Advantage+ AI Campaigns', 'desc' => 'Meta\'s AI-powered Advantage+ Shopping and Advantage+ Audience campaigns that automatically find your best customers and optimize delivery for maximum ROAS.'],
+        ['icon' => '🎨', 'title' => 'Creative Strategy & Production', 'desc' => 'High-converting ad creatives — static images, carousels, video ads, Reels ads, and Stories ads. Thumb-stopping visuals and direct-response copywriting that drives action.'],
+        ['icon' => '🔄', 'title' => 'Retargeting & Lookalike Audiences', 'desc' => 'Multi-stage retargeting sequences that re-engage past visitors, cart abandoners, and video viewers. Lookalike audience expansion using your best customers as seeds.'],
+        ['icon' => '📊', 'title' => 'Full-Funnel Campaign Strategy', 'desc' => 'Top-of-funnel awareness, middle-funnel consideration, and bottom-funnel conversion campaigns working together. Attribution setup across the complete customer journey.'],
+        ['icon' => '📈', 'title' => 'Meta Ads Analytics & Reporting', 'desc' => 'Weekly performance reports covering ROAS, CPA, CPL, frequency, reach, and creative performance. A/B testing framework for continuous campaign improvement.'],
+      ],
+      'process' => ['Account Audit & Pixel Setup', 'Audience Research & Strategy', 'Creative Development', 'Campaign Launch & Structuring', 'A/B Testing & Optimization', 'Scaling & Monthly Reporting'],
+      'stats' => [['value' => '4.8x', 'label' => 'Average ROAS Delivered'], ['value' => '38%', 'label' => 'Lower Cost Per Lead'], ['value' => '3B+', 'label' => 'Meta Monthly Active Users'], ['value' => '100+', 'label' => 'Meta Campaigns Managed']],
+    ],
     'social-media' => [
       'icon' => '📱',
       'title' => 'Social Media Marketing',
@@ -95,6 +110,104 @@
       ],
       'process' => ['Analytics Audit', 'Tracking Implementation', 'Dashboard Creation', 'Data Collection & QA', 'Analysis & Insights', 'Optimization Recommendations'],
       'stats' => [['value' => '100%', 'label' => 'Tracking Accuracy'], ['value' => '35%', 'label' => 'Better Decision Making'], ['value' => '28%', 'label' => 'Conversion Uplift'], ['value' => '50+', 'label' => 'Dashboards Built']],
+    ],
+
+    // ── Emerging / 2026 Services ──────────────────────────────
+
+    'geo' => [
+      'icon' => '🤖',
+      'title' => 'GEO — Generative Engine Optimization',
+      'subtitle' => 'Get Your Brand Cited by ChatGPT, Gemini, Perplexity & AI Overviews. GEO is the New SEO for the AI Era.',
+      'features' => [
+        ['icon' => '🧠', 'title' => 'AI Overview Optimization', 'desc' => 'Optimize your content to appear in Google\'s AI Overviews (formerly SGE). Structured content, authoritative sources, and E-E-A-T signals that AI models prefer to cite.'],
+        ['icon' => '💬', 'title' => 'ChatGPT & Perplexity Citations', 'desc' => 'Strategic content and brand-building to get cited by ChatGPT, Perplexity AI, and other LLMs when users ask questions in your industry. We track and measure AI mention share.'],
+        ['icon' => '📝', 'title' => 'LLM-Friendly Content Architecture', 'desc' => 'Restructure your content with clear definitions, direct answers, structured data, and authoritative citations — the exact format that LLMs extract and surface to users.'],
+        ['icon' => '🔗', 'title' => 'Brand Entity Optimization', 'desc' => 'Build your brand as a recognized entity across Wikipedia, Wikidata, knowledge graphs, and top-tier publications so AI systems confidently include you in answers.'],
+        ['icon' => '📊', 'title' => 'GEO Tracking & AI Mention Monitoring', 'desc' => 'Monitor your brand\'s appearance in AI-generated answers using custom GEO tracking tools. Measure AI visibility score, citation frequency, and competitive AI share-of-voice.'],
+        ['icon' => '🚀', 'title' => 'AI-Ready PR & Digital Authority', 'desc' => 'Build authoritative backlinks from high-trust publications, earn expert quotes, and create content that positions you as the go-to source in your niche for AI systems.'],
+      ],
+      'process' => ['GEO Audit & AI Visibility Scan', 'Brand Entity & Knowledge Graph Setup', 'LLM-Optimized Content Restructuring', 'Authority & Citation Building', 'AI Overview & Perplexity Targeting', 'GEO Monitoring & Iteration'],
+      'stats' => [['value' => '3.2x', 'label' => 'AI Visibility Increase'], ['value' => '68%', 'label' => 'Brands Now Use GEO'], ['value' => '40%', 'label' => 'Search via AI by 2026'], ['value' => '500+', 'label' => 'AI Citations Earned']],
+    ],
+
+    'aeo' => [
+      'icon' => '🎙️',
+      'title' => 'AEO — Answer Engine Optimization',
+      'subtitle' => 'Win Featured Snippets, Voice Search & AI Chatbot Answers. Make Your Content the Definitive Answer in Your Niche.',
+      'features' => [
+        ['icon' => '⭐', 'title' => 'Featured Snippet Optimization', 'desc' => 'Capture Position Zero on Google for high-value queries. We identify snippet opportunities, restructure content in paragraph, list, and table formats that Google selects.'],
+        ['icon' => '🔊', 'title' => 'Voice Search Optimization', 'desc' => 'Optimize for conversational queries used on Google Assistant, Alexa, Siri, and Cortana. Long-tail, question-based keyword targeting with natural language content.'],
+        ['icon' => '❓', 'title' => 'People Also Ask (PAA) Domination', 'desc' => 'Systematically target PAA boxes for your key topics. Expand your Google real estate by appearing in multiple PAA dropdowns on the same SERP.'],
+        ['icon' => '📋', 'title' => 'Structured Data & Schema Markup', 'desc' => 'FAQ schema, HowTo schema, Q&A schema, and speakable schema implementation. Tell search engines and AI exactly what your content answers.'],
+        ['icon' => '🤖', 'title' => 'Conversational Content Strategy', 'desc' => 'Develop comprehensive Q&A content hubs that answer every question in your industry funnel — from awareness to purchase — across voice, text, and AI chat interfaces.'],
+        ['icon' => '📈', 'title' => 'AEO Analytics & SERP Tracking', 'desc' => 'Track featured snippet wins/losses, voice search ranking, PAA appearances, and AI Overview inclusions. Custom AEO dashboard with weekly reporting.'],
+      ],
+      'process' => ['Query Research & Intent Mapping', 'Snippet & PAA Opportunity Analysis', 'Conversational Content Creation', 'Schema Markup Implementation', 'Voice & AI Optimization', 'SERP Monitoring & Iteration'],
+      'stats' => [['value' => '214%', 'label' => 'Featured Snippet Wins'], ['value' => '58%', 'label' => 'Voice Search Queries Are Questions'], ['value' => '2.5x', 'label' => 'More Clicks from Position Zero'], ['value' => '1B+', 'label' => 'Voice Searches Per Day']],
+    ],
+
+    'ai-marketing' => [
+      'icon' => '⚡',
+      'title' => 'AI Marketing & Automation',
+      'subtitle' => 'Leverage Artificial Intelligence to Hyper-Personalize Campaigns, Automate Workflows, and Scale Your Marketing Faster.',
+      'features' => [
+        ['icon' => '🎯', 'title' => 'AI-Powered Personalization', 'desc' => 'Deploy machine learning to deliver hyper-personalized content, product recommendations, and offers to each user based on behavior, preferences, and purchase history.'],
+        ['icon' => '🔮', 'title' => 'Predictive Analytics & Audience Targeting', 'desc' => 'Use predictive models to identify your next best customers, forecast campaign performance, and optimize budget allocation before you spend a rupee.'],
+        ['icon' => '🤖', 'title' => 'Chatbot & Conversational Marketing', 'desc' => 'AI chatbots on WhatsApp, website, and social media that qualify leads, answer queries, and nurture prospects 24/7. Build intelligent funnels that convert while you sleep.'],
+        ['icon' => '✍️', 'title' => 'AI Content Creation Workflows', 'desc' => 'Strategic AI-assisted content production at scale — blog articles, ad copy, email sequences, social posts — reviewed by experts for quality, accuracy, and brand voice.'],
+        ['icon' => '⚙️', 'title' => 'Marketing Automation & Workflows', 'desc' => 'End-to-end automation of email nurture sequences, lead scoring, CRM updates, social scheduling, and reporting using tools like HubSpot, Zapier, and Make.'],
+        ['icon' => '📊', 'title' => 'AI Analytics & Performance Intelligence', 'desc' => 'AI-powered dashboards that surface insights, detect anomalies, and recommend optimizations automatically. Spend less time analyzing, more time acting.'],
+      ],
+      'process' => ['AI Readiness Audit', 'Use Case Prioritization', 'Tool Stack Selection & Setup', 'AI Campaign Implementation', 'Automation Workflow Deployment', 'Continuous Learning & Optimization'],
+      'stats' => [['value' => '80%', 'label' => 'Reduction in Repetitive Tasks'], ['value' => '6.2x', 'label' => 'Faster Campaign Deployment'], ['value' => '45%', 'label' => 'Higher Personalization Revenue'], ['value' => '10x', 'label' => 'Content Output Increase']],
+    ],
+
+    'video-marketing' => [
+      'icon' => '🎬',
+      'title' => 'Video & Reels Marketing',
+      'subtitle' => 'Short-Form. Long Impact. Dominate YouTube, Instagram Reels, LinkedIn Video & Shorts to Drive Massive Engagement and Revenue.',
+      'features' => [
+        ['icon' => '📺', 'title' => 'YouTube SEO & Channel Growth', 'desc' => 'Full YouTube channel management — keyword research, video SEO (titles, descriptions, tags, chapters), thumbnail optimization, playlist strategy, and subscriber growth campaigns.'],
+        ['icon' => '🎞️', 'title' => 'Reels & Shorts Strategy', 'desc' => 'High-engagement short-form video strategy for Instagram Reels, YouTube Shorts, and LinkedIn Video. Trending audio, hook optimization, and viral content frameworks.'],
+        ['icon' => '🎬', 'title' => 'Video Production & Editing', 'desc' => 'End-to-end video production including scriptwriting, filming direction, professional editing, motion graphics, subtitles, and platform-specific formatting (16:9, 9:16, 1:1).'],
+        ['icon' => '📢', 'title' => 'Video Ad Campaigns', 'desc' => 'YouTube In-stream ads, Bumper ads, Discovery ads, and Shorts ads. Meta video ad campaigns and LinkedIn video ads optimized for awareness, traffic, and conversions.'],
+        ['icon' => '🌐', 'title' => 'Multi-Platform Distribution', 'desc' => 'Repurpose one video into 10 platform-native assets — long-form YouTube, Instagram Reels, LinkedIn clips, WhatsApp Status, YouTube Shorts, Twitter/X videos, and more.'],
+        ['icon' => '📊', 'title' => 'Video Analytics & Performance', 'desc' => 'YouTube Studio analytics, watch time optimization, CTR improvement, audience retention analysis, and monthly video performance reports with actionable insights.'],
+      ],
+      'process' => ['Video Audit & Strategy', 'Content Calendar & Scripting', 'Production & Editing', 'SEO Optimization & Upload', 'Multi-Platform Distribution', 'Analytics & Performance Review'],
+      'stats' => [['value' => '88%', 'label' => 'Marketers Get ROI from Video'], ['value' => '3x', 'label' => 'More Engagement vs Text'], ['value' => '2B+', 'label' => 'YouTube Monthly Users'], ['value' => '500M', 'label' => 'Daily Reels Plays']],
+    ],
+
+    'cro' => [
+      'icon' => '📈',
+      'title' => 'CRO — Conversion Rate Optimization',
+      'subtitle' => 'Turn More Visitors into Paying Customers Without Spending More on Ads. Scientific Testing That Maximizes Revenue from Existing Traffic.',
+      'features' => [
+        ['icon' => '🔬', 'title' => 'CRO Audit & Heuristic Analysis', 'desc' => 'Comprehensive audit of your website using LIFT model, PURE framework, and UX best practices. Identify conversion blockers, friction points, and quick-win opportunities.'],
+        ['icon' => '🌡️', 'title' => 'Heatmaps & Session Recordings', 'desc' => 'Hotjar, Microsoft Clarity, and FullStory analysis to understand exactly how users interact with your pages — where they click, scroll, drop off, and rage-click.'],
+        ['icon' => '🧪', 'title' => 'A/B & Multivariate Testing', 'desc' => 'Rigorous statistical A/B testing using VWO, Optimizely, or Google Optimize. Test headlines, CTAs, layouts, pricing displays, form lengths, and page structures.'],
+        ['icon' => '🎯', 'title' => 'Landing Page Optimization', 'desc' => 'High-converting landing page design and copy — above-the-fold optimization, value proposition clarity, social proof placement, and CTA hierarchy that drives action.'],
+        ['icon' => '📋', 'title' => 'Form & Checkout Optimization', 'desc' => 'Reduce form abandonment with smart field reduction, inline validation, progress indicators, and trust signals. E-commerce checkout optimization to recover lost revenue.'],
+        ['icon' => '📊', 'title' => 'CRO Analytics & Funnel Analysis', 'desc' => 'Full-funnel analysis using GA4, identifying micro-conversion bottlenecks, segment-level drop-off, and behavioral patterns that reveal high-value conversion opportunities.'],
+      ],
+      'process' => ['Data Collection & Funnel Audit', 'User Research & Heuristic Analysis', 'Hypothesis Generation & Prioritization', 'Test Design & Implementation', 'Statistical Analysis & Learning', 'Scale Winners & Iterate'],
+      'stats' => [['value' => '223%', 'label' => 'Average CRO ROI'], ['value' => '2-3x', 'label' => 'Conversion Rate Improvement'], ['value' => '49%', 'label' => 'Businesses Run A/B Tests'], ['value' => '0%', 'label' => 'Extra Ad Spend Needed']],
+    ],
+
+    'programmatic' => [
+      'icon' => '🖥️',
+      'title' => 'Programmatic & Display Advertising',
+      'subtitle' => 'Reach the Right Audience at the Right Moment Across 50,000+ Premium Publisher Websites with AI-Powered Real-Time Bidding.',
+      'features' => [
+        ['icon' => '⚡', 'title' => 'Real-Time Bidding (RTB)', 'desc' => 'Automated auction-based ad buying that places your ads in milliseconds on premium inventory. AI-powered bidding strategies that maximize reach and minimize cost per impression.'],
+        ['icon' => '🎯', 'title' => 'Advanced Audience Targeting', 'desc' => 'First-party data activation, contextual targeting, behavioral segments, demographic targeting, intent-based audiences, and lookalike modeling using your best customers.'],
+        ['icon' => '🖼️', 'title' => 'Creative Management & DCO', 'desc' => 'Dynamic Creative Optimization (DCO) automatically assembles personalized ad creatives for each user — combining the best headline, image, and CTA in real-time.'],
+        ['icon' => '📊', 'title' => 'DMP & Data Integration', 'desc' => 'Data Management Platform setup to unify first, second, and third-party data. CRM data onboarding, audience segmentation, and customer journey mapping across channels.'],
+        ['icon' => '🛡️', 'title' => 'Brand Safety & Viewability', 'desc' => 'Whitelist/blacklist management, category exclusions, fraud detection (IVT filtering), viewability optimization (MOAT, IAS, DoubleVerify), and premium PMP deals.'],
+        ['icon' => '📈', 'title' => 'Cross-Channel Attribution', 'desc' => 'Multi-touch attribution models that accurately credit programmatic\'s role in conversions. Identity resolution, data clean rooms, and unified cross-channel performance reporting.'],
+      ],
+      'process' => ['Audience & Inventory Strategy', 'DSP & DMP Setup', 'Creative Development & DCO', 'Campaign Launch & Targeting', 'Real-Time Optimization', 'Attribution & Performance Analysis'],
+      'stats' => [['value' => '50K+', 'label' => 'Publisher Sites Reached'], ['value' => '89%', 'label' => 'Programmatic Share of Display'], ['value' => '3.5x', 'label' => 'Better Targeting vs Traditional'], ['value' => '<1ms', 'label' => 'Real-Time Bidding Speed']],
     ],
   ];
 
