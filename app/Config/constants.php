@@ -71,7 +71,7 @@ define('GLOSSARY_PER_PAGE', 50);
 define('SEARCH_PER_PAGE',   20);
 
 // ── Version (for cache busting CSS/JS) ────────────────────
-define('ASSET_VERSION', '1.0.0');
+define('ASSET_VERSION', '2.1.0');
 
 // ── Date/Time Formats ──────────────────────────────────────
 define('DATE_FORMAT',          'd M Y');

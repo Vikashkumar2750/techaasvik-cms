@@ -783,7 +783,6 @@ blockquote {
   border-radius: 2px;
   transition: all var(--transition-base);
 }
-
 /* ============================================================
    CONTENT + SIDEBAR LAYOUT
    ============================================================ */
@@ -792,29 +791,51 @@ blockquote {
   grid-template-columns: minmax(0, 1fr) 280px;
   gap: var(--space-10);
   align-items: start;
+  /* Prevent grid blowout */
+  width: 100%;
+  max-width: 100%;
 }
+/* CRITICAL: all grid children must have min-width:0 */
+.layout-content-sidebar > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+/* But allow sidebar to scroll vertically */
+.layout-content-sidebar > aside,
+.layout-content-sidebar > .layout-sticky-sidebar {
+  overflow: visible;
+}
+
 .layout-sticky-sidebar {
   position: sticky;
   top: calc(var(--header-height) + var(--space-6));
   max-height: calc(100vh - var(--header-height) - var(--space-12));
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 @media (max-width: 1024px) {
   .layout-content-sidebar {
-    grid-template-columns: minmax(0, 1fr) 240px;
+    grid-template-columns: minmax(0, 1fr) 240px !important;
     gap: var(--space-8);
   }
 }
 @media (max-width: 768px) {
   .layout-content-sidebar {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     gap: var(--space-6);
   }
+  .layout-content-sidebar > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
   .layout-sticky-sidebar {
-    position: static;
-    max-height: none;
-    overflow-y: visible;
+    position: static !important;
+    top: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 }
 

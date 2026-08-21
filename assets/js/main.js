@@ -67,7 +67,11 @@
     menuToggle.addEventListener('click', () => {
       const isOpen = siteNav.classList.toggle('is-open');
       menuToggle.setAttribute('aria-expanded', String(isOpen));
-      // Animate toggle bars
+
+      // Lock body scroll when menu is open
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+
+      // Animate toggle bars → X
       const bars = menuToggle.querySelectorAll('span');
       if (isOpen) {
         bars[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
@@ -84,7 +88,18 @@
         siteNav.classList.remove('is-open');
         menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.querySelectorAll('span').forEach(b => { b.style.transform = ''; b.style.opacity = ''; });
+        document.body.style.overflow = '';
       }
+    });
+
+    // Close on nav link click (navigate away)
+    siteNav.querySelectorAll('.site-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        siteNav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.querySelectorAll('span').forEach(b => { b.style.transform = ''; b.style.opacity = ''; });
+        document.body.style.overflow = '';
+      });
     });
   }
 
