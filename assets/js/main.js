@@ -254,7 +254,36 @@
       const target = document.querySelector(a.getAttribute('href'));
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const headerH = document.getElementById('siteHeader')?.offsetHeight || 70;
+        const top = target.getBoundingClientRect().top + window.scrollY - headerH - 16;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ── Mobile TOC Toggle ────────────────────────────────────
+  const tocEls = document.querySelectorAll('.toc');
+  tocEls.forEach(toc => {
+    const tocTitle = toc.querySelector('.toc-title');
+    if (!tocTitle) return;
+    // Default: open on desktop, closed on mobile
+    function syncTocState() {
+      if (window.innerWidth <= 768) {
+        // mobile: closed by default unless already toggled
+        if (!toc.dataset.tocInit) {
+          toc.classList.remove('toc-open');
+          toc.dataset.tocInit = '1';
+        }
+      } else {
+        toc.classList.add('toc-open');
+      }
+    }
+    syncTocState();
+    window.addEventListener('resize', syncTocState, { passive: true });
+
+    tocTitle.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        toc.classList.toggle('toc-open');
       }
     });
   });
