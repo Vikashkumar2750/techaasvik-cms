@@ -72,7 +72,7 @@ if (!function_exists('navClass')) {
       </button>
 
       <!-- CTA -->
-      <a href="/free-audit" class="btn btn-primary btn-sm" id="headerCta">
+      <a href="/free-audit" class="btn btn-primary btn-sm header-cta-btn" id="headerCta">
         Free Audit ↗
       </a>
 

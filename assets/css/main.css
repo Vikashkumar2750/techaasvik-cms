@@ -1505,3 +1505,242 @@ blockquote {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ============================================================
+   UX POLISH — GLOBAL FIXES (all pages, both mobile + web)
+   ============================================================ */
+
+/* ── 1. Global: word-break for long titles ─────────────────── */
+h1, h2, h3, h4 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── 2. Section headers (flex between title and "View All" btn) */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+/* ── 3. Post/Article: tags row flex-wrap ────────────────────── */
+.post-tags, .post-meta-tags, .tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── 4. Hero stats: improved on all sizes ───────────────────── */
+.hero-stats {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border-subtle);
+}
+.hero-stat-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+.hero-stat-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── 5. Prose: cap h2/h3 size for readability ──────────────── */
+.prose h2 { font-size: clamp(var(--text-xl), 3vw, var(--text-3xl)); }
+.prose h3 { font-size: clamp(var(--text-lg), 2.5vw, var(--text-2xl)); }
+.prose h4 { font-size: var(--text-xl); }
+
+/* ── 6. Author box: proper flex layout ─────────────────────── */
+.author-box {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin: var(--space-10) 0;
+}
+.author-box-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.author-box-info { flex: 1; min-width: 0; }
+.author-box-name { font-weight: var(--fw-semibold); color: var(--text-primary); margin-bottom: var(--space-1); }
+.author-box-bio { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-relaxed); }
+
+/* ── 7. Breadcrumb: don't overflow ─────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+}
+.breadcrumb a { color: var(--text-muted); }
+.breadcrumb a:hover { color: var(--brand-400); }
+.breadcrumb-sep { opacity: 0.4; }
+
+/* ── 8. Glossary alphabet nav: flex-wrap ────────────────────── */
+.glossary-alpha, .alpha-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── 9. Process steps: hide arrows on mobile cleanly ──────── */
+.process-arrow { display: inline-flex; align-items: center; }
+
+/* ── 10. Newsletter form: always stack on wrap ──────────────── */
+.newsletter-form {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.newsletter-form .form-input { flex: 1; min-width: 200px; }
+
+/* ── 11. Inline style flex headers — universal fix ─────────── */
+[style*="justify-content:space-between"][style*="display:flex"] {
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ── 12. Card grids — consistent gaps ──────────────────────── */
+.grid.gap-6 { gap: var(--space-6); }
+.grid.gap-4 { gap: var(--space-4); }
+
+
+/* ============================================================
+   UX POLISH — MOBILE OVERRIDES (≤768px)
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* Section padding reduction */
+  .section    { padding: var(--space-12) 0; }
+  .section-sm { padding: var(--space-8) 0; }
+  .section-lg { padding: var(--space-16) 0; }
+
+  /* Section header: stack on mobile */
+  .section-header { margin-bottom: var(--space-6); }
+  .section-header .btn-secondary,
+  .section-header .btn-sm { width: 100%; justify-content: center; }
+
+  /* Hero stats: 2x2 grid on mobile */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+  }
+  .hero-stat-value { font-size: var(--text-xl); }
+
+  /* Prose mobile typography */
+  .prose h2 { font-size: var(--text-xl); margin: var(--space-8) 0 var(--space-3); }
+  .prose h3 { font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-2); }
+  .prose ul, .prose ol { padding-left: var(--space-5); }
+
+  /* Post article image: limit height on mobile */
+  .post-card-image { max-height: 220px; }
+  .post-hero-image { max-height: 240px; object-fit: cover; }
+
+  /* Author box: stack on mobile */
+  .author-box {
+    flex-direction: column;
+    padding: var(--space-5);
+    gap: var(--space-4);
+  }
+  .author-box-avatar { width: 48px; height: 48px; }
+
+  /* Breadcrumb: smaller text */
+  .breadcrumb { font-size: var(--text-xs); margin-bottom: var(--space-4); }
+
+  /* Card interactive: reduce padding */
+  .card-interactive { padding: var(--space-4); }
+
+  /* Process steps: hide separator arrows */
+  .process-arrow { display: none; }
+
+  /* Newsletter form: full stack */
+  .newsletter-form { flex-direction: column; }
+  .newsletter-form .form-input { min-width: 0; }
+  .newsletter-form .btn { width: 100%; justify-content: center; }
+
+  /* Contact card: reduce mobile padding */
+  .contact-card { padding: var(--space-5) !important; }
+
+  /* Service single: feature card padding */
+  .card.card-interactive { padding: var(--space-4); }
+
+  /* Services svc-stat font */
+  .svc-stat-value { font-size: var(--text-2xl) !important; }
+
+  /* Footer newsletter row */
+  .footer-newsletter-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  /* Inline style flex between → wrap */
+  [style*="display:flex;align-items:center;justify-content:space-between"] {
+    flex-wrap: wrap !important;
+    gap: var(--space-3) !important;
+  }
+
+  /* Reduce heading padding-top in container */
+  .container > h1:first-child,
+  .container > h2:first-child { margin-top: 0; }
+
+  /* Safe area bottom padding for forms (notch phones) */
+  .audit-form-card, .contact-form-card {
+    padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
+  }
+}
+
+/* ── Very small screens (≤420px) ──────────────────────────── */
+@media (max-width: 420px) {
+  /* Hide header "Free Audit" btn — too cramped */
+  .header-cta-btn { display: none !important; }
+
+  /* Remove border from last mobile nav link */
+  .site-nav.is-open .site-nav-link:last-child { border-bottom: none; }
+
+  /* Smaller container padding */
+  .container { padding: 0 var(--space-3); }
+
+  /* Hero title line-height tighter */
+  .hero-title { line-height: 1.2; }
+
+  /* Stats: single column */
+  .hero-stats { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+
+  /* Process steps: full width pills */
+  [style*="display:flex;gap:var(--space-3);flex-wrap:wrap"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  [style*="display:flex;gap:var(--space-3);flex-wrap:wrap"] > div {
+    width: 100% !important;
+  }
+
+  /* Smaller card padding */
+  .card { padding: var(--space-4); }
+  .card-glass { padding: var(--space-4); }
+
+  /* Tags smaller */
+  .tag { font-size: 10px; padding: 2px var(--space-2); }
+}
+
