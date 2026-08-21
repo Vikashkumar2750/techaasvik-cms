@@ -24,6 +24,7 @@ $router->get('/privacy-policy',      'PageController@legal',       'privacy');
 $router->get('/terms-of-service',    'PageController@legal',       'terms');
 $router->get('/editorial-policy',    'PageController@legal',       'editorial');
 $router->get('/disclaimer',          'PageController@legal',       'disclaimer');
+$router->get('/free-audit',          'PageController@freeAudit',   'free-audit');
 $router->get('/services',            'PageController@services',    'services');
 $router->get('/services/{slug}',     'PageController@service',     'service');
 

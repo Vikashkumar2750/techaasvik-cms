@@ -72,11 +72,22 @@ class PageController extends Controller
     {
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Digital Marketing Services — TechAasvik',
-            'Expert digital marketing services including SEO, Google Ads, Meta Ads, content marketing, analytics, and full-funnel performance marketing for businesses in India and globally.',
+            'Digital Marketing Services — SEO, GEO, AI Marketing & More | TechAasvik',
+            'Expert digital marketing services including SEO, GEO, AEO, AI Marketing, Google Ads, Meta Ads, content marketing, CRO, and video marketing for businesses in India and globally.',
             'https://t1.techaasvik.com/services'
         );
         $this->view('services', ['seo' => $seo]);
+    }
+
+    public function freeAudit(array $params = []): void
+    {
+        $seoSvc = new SeoService();
+        $seo = $seoSvc->buildStatic(
+            'Get a Free Digital Marketing Audit — TechAasvik',
+            'Request your free digital marketing audit. Our certified experts will analyse your SEO, GEO visibility, Google Ads, Meta Ads, and deliver a personalised 90-day action plan within 24 hours.',
+            'https://t1.techaasvik.com/free-audit'
+        );
+        $this->view('free-audit', ['seo' => $seo]);
     }
 
     public function service(array $params = []): void

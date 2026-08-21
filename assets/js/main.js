@@ -1,11 +1,52 @@
 /**
  * TECHAASVIK.COM — MAIN JAVASCRIPT
  * Handles: navigation, search overlay, newsletter forms, audit forms,
- *          reading progress, mobile menu, lazy load, FAQ accordion
+ *          reading progress, mobile menu, lazy load, FAQ accordion,
+ *          theme toggle (dark/light mode)
  */
 
 (function () {
   'use strict';
+
+  // ── Theme Toggle (Dark / Light Mode) ─────────────────────
+  const THEME_KEY  = 'ta-theme';
+  const htmlEl     = document.documentElement;
+
+  /**
+   * Apply theme: persist to localStorage + set data-theme attribute.
+   * @param {'dark'|'light'} theme
+   */
+  function applyTheme(theme) {
+    htmlEl.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  // Initialise: stored preference → system preference → dark (default)
+  (function initTheme() {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'light' || stored === 'dark') {
+      applyTheme(stored);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      applyTheme('light');
+    }
+    // else: leave as dark (CSS default, no data-theme attribute needed)
+  })();
+
+  // Wire up toggle button
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = htmlEl.getAttribute('data-theme');
+      applyTheme(current === 'light' ? 'dark' : 'light');
+    });
+  }
+
+  // Sync across tabs
+  window.addEventListener('storage', e => {
+    if (e.key === THEME_KEY && (e.newValue === 'light' || e.newValue === 'dark')) {
+      htmlEl.setAttribute('data-theme', e.newValue);
+    }
+  });
 
   // ── Reading Progress Bar ────────────────────────────────────
   const progressBar = document.getElementById('readingProgress');

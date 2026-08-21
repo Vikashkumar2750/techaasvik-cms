@@ -90,13 +90,25 @@ class LeadController extends Controller
             return;
         }
 
+        $service  = $this->request->post('service', '');
+        $budget   = $this->request->post('budget', '');
+        $message  = $this->request->post('message', '');
+        $msgFull  = implode("\n", array_filter([
+            $service  ? 'Service: '  . $service  : '',
+            $budget   ? 'Budget: '   . $budget   : '',
+            $message  ? 'Notes: '    . $message  : '',
+        ]));
+
         $lead = new Lead();
         $data = [
             'email'       => $email,
             'name'        => $this->request->post('name', ''),
+            'phone'       => $this->request->post('phone', ''),
+            'company'     => $this->request->post('company', ''),
             'website'     => $website,
+            'message'     => $msgFull,
             'lead_type'   => 'audit',
-            'source_page' => $_SERVER['HTTP_REFERER'] ?? '',
+            'source_page' => $this->request->post('source_page', $_SERVER['HTTP_REFERER'] ?? ''),
         ];
         $lead->capture($data);
 
