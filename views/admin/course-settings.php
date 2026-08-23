@@ -51,6 +51,33 @@ $tabs = ['pricing' => '💰 Pricing', 'cert' => '🎓 Certificate', 'email' => '
     <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:8px;padding:14px;margin-bottom:20px;font-size:13px;color:var(--admin-text-muted);">
       💡 Current display: <strong>₹<?= $s['course_price_sale']??199 ?></strong> (was ₹<?= $s['course_price_original']??999 ?>) · <?= round((($s['course_price_original']??999)-($s['course_price_sale']??199))/($s['course_price_original']??999)*100) ?>% off
     </div>
+
+    <!-- Processing fee -->
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Processing Fee (%) <span style="color:var(--admin-text-muted);font-weight:400;">— added on top of sale price (1.5 = 1.5%)</span></label>
+      <input type="number" name="processing_fee_pct" class="admin-input" value="<?= htmlspecialchars($s['processing_fee_pct']??'1.5') ?>" step="0.1" min="0" max="10">
+      <div style="font-size:11px;color:var(--admin-text-muted);margin-top:4px;">On ₹<?= $s['course_price_sale']??199 ?> → fee = ₹<?= round(($s['course_price_sale']??199) * ($s['processing_fee_pct']??1.5) / 100, 2) ?> → total ₹<?= round(($s['course_price_sale']??199) * (1 + ($s['processing_fee_pct']??1.5)/100), 2) ?></div>
+    </div>
+
+    <!-- Grade thresholds -->
+    <div style="margin-bottom:8px;">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:10px;">Grade Thresholds (% minimum score)</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:12px;color:#059669;font-weight:600;">Grade A (Distinction)</label>
+          <input type="number" name="course_grade_a_min" class="admin-input" value="<?= htmlspecialchars($s['course_grade_a_min']??'85') ?>" min="0" max="100" style="margin-top:4px;">
+        </div>
+        <div>
+          <label style="font-size:12px;color:#6366f1;font-weight:600;">Grade B (Merit)</label>
+          <input type="number" name="course_grade_b_min" class="admin-input" value="<?= htmlspecialchars($s['course_grade_b_min']??'70') ?>" min="0" max="100" style="margin-top:4px;">
+        </div>
+        <div>
+          <label style="font-size:12px;color:#d97706;font-weight:600;">Grade C (Pass)</label>
+          <input type="number" name="course_grade_c_min" class="admin-input" value="<?= htmlspecialchars($s['course_grade_c_min']??'60') ?>" min="0" max="100" style="margin-top:4px;">
+        </div>
+      </div>
+    </div>
+
     <input type="hidden" name="video_enabled" value="<?= $s['video_enabled']??'0' ?>">
     <input type="hidden" name="cert_signatory_name" value="<?= htmlspecialchars($s['cert_signatory_name']??'') ?>">
     <input type="hidden" name="smtp_provider" value="<?= htmlspecialchars($s['smtp_provider']??'') ?>">
@@ -60,7 +87,7 @@ $tabs = ['pricing' => '💰 Pricing', 'cert' => '🎓 Certificate', 'email' => '
     <input type="hidden" name="smtp_user" value="<?= htmlspecialchars($s['smtp_user']??'') ?>">
     <input type="hidden" name="smtp_from_name" value="<?= htmlspecialchars($s['smtp_from_name']??'') ?>">
     <input type="hidden" name="smtp_from_email" value="<?= htmlspecialchars($s['smtp_from_email']??'') ?>">
-    <button type="submit" class="admin-btn admin-btn-primary">Save Pricing</button>
+    <button type="submit" class="admin-btn admin-btn-primary">Save Pricing & Settings</button>
   </div>
 
   <?php elseif($activeTab === 'cert'): ?>

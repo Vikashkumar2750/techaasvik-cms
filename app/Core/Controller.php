@@ -108,7 +108,9 @@ abstract class Controller
     protected function verifyCsrf(): void
     {
         Auth::startSession();
-        $token = $this->request->post('_csrf_token', '');
+        // Accept both _csrf_token (form default) and csrf_token (AJAX)
+        $token = $this->request->post('_csrf_token', '')
+               ?: $this->request->post('csrf_token', '');
         if (!Auth::verifyCsrf($token)) {
             $this->json(['error' => 'Invalid CSRF token.'], 403);
         }

@@ -1,306 +1,507 @@
-<!-- Course Player — Left sidebar + Right content -->
+<!-- Course Player v2 — Submodule sidebar + AJAX content panel -->
 <?php
 use Core\Auth;
 Auth::startSession();
-$csrfToken  = Auth::csrfToken();
-$moduleNum  = $moduleNum  ?? 1;
-$totalModules = $totalModules ?? 10;
-$freeCount  = $freeCount  ?? 5;
-$isPaid     = $isPaid     ?? false;
-$module     = $module     ?? [];
-$allModules = $allModules ?? [];
-$progress   = $progress   ?? [];
-$videoEnabled = $videoEnabled ?? false;
-$priceOrig  = $priceOrig  ?? 999;
-$priceSale  = $priceSale  ?? 199;
-$cert       = $cert       ?? null;
-$courseSlug = 'ai-marketing-course';
-?>
+$csrfToken      = Auth::csrfToken();
+$moduleNum      = $moduleNum      ?? 1;
+$submoduleNum   = $submoduleNum   ?? 1;
+$totalModules   = $totalModules   ?? 10;
+$freeCount      = $freeCount      ?? 5;
+$isPaid         = $isPaid         ?? false;
+$module         = $module         ?? [];
+$allModules     = $allModules     ?? [];
+$submodules     = $submodules     ?? [];
+$currentSub     = $currentSub     ?? [];
+$progress       = $progress       ?? [];
+$completedSubKeys = $completedSubKeys ?? [];
+$videoEnabled   = $videoEnabled   ?? false;
+$priceOrig      = $priceOrig      ?? 999;
+$priceSale      = $priceSale      ?? 199;
+$processingFeePct = $processingFeePct ?? 1.5;
+$cert           = $cert           ?? null;
+$overallScore   = $overallScore   ?? 0;
+$grade          = $grade          ?? 'Pass';
+$courseSlug     = 'ai-marketing-course';
+$enrollment     = $enrollment     ?? [];
 
-<!-- Override layout padding for full-height player -->
+// Progress counts
+$doneModules = count(array_filter($progress, fn($p) => $p['completed']));
+$totalSubs   = count($allModules) * 5;
+$doneSubs    = count($completedSubKeys);
+$pct         = $totalSubs > 0 ? round($doneSubs / $totalSubs * 100) : 0;
+?>
 <style>
-.player-wrap { display:grid; grid-template-columns:280px 1fr; min-height:calc(100vh - 64px); }
-.player-sidebar {
-  background:var(--bg-surface);
-  border-right:1px solid var(--border-subtle);
-  position:sticky; top:64px; height:calc(100vh - 64px);
-  overflow-y:auto; flex-shrink:0;
+/* ── Player Layout ─────────────────────────────────────────────── */
+.player-wrap {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: calc(100vh - 64px);
+  background: var(--bg-base);
 }
-.player-sidebar::-webkit-scrollbar { width:4px; }
-.player-sidebar::-webkit-scrollbar-thumb { background:var(--border-subtle); border-radius:2px; }
-.player-main { overflow-y:auto; height:calc(100vh - 64px); }
-.mod-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-left:3px solid transparent; cursor:pointer; transition:all 0.15s; text-decoration:none; }
-.mod-item:hover { background:var(--bg-elevated); }
-.mod-item.active { border-left-color:var(--brand-primary); background:rgba(99,102,241,0.06); }
-.mod-item.locked { opacity:0.5; cursor:default; }
-.quiz-option { display:flex; align-items:flex-start; gap:10px; padding:14px; border:1px solid var(--border-subtle); border-radius:var(--radius-md); cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
-.quiz-option:hover { border-color:var(--brand-primary); background:rgba(99,102,241,0.04); }
-.quiz-option.selected { border-color:var(--brand-primary); background:rgba(99,102,241,0.08); }
-.quiz-option.correct { border-color:#34d399; background:rgba(52,211,153,0.08); }
-.quiz-option.wrong { border-color:#f87171; background:rgba(248,113,113,0.08); }
-@media(max-width:900px){
-  .player-wrap { grid-template-columns:1fr; }
-  .player-sidebar { position:fixed; left:-100%; width:280px; top:64px; height:calc(100vh - 64px); z-index:900; transition:left 0.3s; }
-  .player-sidebar.mob-open { left:0; }
-  .player-main { height:auto; overflow-y:visible; }
+.player-sidebar {
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  position: sticky; top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto; flex-shrink: 0;
+  display: flex; flex-direction: column;
+}
+.player-sidebar::-webkit-scrollbar { width: 4px; }
+.player-sidebar::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
+.player-main { overflow-y: auto; height: calc(100vh - 64px); }
+
+/* ── Sidebar Module Items ──────────────────────────────────────── */
+.mod-group { border-bottom: 1px solid var(--border-subtle); }
+.mod-header {
+  display: flex; align-items: center; gap:10px;
+  padding: 12px 16px; cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.mod-header:hover { background: var(--bg-elevated); }
+.mod-header.active { background: rgba(99,102,241,0.06); }
+.mod-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+  background: var(--bg-elevated); color: var(--text-muted);
+}
+.mod-num.done { background: #34d399; color: #fff; }
+.mod-num.active { background: #6366f1; color: #fff; }
+.mod-num.locked { background: var(--bg-elevated); color: var(--border-subtle); }
+.mod-title-text { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.35; flex: 1; }
+.mod-chevron { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.mod-group.expanded .mod-chevron { transform: rotate(90deg); }
+
+/* ── Submodule Items ───────────────────────────────────────────── */
+.sub-list { display: none; }
+.mod-group.expanded .sub-list { display: block; }
+.sub-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px 8px 52px;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.15s; position: relative;
+  font-size: 12px; color: var(--text-secondary);
+}
+.sub-item:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.sub-item.active { color: #6366f1; font-weight: 600; }
+.sub-item.done::after {
+  content: '✓'; position: absolute; right: 12px;
+  font-size: 11px; color: #34d399; font-weight: 700;
+}
+.sub-item.locked { opacity: 0.45; cursor: default; }
+.sub-type-badge {
+  font-size: 10px; padding: 2px 6px; border-radius: 4px;
+  background: rgba(99,102,241,0.1); color: #6366f1; font-weight: 600;
+  flex-shrink: 0;
+}
+.sub-type-badge.quiz { background: rgba(245,158,11,0.1); color: #f59e0b; }
+
+/* ── Content Panel ─────────────────────────────────────────────── */
+.player-content { padding: 32px 40px; max-width: 820px; }
+.sub-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px; padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sub-badge {
+  padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700;
+  background: rgba(99,102,241,0.1); color: #6366f1; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.sub-badge.quiz { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.sub-complete-btn {
+  margin-top: 28px; padding: 12px 24px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff; border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: opacity 0.2s;
+}
+.sub-complete-btn:hover { opacity: 0.9; }
+.sub-complete-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Infographic / Visual Cards ───────────────────────────────── */
+.visual-card {
+  background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.03));
+  border: 1px solid rgba(99,102,241,0.12); border-radius: 12px;
+  padding: 24px; margin: 20px 0;
+}
+.visual-card h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+.visual-steps { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.visual-step {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-elevated); border-radius: 8px;
+  padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary);
+}
+.visual-step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ── Quiz Styles ───────────────────────────────────────────────── */
+.quiz-wrap { max-width: 640px; }
+.quiz-q { margin-bottom: 24px; }
+.quiz-q-text { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; line-height: 1.5; }
+.quiz-option {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border: 1.5px solid var(--border-subtle); border-radius: 10px;
+  cursor: pointer; transition: all 0.15s; margin-bottom: 8px;
+}
+.quiz-option:hover { border-color: #6366f1; background: rgba(99,102,241,0.03); }
+.quiz-option.selected { border-color: #6366f1; background: rgba(99,102,241,0.07); }
+.quiz-option.correct { border-color: #34d399; background: rgba(52,211,153,0.08); }
+.quiz-option.wrong { border-color: #f87171; background: rgba(248,113,113,0.08); }
+.quiz-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border-subtle);
+  flex-shrink: 0; margin-top: 1px;
+  transition: all 0.15s;
+}
+.quiz-option.selected .quiz-radio { border-color: #6366f1; background: #6366f1; }
+.quiz-result {
+  text-align: center; padding: 28px;
+  border-radius: 12px; margin-top: 20px;
+}
+.quiz-result.pass { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); }
+.quiz-result.fail { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); }
+.quiz-score-big { font-size: 48px; font-weight: 900; line-height: 1; }
+
+/* ── Grade Badge ───────────────────────────────────────────────── */
+.grade-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 14px; border-radius: 100px; font-size: 13px; font-weight: 700;
+}
+.grade-A { background: rgba(52,211,153,0.15); color: #059669; }
+.grade-B { background: rgba(99,102,241,0.12); color: #6366f1; }
+.grade-C { background: rgba(245,158,11,0.12); color: #d97706; }
+.grade-Pass { background: rgba(100,116,139,0.12); color: #64748b; }
+
+/* ── Mobile Sidebar ────────────────────────────────────────────── */
+.mob-menu-btn {
+  display: none;
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #6366f1; color: #fff;
+  border: none; border-radius: 100px; padding: 12px 24px;
+  font-size: 14px; font-weight: 600; z-index: 910; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+  gap: 8px; align-items: center;
+}
+.mob-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 890; backdrop-filter: blur(2px);
+}
+@media (max-width: 900px) {
+  .player-wrap { grid-template-columns: 1fr; }
+  .player-sidebar {
+    position: fixed; left: -100%; width: 300px; top: 64px;
+    height: calc(100vh - 64px); z-index: 900; transition: left 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .player-sidebar.mob-open { left: 0; }
+  .player-main { height: auto; overflow-y: visible; }
+  .player-content { padding: 20px 16px 80px; }
+  .mob-menu-btn { display: flex; }
+  .mob-overlay.show { display: block; }
+}
+@media (max-width: 480px) {
+  .sub-header { flex-wrap: wrap; gap: 8px; }
+  .visual-steps { flex-direction: column; }
 }
 </style>
 
+<!-- Mobile overlay -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
 <div class="player-wrap" id="playerWrap">
 
-  <!-- ── LEFT SIDEBAR ── -->
+  <!-- ── LEFT SIDEBAR ─────────────────────────────────────────── -->
   <aside class="player-sidebar" id="playerSidebar">
-    <!-- Course header -->
-    <div style="padding:var(--space-4);border-bottom:1px solid var(--border-subtle);">
-      <a href="/courses/<?= $courseSlug ?>" style="font-size:11px;color:var(--text-muted);text-decoration:none;display:block;margin-bottom:6px;">← Back to Course</a>
-      <div style="font-size:13px;font-weight:700;color:var(--text-primary);line-height:1.3;">AI Marketing &amp; ChatGPT SEO</div>
-      <?php
-      $done = count(array_filter($progress, fn($p) => $p['completed']));
-      $pct  = $totalModules > 0 ? round($done / $totalModules * 100) : 0;
-      ?>
+
+    <!-- Course info + progress -->
+    <div style="padding:16px;border-bottom:1px solid var(--border-subtle);">
+      <a href="/courses/<?= $courseSlug ?>" style="font-size:11px;color:var(--text-muted);text-decoration:none;display:block;margin-bottom:8px;">← Back to Course</a>
+      <div style="font-size:13px;font-weight:700;color:var(--text-primary);line-height:1.3;">AI Marketing & ChatGPT SEO</div>
+
+      <!-- Grade badge if score exists -->
+      <?php if ($overallScore > 0): ?>
+      <div style="margin-top:8px;">
+        <span class="grade-badge grade-<?= htmlspecialchars($grade) ?>">
+          Grade <?= htmlspecialchars($grade) ?> · <?= $overallScore ?>%
+        </span>
+      </div>
+      <?php endif; ?>
+
+      <!-- Progress bar -->
       <div style="margin-top:10px;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px;">
-          <span>Progress</span><span><?= $done ?>/<?= $totalModules ?> modules</span>
+          <span>Progress</span><span><?= $doneSubs ?>/<?= $totalSubs ?> lessons</span>
         </div>
-        <div style="height:4px;background:var(--bg-elevated);border-radius:2px;overflow:hidden;">
-          <div style="width:<?= $pct ?>%;height:100%;background:linear-gradient(90deg,#6366f1,#34d399);transition:width 0.5s;"></div>
+        <div style="height:5px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;">
+          <div id="progressBar" style="width:<?= $pct ?>%;height:100%;background:linear-gradient(90deg,#6366f1,#34d399);transition:width 0.5s;"></div>
         </div>
       </div>
     </div>
 
-    <!-- Module List -->
-    <nav style="padding:var(--space-2) 0;">
-      <?php foreach($allModules as $mod): ?>
-      <?php
-        $mNum    = $mod['num'];
-        $isDone  = !empty($progress[$mNum]['completed']);
+    <!-- Module + Submodule tree -->
+    <nav style="flex:1;overflow-y:auto;padding:8px 0;" id="modNav">
+      <?php foreach ($allModules as $mod):
+        $mNum     = $mod['num'];
+        $isDone   = !empty($progress[$mNum]['completed']);
         $isLocked = $mNum > $freeCount && !$isPaid;
-        $isCurrent = $mNum === $moduleNum;
-        $href    = $isLocked ? '#' : "/courses/{$courseSlug}/learn/{$mNum}";
-        $classes = 'mod-item' . ($isCurrent ? ' active' : '') . ($isLocked ? ' locked' : '');
+        $isCurrent= $mNum === $moduleNum;
+        $modSubs  = []; // We'll generate submodule keys on client side for display
+        // Submodule items for this module
+        $modSubKeys = array_map(fn($s) => $mNum . '-' . $s, range(1, 5));
+        $allSubDone = !$isLocked && count(array_filter($modSubKeys, fn($k) => in_array($k, $completedSubKeys))) === 5;
       ?>
-      <a href="<?= $href ?>" class="<?= $classes ?>"
-         <?= $isLocked ? 'onclick="showPaywall();return false;"' : '' ?>
-         id="mod-nav-<?= $mNum ?>">
-        <div style="width:26px;height:26px;border-radius:50%;border:2px solid <?= $isDone ? '#34d399' : ($isCurrent ? 'var(--brand-primary)' : 'var(--border-subtle)') ?>;background:<?= $isDone ? 'rgba(52,211,153,0.1)' : ($isCurrent ? 'rgba(99,102,241,0.1)' : 'transparent') ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:<?= $isDone ? '#34d399' : ($isCurrent ? 'var(--brand-primary)' : 'var(--text-muted)') ?>;">
-          <?= $isDone ? '✓' : ($isLocked ? '🔒' : $mNum) ?>
+      <div class="mod-group <?= $isCurrent ? 'expanded' : '' ?>" id="modGroup<?= $mNum ?>">
+        <div class="mod-header <?= $isCurrent ? 'active' : '' ?>"
+             onclick="<?= $isLocked ? "showPaywall()" : "toggleMod($mNum)" ?>">
+          <div class="mod-num <?= $isDone || $allSubDone ? 'done' : ($isCurrent ? 'active' : ($isLocked ? 'locked' : '')) ?>">
+            <?php if ($isDone || $allSubDone): ?>✓
+            <?php elseif ($isLocked): ?>🔒
+            <?php else: ?><?= $mNum ?>
+            <?php endif; ?>
+          </div>
+          <div style="flex:1;">
+            <div class="mod-title-text"><?= htmlspecialchars($mod['title']) ?></div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:2px;"><?= $mod['duration'] ?? '45 min' ?> · 5 lessons</div>
+          </div>
+          <?php if (!$isLocked): ?>
+          <span class="mod-chevron">▶</span>
+          <?php endif; ?>
         </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:12px;font-weight:<?= $isCurrent ? '700' : '500' ?>;color:<?= $isCurrent ? 'var(--text-primary)' : 'var(--text-secondary)' ?>;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($mod['title']) ?></div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;"><?= $mod['duration'] ?></div>
+
+        <?php if (!$isLocked): ?>
+        <div class="sub-list" id="subList<?= $mNum ?>">
+          <?php
+          $subTitles = [
+            1 => ['Overview & Mindset', "AI's Impact on Marketing", 'Search & Content Shift', 'Automation & Personalization', 'Quiz'],
+            2 => ['ChatGPT Basics for Marketers', 'Context Engineering', 'The CRAFT Framework', 'Building Reusable Workflows', 'Quiz'],
+            3 => ['Research Mindset', 'Customer & Competitor Intel', 'Mining Reviews & Gaps', 'Positioning Framework', 'Quiz'],
+            4 => ['Keyword Strategy with AI', 'Topical Authority Clusters', 'AI Content Briefs', 'Content Refresh System', 'Quiz'],
+            5 => ['AI Content at Scale', 'E-E-A-T & Brand Voice', 'Multimedia & Repurposing', '30-Day Content System', 'Quiz'],
+            6 => ['GEO Fundamentals', 'AI Overview Optimization', 'Entity Signals & Schema', 'AEO Answer Engineering', 'Quiz'],
+            7 => ['Google Performance Max', 'Meta Advantage+ Ads', 'AI Bidding & Signals', 'ROAS Scaling System', 'Quiz'],
+            8 => ['CRO with AI', 'Lead Scoring & Nurturing', 'n8n Workflow Automation', 'Email Sequences', 'Quiz'],
+            9 => ['GA4 Setup & Events', 'Attribution Models', 'CAC, LTV & North Star', 'Marketing Diagnosis', 'Quiz'],
+            10 => ['Build Your AI Marketing OS', 'Capstone: Real Business Plan', 'AI Safety & Ethics', 'Career Roadmap & Next Steps', 'Quiz'],
+          ];
+          $thisSubs = $subTitles[$mNum] ?? ['Part 1','Part 2','Part 3','Part 4','Quiz'];
+          foreach ($thisSubs as $sIdx => $sTitle):
+            $sNum    = $sIdx + 1;
+            $subKey  = $mNum . '-' . $sNum;
+            $isQuiz  = $sIdx === 4;
+            $isDoneS = in_array($subKey, $completedSubKeys);
+            $isCurS  = $mNum === $moduleNum && $sNum === $submoduleNum;
+            $href    = "/courses/{$courseSlug}/learn/{$mNum}/{$sNum}";
+          ?>
+          <a href="<?= $href ?>"
+             class="sub-item <?= $isDoneS ? 'done' : '' ?> <?= $isCurS ? 'active' : '' ?>"
+             title="<?= htmlspecialchars($sTitle) ?>">
+            <?= $isQuiz ? '📝' : '📖' ?>
+            <span style="flex:1;line-height:1.3;"><?= htmlspecialchars($sTitle) ?></span>
+            <?php if ($isQuiz): ?><span class="sub-type-badge quiz">Quiz</span><?php endif; ?>
+          </a>
+          <?php endforeach; ?>
         </div>
-      </a>
+        <?php else: ?>
+        <!-- Locked module teaser -->
+        <div style="padding:8px 16px 8px 52px;">
+          <div style="font-size:11px;color:var(--text-muted);padding:8px;background:var(--bg-elevated);border-radius:6px;">
+            🔒 Unlock for ₹<?= number_format($priceSale) ?>
+          </div>
+        </div>
+        <?php endif; ?>
+      </div>
       <?php endforeach; ?>
     </nav>
 
+    <!-- Upgrade CTA for free users -->
     <?php if (!$isPaid): ?>
-    <div style="margin:var(--space-3);padding:var(--space-4);background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-lg);">
-      <div style="font-size:12px;font-weight:700;margin-bottom:6px;">🔓 Unlock All Modules</div>
-      <p style="font-size:11px;color:var(--text-muted);line-height:1.5;margin-bottom:10px;">Get modules 6–10 + certificate for just ₹<?= number_format($priceSale) ?></p>
-      <a href="/courses/<?= $courseSlug ?>/enroll" class="btn btn-primary" style="width:100%;justify-content:center;text-align:center;font-size:12px;padding:8px;" id="btn-sidebar-unlock">Unlock ₹<?= number_format($priceSale) ?></a>
+    <div style="padding:12px;border-top:1px solid var(--border-subtle);">
+      <a href="/courses/<?= $courseSlug ?>/enroll" style="display:block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">
+        🔓 Unlock All 10 Modules — ₹<?= number_format($priceSale) ?>
+      </a>
     </div>
     <?php endif; ?>
   </aside>
 
-  <!-- ── RIGHT CONTENT ── -->
+  <!-- ── RIGHT CONTENT PANEL ──────────────────────────────────── -->
   <main class="player-main" id="playerMain">
-    <div style="max-width:800px;margin:0 auto;padding:var(--space-8) var(--space-6);">
+    <div class="player-content" id="playerContent">
 
-      <!-- Mobile: Hamburger -->
-      <button onclick="document.getElementById('playerSidebar').classList.toggle('mob-open')" style="display:none;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:8px 12px;font-size:13px;color:var(--text-secondary);margin-bottom:var(--space-5);cursor:pointer;" class="mob-menu-btn" id="playerMobMenu">
-        ☰ Modules
-      </button>
+      <!-- Submodule header -->
+      <div class="sub-header">
+        <span class="sub-badge <?= ($currentSub['type'] ?? '') === 'quiz' ? 'quiz' : '' ?>">
+          <?= ($currentSub['type'] ?? 'lesson') === 'quiz' ? '📝 Quiz' : '📖 Lesson' ?>
+        </span>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">
+            Module <?= $moduleNum ?> · Lesson <?= $submoduleNum ?>/5
+          </div>
+          <h1 style="font-size:20px;font-weight:800;color:var(--text-primary);line-height:1.3;margin:0;">
+            <?= htmlspecialchars($currentSub['title'] ?? $module['title'] ?? 'Loading...') ?>
+          </h1>
+        </div>
 
-      <!-- Module Header -->
-      <div style="margin-bottom:var(--space-6);">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--space-3);flex-wrap:wrap;">
-          <span style="background:var(--bg-surface);border:1px solid var(--border-subtle);font-size:11px;color:var(--text-muted);padding:3px 10px;border-radius:100px;">Module <?= $moduleNum ?> of <?= $totalModules ?></span>
-          <?php if($module['free']): ?>
-          <span style="background:rgba(52,211,153,0.15);color:#34d399;font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;">FREE</span>
+        <?php if ($overallScore > 0): ?>
+        <div style="margin-left:auto;text-align:right;">
+          <div style="font-size:10px;color:var(--text-muted);">Your Grade</div>
+          <span class="grade-badge grade-<?= htmlspecialchars($grade) ?>" style="font-size:15px;">
+            <?= htmlspecialchars($grade) ?>
+          </span>
+        </div>
+        <?php endif; ?>
+      </div>
+
+      <!-- ── LESSON CONTENT or QUIZ ── -->
+      <?php $subKey = $moduleNum . '-' . $submoduleNum; ?>
+      <?php $isQuizSub = ($currentSub['type'] ?? '') === 'quiz'; ?>
+
+      <?php if ($isQuizSub): ?>
+        <!-- QUIZ SUBMODULE -->
+        <?php include APP_ROOT . '/views/partials/course-quiz-inline.php'; ?>
+      <?php else: ?>
+        <!-- LESSON CONTENT with visual -->
+        <?php include APP_ROOT . '/views/partials/course-submodule-content.php'; ?>
+
+        <!-- Mark complete button -->
+        <?php $isDoneNow = in_array($subKey, $completedSubKeys); ?>
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <?php if ($isDoneNow): ?>
+          <button class="sub-complete-btn" disabled style="background:var(--bg-elevated);color:var(--text-muted);">✓ Completed</button>
           <?php else: ?>
-          <span style="background:rgba(99,102,241,0.1);color:var(--brand-400);font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;">PREMIUM</span>
+          <button class="sub-complete-btn" id="markDoneBtn" onclick="markSubDone('<?= $subKey ?>')">
+            Mark as Complete →
+          </button>
           <?php endif; ?>
-          <span style="font-size:11px;color:var(--text-muted);">⏱ <?= $module['duration'] ?></span>
-        </div>
-        <h1 style="font-size:var(--text-2xl);line-height:1.2;margin-bottom:var(--space-2);"><?= htmlspecialchars($module['title']) ?></h1>
-        <p style="font-size:var(--text-base);color:var(--text-muted);font-style:italic;"><?= htmlspecialchars($module['tagline']) ?></p>
-      </div>
 
-      <!-- Video Placeholder (if enabled) -->
-      <?php if($videoEnabled): ?>
-      <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-6);">
-        <div style="text-align:center;">
-          <div style="font-size:48px;margin-bottom:8px;">▶</div>
-          <p style="font-size:14px;color:var(--text-muted);">Video coming soon</p>
+          <!-- Navigation arrows -->
+          <div style="display:flex;gap:8px;">
+            <?php if ($submoduleNum > 1): ?>
+            <a href="/courses/<?= $courseSlug ?>/learn/<?= $moduleNum ?>/<?= $submoduleNum - 1 ?>"
+               style="padding:10px 16px;border:1px solid var(--border-subtle);border-radius:8px;font-size:13px;font-weight:600;color:var(--text-primary);text-decoration:none;">← Prev</a>
+            <?php endif; ?>
+            <?php if ($submoduleNum < 5): ?>
+            <a href="/courses/<?= $courseSlug ?>/learn/<?= $moduleNum ?>/<?= $submoduleNum + 1 ?>"
+               style="padding:10px 20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">Next →</a>
+            <?php elseif ($moduleNum < $totalModules): ?>
+            <?php $nextMod = $moduleNum + 1; $nextLocked = $nextMod > $freeCount && !$isPaid; ?>
+            <?php if ($nextLocked): ?>
+            <a href="/courses/<?= $courseSlug ?>/enroll"
+               style="padding:10px 20px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">🔓 Unlock Module <?= $nextMod ?> →</a>
+            <?php else: ?>
+            <a href="/courses/<?= $courseSlug ?>/learn/<?= $nextMod ?>/1"
+               style="padding:10px 20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">Next Module →</a>
+            <?php endif; ?>
+            <?php endif; ?>
+          </div>
         </div>
-      </div>
       <?php endif; ?>
 
-      <!-- Module Content -->
-      <div class="prose" id="moduleContent">
-        <?= $module['content'] ?? '<p>Content loading...</p>' ?>
-      </div>
-
-      <!-- Lesson Checklist -->
-      <div style="margin-top:var(--space-8);background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);padding:var(--space-5);">
-        <h3 style="font-size:var(--text-sm);font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:var(--space-4);">📋 Lessons in This Module</h3>
-        <?php foreach($module['lessons'] as $j => $lesson): ?>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-subtle);<?= $j===count($module['lessons'])-1?'border-bottom:none;':'' ?>">
-          <div style="width:22px;height:22px;border-radius:50%;background:var(--bg-elevated);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted);flex-shrink:0;"><?= $j+1 ?></div>
-          <span style="font-size:var(--text-sm);color:var(--text-secondary);flex:1;"><?= htmlspecialchars($lesson['title']) ?></span>
-          <span style="font-size:11px;color:var(--text-muted);"><?= $lesson['duration'] ?></span>
-        </div>
-        <?php endforeach; ?>
-      </div>
-
-      <!-- Quiz Section -->
-      <?php $modProgress = $progress[$moduleNum] ?? []; ?>
-      <div id="quizSection" style="margin-top:var(--space-8);">
-        <?php if (!empty($modProgress['quiz_passed'])): ?>
-        <!-- Already passed -->
-        <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:var(--radius-xl);padding:var(--space-5);text-align:center;">
-          <div style="font-size:32px;margin-bottom:8px;">✅</div>
-          <div style="font-size:var(--text-base);font-weight:700;color:#34d399;">Quiz Passed — <?= $modProgress['quiz_score'] ?>%</div>
-          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">You've completed this module.</div>
-        </div>
-        <?php else: ?>
-        <!-- Quiz -->
-        <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);padding:var(--space-6);" id="quizBox">
-          <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-2);">🧠 Module Quiz</h3>
-          <p style="font-size:13px;color:var(--text-muted);margin-bottom:var(--space-5);">Answer all questions. Score 60% or above to complete this module.</p>
-          <form id="quizForm" onsubmit="submitQuiz(event)">
-            <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-            <input type="hidden" name="module" value="<?= $moduleNum ?>">
-            <?php foreach($module['quiz'] as $qi => $q): ?>
-            <div style="margin-bottom:var(--space-6);" id="quiz-q-<?= $qi ?>">
-              <p style="font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-3);line-height:1.5;"><?= ($qi+1) ?>. <?= htmlspecialchars($q['q']) ?></p>
-              <?php foreach($q['options'] as $oi => $opt): ?>
-              <div class="quiz-option" onclick="selectOption(<?= $qi ?>, <?= $oi ?>, this)" id="opt-<?= $qi ?>-<?= $oi ?>">
-                <input type="radio" name="answers[<?= $qi ?>]" value="<?= $oi ?>" style="flex-shrink:0;margin-top:2px;" required>
-                <span style="font-size:var(--text-sm);color:var(--text-secondary);"><?= htmlspecialchars($opt) ?></span>
-              </div>
-              <?php endforeach; ?>
-            </div>
-            <?php endforeach; ?>
-            <div id="quizError" style="display:none;color:#f87171;font-size:13px;margin-bottom:var(--space-3);"></div>
-            <button type="submit" class="btn btn-primary" style="padding:12px 28px;" id="quizSubmit">Submit Quiz →</button>
-          </form>
-          <!-- Quiz Result (hidden initially) -->
-          <div id="quizResult" style="display:none;margin-top:var(--space-5);padding:var(--space-5);border-radius:var(--radius-lg);text-align:center;"></div>
-        </div>
-        <?php endif; ?>
-      </div>
-
-      <!-- Certificate Banner (if all done) -->
-      <?php if ($cert): ?>
-      <div style="margin-top:var(--space-8);background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.06));border:1px solid rgba(99,102,241,0.3);border-radius:var(--radius-xl);padding:var(--space-6);text-align:center;">
-        <div style="font-size:48px;margin-bottom:12px;">🎓</div>
-        <h3 style="font-size:var(--text-xl);margin-bottom:8px;">Course Complete!</h3>
-        <p style="color:var(--text-muted);margin-bottom:var(--space-4);">Your certificate has been emailed. You can also view/download it here.</p>
-        <a href="/certificate/<?= $cert['cert_uid'] ?>" target="_blank" class="btn btn-primary" style="padding:12px 28px;" id="btn-view-cert">🎓 View &amp; Download Certificate</a>
-      </div>
-      <?php endif; ?>
-
-      <!-- Navigation -->
-      <div style="display:flex;justify-content:space-between;margin-top:var(--space-10);padding-top:var(--space-6);border-top:1px solid var(--border-subtle);">
-        <?php if($moduleNum > 1): ?>
-        <a href="/courses/<?= $courseSlug ?>/learn/<?= $moduleNum-1 ?>" class="btn btn-ghost" id="btn-prev-module">← Previous Module</a>
-        <?php else: ?>
-        <div></div>
-        <?php endif; ?>
-
-        <?php if($moduleNum < $totalModules): ?>
-          <?php $nextNum = $moduleNum + 1; $nextLocked = $nextNum > $freeCount && !$isPaid; ?>
-          <?php if($nextLocked): ?>
-          <button onclick="showPaywall()" class="btn btn-primary" id="btn-next-paywall">Next Module 🔒</button>
-          <?php else: ?>
-          <a href="/courses/<?= $courseSlug ?>/learn/<?= $nextNum ?>" class="btn btn-primary" id="btn-next-module">Next Module →</a>
-          <?php endif; ?>
-        <?php else: ?>
-        <span class="btn btn-primary" style="opacity:0.5;">Course Complete 🎓</span>
-        <?php endif; ?>
-      </div>
     </div>
   </main>
 </div>
 
-<!-- Paywall Modal -->
-<div id="paywallModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);" onclick="if(event.target===this)this.style.display='none'">
-  <div class="card" style="max-width:440px;width:100%;padding:var(--space-7);text-align:center;">
-    <div style="font-size:48px;margin-bottom:12px;">🔒</div>
-    <h2 style="font-size:var(--text-xl);margin-bottom:8px;">Premium Module</h2>
-    <p style="color:var(--text-muted);margin-bottom:var(--space-4);">Modules 6–10 require the full course. Unlock all 10 modules + certificate.</p>
-    <div style="margin-bottom:var(--space-5);">
-      <span style="font-size:32px;font-weight:900;">₹<?= number_format($priceSale) ?></span>
-      <span style="font-size:18px;color:var(--text-muted);text-decoration:line-through;margin-left:8px;">₹<?= number_format($priceOrig) ?></span>
-    </div>
-    <a href="/courses/<?= $courseSlug ?>/enroll" class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:14px;margin-bottom:10px;" id="btn-paywall-unlock">Unlock Full Course ₹<?= number_format($priceSale) ?></a>
-    <button onclick="document.getElementById('paywallModal').style.display='none'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;">Maybe later</button>
-  </div>
-</div>
+<!-- Mobile sidebar toggle button -->
+<button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleSidebar()">
+  ☰ Course Modules
+</button>
 
 <script>
-function showPaywall(){ document.getElementById('paywallModal').style.display='flex'; }
+const CSRF = '<?= $csrfToken ?>';
+const courseSlug = '<?= $courseSlug ?>';
 
-function selectOption(qi, oi, el){
-  // Deselect siblings
-  document.querySelectorAll('[id^="opt-'+qi+'-"]').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  el.querySelector('input[type=radio]').checked=true;
+// ── Sidebar accordion ──────────────────────────────────────────
+function toggleMod(n) {
+  const g = document.getElementById('modGroup' + n);
+  if (!g) return;
+  g.classList.toggle('expanded');
 }
 
-async function submitQuiz(e){
-  e.preventDefault();
-  const btn=document.getElementById('quizSubmit');
-  const err=document.getElementById('quizError');
-  btn.disabled=true; btn.textContent='Grading...';
-  err.style.display='none';
+// ── Mobile sidebar ─────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('playerSidebar').classList.toggle('mob-open');
+  document.getElementById('mobOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('playerSidebar').classList.remove('mob-open');
+  document.getElementById('mobOverlay').classList.remove('show');
+}
 
-  const form=e.target;
-  const data=new FormData(form);
+// ── Mark submodule complete ────────────────────────────────────
+function markSubDone(subKey) {
+  const btn = document.getElementById('markDoneBtn');
+  if (!btn) return;
+  btn.disabled = true; btn.textContent = 'Saving…';
 
-  try{
-    const res=await fetch('/courses/quiz',{method:'POST',body:data});
-    const json=await res.json();
-    if(!json.success){ err.textContent=json.error||'Error submitting quiz.'; err.style.display='block'; btn.disabled=false; btn.textContent='Submit Quiz →'; return; }
+  fetch('/courses/submodule-complete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ csrf_token: CSRF, sub_key: subKey })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) {
+      btn.textContent = '✓ Completed';
+      btn.style.background = '#34d399';
 
-    // Show result
-    const result=document.getElementById('quizResult');
-    const passed=json.passed;
-    result.style.display='block';
-    result.style.background=passed?'rgba(52,211,153,0.08)':'rgba(248,113,113,0.08)';
-    result.style.border='1px solid '+(passed?'rgba(52,211,153,0.3)':'rgba(248,113,113,0.3)');
-    result.innerHTML=`
-      <div style="font-size:36px;margin-bottom:8px;">${passed?'🎉':'😊'}</div>
-      <div style="font-size:20px;font-weight:800;color:${passed?'#34d399':'#f87171'};margin-bottom:8px;">${json.score}% — ${passed?'Passed!':'Not quite yet'}</div>
-      <div style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">${json.correct} of ${json.total} correct</div>
-      ${passed
-        ? `${json.cert_uid ? '<div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:10px;padding:14px;margin-bottom:14px;"><div style="font-size:14px;font-weight:600;margin-bottom:6px;">🎓 Course Complete! Certificate Ready!</div><a href="/certificate/'+json.cert_uid+'" target="_blank" class="btn btn-primary" style="font-size:13px;padding:8px 20px;">View Certificate</a></div>' : ''}
-          <a href="/courses/ai-marketing-course/learn/${Math.min(<?= $moduleNum ?>+1, <?= $totalModules ?>)}" class="btn btn-primary" style="padding:12px 24px;">Next Module →</a>`
-        : `<button onclick="location.reload()" class="btn btn-ghost" style="padding:10px 20px;">Try Again</button>`
+      // Mark sidebar item as done
+      document.querySelectorAll('.sub-item').forEach(el => {
+        if (el.getAttribute('href') && el.getAttribute('href').includes(subKey.replace('-','/'))) {
+          el.classList.add('done');
+        }
+      });
+
+      // Update grade badge if returned
+      if (d.grade && d.score > 0) {
+        updateGrade(d.grade, d.score);
       }
-    `;
-    document.getElementById('quizBox').querySelector('form').style.display='none';
-    result.scrollIntoView({behavior:'smooth', block:'center'});
 
-    // Update sidebar progress dot
-    if(passed){
-      const navDot=document.querySelector('#mod-nav-<?= $moduleNum ?> div');
-      if(navDot){ navDot.textContent='✓'; navDot.style.borderColor='#34d399'; navDot.style.color='#34d399'; }
+      // Increment progress bar
+      updateProgressBar();
+
+      // Auto-advance after 1s
+      setTimeout(() => {
+        const parts = subKey.split('-');
+        const mod = parseInt(parts[0]); const sub = parseInt(parts[1]);
+        if (sub < 5) {
+          window.location = `/courses/${courseSlug}/learn/${mod}/${sub + 1}`;
+        }
+      }, 900);
     }
-  } catch(ex){
-    err.textContent='Network error. Please try again.';
-    err.style.display='block';
-  }
-  btn.disabled=false; btn.textContent='Submit Quiz →';
+  })
+  .catch(() => { btn.disabled = false; btn.textContent = 'Mark as Complete →'; });
 }
 
-// Mobile sidebar
-document.getElementById('playerMobMenu') && (document.getElementById('playerMobMenu').style.display='flex');
-document.addEventListener('click', e=>{
-  const sb=document.getElementById('playerSidebar');
-  if(sb && sb.classList.contains('mob-open') && !sb.contains(e.target) && !document.getElementById('playerMobMenu')?.contains(e.target)){
-    sb.classList.remove('mob-open');
+function updateGrade(grade, score) {
+  document.querySelectorAll('.grade-badge').forEach(el => {
+    el.textContent = 'Grade ' + grade + ' · ' + score + '%';
+    el.className = 'grade-badge grade-' + grade;
+  });
+}
+
+function updateProgressBar() {
+  const bar = document.getElementById('progressBar');
+  if (!bar) return;
+  const current = parseFloat(bar.style.width) || 0;
+  const total = <?= count($allModules) * 5 ?>;
+  const newPct = Math.min(100, current + (100 / total));
+  bar.style.width = newPct.toFixed(1) + '%';
+}
+
+// ── Paywall prompt ─────────────────────────────────────────────
+function showPaywall() {
+  if (confirm('This module requires full access. Unlock all 10 modules for ₹<?= $priceSale ?>?')) {
+    window.location = '/courses/<?= $courseSlug ?>/enroll';
   }
+}
+
+// Close sidebar when clicking a sub-link on mobile
+document.querySelectorAll('.sub-item').forEach(el => {
+  el.addEventListener('click', () => {
+    if (window.innerWidth <= 900) closeSidebar();
+  });
 });
 </script>

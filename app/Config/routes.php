@@ -63,18 +63,20 @@ $router->get('/research/{slug}',     'PostController@show',          'research.s
 $router->get('/videos',              'ArchiveController@videos',     'videos');
 
 // Courses — Full system
-$router->get('/courses',                            'CourseController@index',          'courses');
-$router->post('/courses/register',                  'CourseController@register',        'course.register');
-$router->post('/courses/apply-coupon',              'CourseController@applyCoupon',     'course.coupon');
-$router->post('/courses/create-order',              'CourseController@createOrder',     'course.order');
-$router->post('/courses/verify-payment',            'CourseController@verifyPayment',   'course.verify');
-$router->post('/courses/webhook',                   'CourseController@webhook',         'course.webhook');
-$router->post('/courses/quiz',                      'CourseController@submitQuiz',      'course.quiz');
-$router->get('/courses/{slug}/learn/{module}',      'CourseController@player',          'course.player');
-$router->get('/courses/{slug}/enroll',              'CourseController@enroll',          'course.enroll');
-$router->get('/courses/{slug}',                     'CourseController@landing',         'course.show');
-$router->get('/certificate/{uid}',                  'CourseController@certificate',     'course.cert');
-$router->get('/verify-certificate/{uid}',           'CourseController@verifyCertificate','course.verify.cert');
+$router->get('/courses',                                   'CourseController@index',            'courses');
+$router->post('/courses/register',                         'CourseController@register',          'course.register');
+$router->post('/courses/apply-coupon',                     'CourseController@applyCoupon',       'course.coupon');
+$router->post('/courses/create-order',                     'CourseController@createOrder',       'course.order');
+$router->post('/courses/verify-payment',                   'CourseController@verifyPayment',     'course.verify');
+$router->post('/courses/webhook',                          'CourseController@webhook',           'course.webhook');
+$router->post('/courses/quiz',                             'CourseController@submitQuiz',        'course.quiz');
+$router->post('/courses/submodule-complete',               'CourseController@markSubmoduleComplete','course.sub.done');
+$router->get('/courses/{slug}/learn/{module}/{submodule}', 'CourseController@player',            'course.player.sub');
+$router->get('/courses/{slug}/learn/{module}',             'CourseController@player',            'course.player');
+$router->get('/courses/{slug}/enroll',                     'CourseController@enroll',            'course.enroll');
+$router->get('/courses/{slug}',                            'CourseController@landing',           'course.show');
+$router->get('/certificate/{uid}',                         'CourseController@certificate',       'course.cert');
+$router->get('/verify-certificate/{uid}',                  'CourseController@verifyCertificate', 'course.verify.cert');
 
 // Authors
 $router->get('/authors',             'AuthorController@index',       'authors');

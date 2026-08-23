@@ -2,12 +2,15 @@
 <?php
 use Core\Auth;
 Auth::startSession();
-$csrfToken = Auth::csrfToken();
-$priceOrig = $priceOrig ?? 999;
-$priceSale = $priceSale ?? 199;
-$razorpayKeyId = $razorpayKeyId ?? '';
-$enrollment = $enrollment ?? [];
-$courseSlug = 'ai-marketing-course';
+$csrfToken      = Auth::csrfToken();
+$priceOrig      = $priceOrig      ?? 999;
+$priceSale      = $priceSale      ?? 199;
+$razorpayKeyId  = $razorpayKeyId  ?? '';
+$enrollment     = $enrollment     ?? [];
+$courseSlug     = 'ai-marketing-course';
+$processingFeePct = $processingFeePct ?? 1.5;
+$processingFee  = round($priceSale * ($processingFeePct / 100), 2);
+$totalFinal     = round($priceSale + $processingFee, 2);
 ?>
 
 <div class="container" style="padding-top:var(--space-14);padding-bottom:var(--space-16);max-width:900px;">
@@ -75,13 +78,16 @@ $courseSlug = 'ai-marketing-course';
         <!-- Price Summary -->
         <div id="priceSummary" style="background:var(--bg-surface);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:var(--space-4);">
           <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:6px;">
-            <span>Course price</span><span>₹<?= number_format($priceSale) ?></span>
+            <span>Course price</span><span id="coursePriceAmt">₹<?= number_format($priceSale) ?></span>
           </div>
-          <div id="discountRow" style="display:none;display:flex;justify-content:space-between;font-size:13px;color:#34d399;margin-bottom:6px;">
+          <div id="discountRow" style="display:none;justify-content:space-between;font-size:13px;color:#34d399;margin-bottom:6px;">
             <span>Coupon discount</span><span id="discountAmt">-₹0</span>
           </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:6px;">
+            <span>Processing fee (<?= $processingFeePct ?>%)</span><span id="feeAmt">₹<?= number_format($processingFee, 2) ?></span>
+          </div>
           <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;border-top:1px solid var(--border-subtle);padding-top:8px;margin-top:2px;">
-            <span>Total</span><span id="totalAmt">₹<?= number_format($priceSale) ?></span>
+            <span>Total</span><span id="totalAmt">₹<?= number_format($totalFinal, 2) ?></span>
           </div>
         </div>
 
@@ -89,7 +95,7 @@ $courseSlug = 'ai-marketing-course';
         <input type="hidden" id="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
 
         <button onclick="initiatePayment()" class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:15px;" id="payBtn">
-          🔓 Pay ₹<?= number_format($priceSale) ?> — Unlock Course
+          🔓 Pay ₹<?= number_format($totalFinal, 2) ?> — Unlock Course
         </button>
 
         <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:var(--space-3);">
@@ -109,12 +115,29 @@ $courseSlug = 'ai-marketing-course';
   </div>
 </div>
 
-<!-- Razorpay Checkout JS -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-const CSRF   = document.getElementById('csrfToken').value;
-let finalAmount = <?= (int)round($priceSale) ?>;
-let couponId    = '';
+const CSRF       = '<?= htmlspecialchars($csrfToken) ?>';
+const FEE_PCT    = <?= $processingFeePct ?>;
+let baseCourse   = <?= (float)$priceSale ?>;
+let discountAmt  = 0;
+let couponId     = '';
+
+function calcFee(base) { return Math.round(base * FEE_PCT / 100 * 100) / 100; }
+function calcTotal(base) { return Math.round((base + calcFee(base)) * 100) / 100; }
+
+function updatePriceSummary(base, discount) {
+  const fee   = calcFee(base);
+  const total = calcTotal(base);
+  document.getElementById('coursePriceAmt').textContent = '₹' + base.toFixed(2);
+  document.getElementById('feeAmt').textContent         = '₹' + fee.toFixed(2);
+  document.getElementById('totalAmt').textContent       = '₹' + total.toFixed(2);
+  document.getElementById('payBtn').textContent         = `🔓 Pay ₹${total.toFixed(2)} — Unlock Course`;
+  if (discount > 0) {
+    document.getElementById('discountRow').style.display = 'flex';
+    document.getElementById('discountAmt').textContent   = '-₹' + discount.toFixed(2);
+  }
+}
 
 async function applyCoupon(){
   const code = document.getElementById('couponInput').value.trim();
@@ -125,7 +148,7 @@ async function applyCoupon(){
   btn.disabled=true; btn.textContent='...';
 
   const fd = new FormData();
-  fd.append('_csrf_token', CSRF);
+  fd.append('csrf_token', CSRF);
   fd.append('coupon', code);
 
   try{
@@ -135,18 +158,16 @@ async function applyCoupon(){
     if(json.success){
       msg.style.color='#34d399';
       msg.textContent=`✓ ${json.discount_display} applied!`;
-      finalAmount = json.final;
+      discountAmt = json.discount;
+      baseCourse  = json.final;
       couponId    = json.coupon_id;
       document.getElementById('appliedCouponId').value = couponId;
-      // Update summary
-      document.getElementById('discountRow').style.display='flex';
-      document.getElementById('discountAmt').textContent='-₹'+Math.round(json.discount);
-      document.getElementById('totalAmt').textContent='₹'+Math.round(json.final);
-      document.getElementById('payBtn').textContent=`🔓 Pay ₹${Math.round(json.final)} — Unlock Course`;
+      updatePriceSummary(baseCourse, discountAmt);
     } else {
       msg.style.color='#f87171';
       msg.textContent=json.error||'Invalid coupon.';
-      couponId=''; finalAmount=<?= (int)round($priceSale) ?>;
+      couponId=''; baseCourse=<?= (float)$priceSale ?>; discountAmt=0;
+      updatePriceSummary(baseCourse, 0);
     }
   } catch(e){
     msg.style.color='#f87171'; msg.textContent='Error. Try again.'; msg.style.display='block';
@@ -159,7 +180,7 @@ async function initiatePayment(){
   btn.disabled=true; btn.textContent='Initializing...';
 
   const fd=new FormData();
-  fd.append('_csrf_token', CSRF);
+  fd.append('csrf_token', CSRF);
   if(couponId) fd.append('coupon_id', couponId);
 
   try{
@@ -168,12 +189,19 @@ async function initiatePayment(){
 
     if(!json.success){
       alert(json.error||'Failed to create order. Please try again.');
-      btn.disabled=false; btn.textContent='🔓 Pay — Unlock Course';
+      btn.disabled=false; btn.textContent=`🔓 Pay ₹${calcTotal(baseCourse).toFixed(2)} — Unlock Course`;
       return;
     }
 
     // Handle 100% coupon discount
     if(json.free){ window.location.href=json.redirect; return; }
+
+    // Update price display from server response (authoritative)
+    if(json.final_amount) {
+      document.getElementById('totalAmt').textContent = '₹' + json.final_amount.toFixed(2);
+      document.getElementById('feeAmt').textContent   = '₹' + json.processing_fee.toFixed(2);
+      btn.textContent = `🔓 Pay ₹${json.final_amount.toFixed(2)} — Unlock Course`;
+    }
 
     const options={
       key:          json.key_id,
@@ -183,16 +211,20 @@ async function initiatePayment(){
       description:  'AI Marketing & ChatGPT SEO — Full Course',
       order_id:     json.order_id,
       prefill:{
-        name:  json.name,
-        email: json.email,
+        name:    json.name,
+        email:   json.email,
         contact: json.phone,
       },
+      notes: {
+        'Processing fee': json.processing_fee + ' INR (' + json.fee_pct + '%)',
+        'Base amount':    json.base_amount + ' INR'
+      },
       theme:{ color:'#6366f1' },
-      modal:{ ondismiss: ()=>{ btn.disabled=false; btn.textContent='🔓 Pay — Unlock Course'; } },
+      modal:{ ondismiss: ()=>{ btn.disabled=false; btn.textContent=`🔓 Pay ₹${calcTotal(baseCourse).toFixed(2)} — Unlock Course`; } },
       handler: async function(response){
         btn.textContent='Verifying payment...';
         const vfd=new FormData();
-        vfd.append('_csrf_token', CSRF);
+        vfd.append('csrf_token', CSRF);
         vfd.append('razorpay_order_id',   response.razorpay_order_id);
         vfd.append('razorpay_payment_id', response.razorpay_payment_id);
         vfd.append('razorpay_signature',  response.razorpay_signature);
@@ -204,7 +236,7 @@ async function initiatePayment(){
           window.location.href = vjson.redirect;
         } else {
           alert('Payment verification failed. Contact support with your payment ID: '+response.razorpay_payment_id);
-          btn.disabled=false; btn.textContent='🔓 Pay — Unlock Course';
+          btn.disabled=false; btn.textContent=`🔓 Pay ₹${calcTotal(baseCourse).toFixed(2)} — Unlock Course`;
         }
       }
     };
@@ -213,7 +245,10 @@ async function initiatePayment(){
     rzp.open();
   } catch(e){
     alert('Network error. Please try again.');
-    btn.disabled=false; btn.textContent='🔓 Pay — Unlock Course';
+    btn.disabled=false; btn.textContent=`🔓 Pay ₹${calcTotal(baseCourse).toFixed(2)} — Unlock Course`;
   }
 }
+
+// Init display
+updatePriceSummary(baseCourse, 0);
 </script>

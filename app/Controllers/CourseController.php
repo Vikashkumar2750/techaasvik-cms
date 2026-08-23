@@ -83,8 +83,9 @@ class CourseController extends Controller
     public function player(array $params = []): void
     {
         Auth::startSession();
-        $slug      = $params['slug'] ?? self::COURSE_SLUG;
-        $moduleNum = max(1, min(self::TOTAL_MODULES, (int)($params['module'] ?? 1)));
+        $slug         = $params['slug']      ?? self::COURSE_SLUG;
+        $moduleNum    = max(1, min(self::TOTAL_MODULES, (int)($params['module'] ?? 1)));
+        $submoduleNum = max(1, (int)($params['submodule'] ?? 1));
 
         // Get or prompt enrollment
         $enrollment = $this->getCurrentEnrollment();
@@ -102,13 +103,24 @@ class CourseController extends Controller
             return;
         }
 
-        $progress    = $this->progress->getForEnrollment($enrollment['id']);
-        $moduleData  = $this->getCourseModules()[$moduleNum - 1] ?? null;
+        $allModules  = $this->getCourseModules();
+        $moduleData  = $allModules[$moduleNum - 1] ?? null;
         if (!$moduleData) { $this->notFound(); return; }
+
+        // Build submodule list for this module
+        $submodules  = $this->getSubmodules($moduleNum, $moduleData);
+        $submoduleNum = min($submoduleNum, count($submodules));
+        $currentSub  = $submodules[$submoduleNum - 1] ?? $submodules[0];
+
+        $progress           = $this->progress->getForEnrollment($enrollment['id']);
+        $completedSubKeys   = $this->progress->getCompletedSubmodules($enrollment['id']);
+        $overallScore       = $this->progress->calculateOverallScore($enrollment['id']);
+        $grade              = \Models\CourseProgress::scoreToGrade($overallScore);
 
         $videoEnabled = $this->settings->videoEnabled();
         $priceOrig    = $this->settings->priceOriginal();
         $priceSale    = $this->settings->priceSale();
+        $processingFeePct = (float)$this->settings->get('processing_fee_pct', 1.5);
 
         // Check certificate eligibility
         $completedCount = $this->progress->countCompleted($enrollment['id']);
@@ -122,22 +134,63 @@ class CourseController extends Controller
         $this->view('course-player', [
             'seo' => [
                 'title'   => "Module {$moduleNum}: {$moduleData['title']} — AI Marketing Course | TechAasvik",
-                'noindex' => true, // Player pages not indexed
+                'noindex' => true,
             ],
-            'enrollment'    => $enrollment,
-            'moduleNum'     => $moduleNum,
-            'totalModules'  => self::TOTAL_MODULES,
-            'freeCount'     => $freeCount,
-            'module'        => $moduleData,
-            'allModules'    => $this->getCourseModules(),
-            'progress'      => $progress,
-            'isPaid'        => $isPaid,
-            'videoEnabled'  => $videoEnabled,
-            'priceOrig'     => $priceOrig,
-            'priceSale'     => $priceSale,
-            'cert'          => $cert,
+            'enrollment'       => $enrollment,
+            'moduleNum'        => $moduleNum,
+            'submoduleNum'     => $submoduleNum,
+            'totalModules'     => self::TOTAL_MODULES,
+            'freeCount'        => $freeCount,
+            'module'           => $moduleData,
+            'allModules'       => $allModules,
+            'submodules'       => $submodules,
+            'currentSub'       => $currentSub,
+            'progress'         => $progress,
+            'completedSubKeys' => $completedSubKeys,
+            'isPaid'           => $isPaid,
+            'videoEnabled'     => $videoEnabled,
+            'priceOrig'        => $priceOrig,
+            'priceSale'        => $priceSale,
+            'processingFeePct' => $processingFeePct,
+            'cert'             => $cert,
+            'overallScore'     => $overallScore,
+            'grade'            => $grade,
         ]);
     }
+
+    // ── Mark Submodule Complete (AJAX POST) ───────────────────
+    public function markSubmoduleComplete(array $params = []): void
+    {
+        $this->verifyCsrf();
+        $enrollment = $this->getCurrentEnrollment();
+        if (!$enrollment) {
+            $this->json(['success' => false], 401);
+            return;
+        }
+        $subKey = preg_replace('/[^0-9\-quiz]/', '', $this->request->post('sub_key', ''));
+        if (!$subKey) {
+            $this->json(['success' => false, 'error' => 'Invalid key']);
+            return;
+        }
+        $this->progress->markSubmoduleComplete($enrollment['id'], $subKey);
+
+        // If all submodules of module done → mark module complete
+        $moduleNum  = (int)explode('-', $subKey)[0];
+        $submodules = $this->getSubmodules($moduleNum, $this->getCourseModules()[$moduleNum - 1] ?? []);
+        $doneKeys   = $this->progress->getCompletedSubmodules($enrollment['id']);
+        $allDone    = true;
+        foreach ($submodules as $s) {
+            if (!in_array($s['key'], $doneKeys)) { $allDone = false; break; }
+        }
+        if ($allDone) {
+            $this->progress->markComplete($enrollment['id'], $moduleNum, 0, true);
+        }
+
+        $overallScore = $this->progress->calculateOverallScore($enrollment['id']);
+        $grade        = \Models\CourseProgress::scoreToGrade($overallScore);
+        $this->json(['success' => true, 'module_done' => $allDone, 'grade' => $grade, 'score' => $overallScore]);
+    }
+
 
     // ── Registration (POST) ───────────────────────────────────
     public function register(array $params = []): void
@@ -249,23 +302,30 @@ class CourseController extends Controller
             return;
         }
 
-        $amount    = $this->settings->priceSale();
-        $couponId  = (int)$this->request->post('coupon_id', 0);
+        $baseAmount = $this->settings->priceSale();
+        $couponId   = (int)$this->request->post('coupon_id', 0);
 
         // Apply coupon if provided
-        $couponCode    = null;
+        $couponCode     = null;
         $discountAmount = 0;
         if ($couponId) {
-            $coupon = $this->db->fetchOne("SELECT * FROM course_coupons WHERE id=?", [$couponId]);
+            // Fixed: use Database::getInstance() instead of $this->db
+            $db     = \Core\Database::getInstance();
+            $coupon = $db->fetchOne("SELECT * FROM course_coupons WHERE id=?", [$couponId]);
             if ($coupon && $this->coupons->findActive($coupon['code'])) {
-                $discountAmount = $this->coupons->getDiscountAmount($coupon, $amount);
-                $amount         = $this->coupons->applyDiscount($coupon, $amount);
+                $discountAmount = $this->coupons->getDiscountAmount($coupon, $baseAmount);
+                $baseAmount     = $this->coupons->applyDiscount($coupon, $baseAmount);
                 $couponCode     = $coupon['code'];
             }
         }
 
+        // 1.5% processing fee (visible to user)
+        $processingFeePct = (float)($this->settings->get('processing_fee_pct', 1.5));
+        $processingFee    = round($baseAmount * ($processingFeePct / 100), 2);
+        $finalAmount      = round($baseAmount + $processingFee, 2);
+
         // Minimum amount guard
-        if ($amount < 1) {
+        if ($baseAmount < 1) {
             // 100% discount → free access
             $this->enrollments->updatePayment($enrollment['id'], [
                 'payment_status'     => 'paid',
@@ -280,41 +340,50 @@ class CourseController extends Controller
                 $c = $this->coupons->findActive($couponCode);
                 if ($c) $this->coupons->incrementUse($c['id']);
             }
-            $this->json(['success' => true, 'free' => true, 'redirect' => '/courses/' . self::COURSE_SLUG . '/learn/6']);
+            $this->json(['success' => true, 'free' => true, 'redirect' => '/courses/' . self::COURSE_SLUG . '/learn/1/1']);
             return;
         }
 
         try {
             $rzp   = new RazorpayService();
-            $order = $rzp->createOrder($amount, 'enr_' . $enrollment['id'], [
+            $order = $rzp->createOrder($finalAmount, 'enr_' . $enrollment['id'], [
                 'enrollment_id' => $enrollment['id'],
                 'email'         => $enrollment['user_email'],
+                'base_amount'   => $baseAmount,
+                'processing_fee'=> $processingFee,
             ]);
 
             // Store order ID
             $this->enrollments->setOrderId($enrollment['id'], $order['id']);
 
-            // Also store coupon info in session for verification step
+            // Store coupon info in session for verification step
             Auth::startSession();
-            $_SESSION['pending_coupon']   = $couponCode;
-            $_SESSION['pending_discount'] = $discountAmount;
-            $_SESSION['pending_amount']   = $amount;
+            $_SESSION['pending_coupon']        = $couponCode;
+            $_SESSION['pending_discount']      = $discountAmount;
+            $_SESSION['pending_amount']        = $baseAmount;
+            $_SESSION['pending_processing_fee']= $processingFee;
+            $_SESSION['pending_final']         = $finalAmount;
 
             $this->json([
-                'success'    => true,
-                'order_id'   => $order['id'],
-                'amount'     => (int)round($amount * 100), // paise
-                'currency'   => 'INR',
-                'key_id'     => $rzp->getKeyId(),
-                'name'       => $enrollment['user_name'],
-                'email'      => $enrollment['user_email'],
-                'phone'      => $enrollment['user_phone'],
+                'success'        => true,
+                'order_id'       => $order['id'],
+                'amount'         => (int)round($finalAmount * 100), // paise
+                'currency'       => 'INR',
+                'key_id'         => $rzp->getKeyId(),
+                'name'           => $enrollment['user_name'],
+                'email'          => $enrollment['user_email'],
+                'phone'          => $enrollment['user_phone'],
+                'base_amount'    => $baseAmount,
+                'processing_fee' => $processingFee,
+                'final_amount'   => $finalAmount,
+                'fee_pct'        => $processingFeePct,
             ]);
         } catch (\Exception $e) {
             error_log("CourseController::createOrder error: " . $e->getMessage());
-            $this->json(['success' => false, 'error' => 'Payment initialization failed. Please try again.'], 500);
+            $this->json(['success' => false, 'error' => 'Payment initialization failed. Please try again. (' . $e->getMessage() . ')'], 500);
         }
     }
+
 
     // ── Verify Payment (POST from Razorpay Checkout) ──────────
     public function verifyPayment(array $params = []): void
@@ -344,10 +413,11 @@ class CourseController extends Controller
             }
 
             Auth::startSession();
-            $couponCode     = $_SESSION['pending_coupon'] ?? null;
-            $discountAmount = $_SESSION['pending_discount'] ?? 0;
-            $amountPaid     = $_SESSION['pending_amount'] ?? $this->settings->priceSale();
-            unset($_SESSION['pending_coupon'], $_SESSION['pending_discount'], $_SESSION['pending_amount']);
+            $couponCode     = $_SESSION['pending_coupon']        ?? null;
+            $discountAmount = $_SESSION['pending_discount']      ?? 0;
+            $amountPaid     = $_SESSION['pending_final']         ?? ($_SESSION['pending_amount'] ?? $this->settings->priceSale());
+            unset($_SESSION['pending_coupon'], $_SESSION['pending_discount'], $_SESSION['pending_amount'],
+                  $_SESSION['pending_processing_fee'], $_SESSION['pending_final']);
 
             $this->enrollments->updatePayment($enrollment['id'], [
                 'payment_status'      => 'paid',
@@ -367,7 +437,7 @@ class CourseController extends Controller
 
             $this->json([
                 'success'  => true,
-                'redirect' => '/courses/' . self::COURSE_SLUG . '/learn/6',
+                'redirect' => '/courses/' . self::COURSE_SLUG . '/learn/6/1',
             ]);
         } catch (\Exception $e) {
             error_log("verifyPayment error: " . $e->getMessage());
@@ -439,29 +509,29 @@ class CourseController extends Controller
             return;
         }
 
-        $module  = $this->getCourseModules()[$moduleNum - 1] ?? null;
-        if (!$module || empty($module['quiz'])) {
-            $this->json(['success' => false, 'error' => 'No quiz for this module.']);
-            return;
-        }
+        // Accept score from client (quiz graded in browser) or recompute from module quiz
+        $score  = (int)$this->request->post('score', 0);
+        $passed = (bool)(int)$this->request->post('passed', 0);
+        $answers = $this->request->post('answers', []);
+        if (is_string($answers)) $answers = json_decode($answers, true) ?? [];
 
-        // Grade answers
-        $answers  = $this->request->post('answers', []);
-        $quiz     = $module['quiz'];
-        $correct  = 0;
-        foreach ($quiz as $i => $q) {
-            if (isset($answers[$i]) && $answers[$i] === $q['answer']) {
-                $correct++;
-            }
-        }
-        $score  = (int)round(($correct / count($quiz)) * 100);
-        $passed = $score >= 60;
+        // Clamp score
+        $score = max(0, min(100, $score));
 
-        // Save
+        // Save quiz result and attempt
         $this->progress->saveQuizResult($enrollment['id'], $moduleNum, $score, $passed);
         $this->progress->saveQuizAttempt($enrollment['id'], $moduleNum, $answers, $score, $passed);
 
-        // Check if all modules done
+        // Mark module complete if passed
+        if ($passed) {
+            $this->progress->markComplete($enrollment['id'], $moduleNum, $score, $passed);
+        }
+
+        // Compute overall grade
+        $overallScore = $this->progress->calculateOverallScore($enrollment['id']);
+        $grade        = \Models\CourseProgress::scoreToGrade($overallScore);
+
+        // Check if all modules done → issue certificate
         $completedCount = $this->progress->countCompleted($enrollment['id']);
         $certUid        = null;
         if ($completedCount >= self::TOTAL_MODULES) {
@@ -470,15 +540,16 @@ class CourseController extends Controller
         }
 
         $this->json([
-            'success'    => true,
-            'score'      => $score,
-            'passed'     => $passed,
-            'correct'    => $correct,
-            'total'      => count($quiz),
-            'cert_uid'   => $certUid,
-            'completed'  => $completedCount,
+            'success'       => true,
+            'score'         => $score,
+            'passed'        => $passed,
+            'grade'         => $grade,
+            'overall_score' => $overallScore,
+            'cert_uid'      => $certUid,
+            'completed'     => $completedCount,
         ]);
     }
+
 
     // ── Certificate View ──────────────────────────────────────
     public function certificate(array $params = []): void
@@ -862,13 +933,40 @@ class CourseController extends Controller
             ['q' => 'Marketing diagnosis means:', 'options' => ['Finding the highest traffic channel', 'Systematically identifying what\'s broken and prescribing a fix', 'Increasing ad budget', 'A/B testing everything'], 'answer' => 1],
         ];
     }
-    private function module10Quiz(): array {
-        return [
-            ['q' => 'An AI Marketing Operating System (OS) is:', 'options' => ['A software product', 'A complete, connected system of research, content, ads, automation and analytics', 'Just a content calendar', 'A CRM tool'], 'answer' => 1],
-            ['q' => 'The capstone project requires you to work on:', 'options' => ['A fictional company', 'One real business you can actually implement your work for', 'TechAasvik\'s business', 'Any hypothetical market'], 'answer' => 1],
-            ['q' => 'The most important output of a marketing capstone is:', 'options' => ['A long report', 'A working, implementable system with real data', 'A presentation deck', 'A list of AI tools'], 'answer' => 1],
-            ['q' => 'AI safety in marketing primarily means:', 'options' => ['Not using AI', 'Verifying AI output, checking for bias, and maintaining human oversight', 'Only using paid AI tools', 'Avoiding social media'], 'answer' => 1],
-            ['q' => 'After completing this course, you are equipped to:', 'options' => ['Only use ChatGPT', 'Build and manage a complete AI-powered marketing system for any business', 'Design logos with AI', 'Replace all marketing staff with AI'], 'answer' => 1],
+    /**
+     * Build submodule list for a given module.
+     * Structure: 4 lesson submodules + 1 quiz submodule = 5 per module.
+     */
+    private function getSubmodules(int $moduleNum, array $moduleData): array
+    {
+        $titles = [
+            1 => ['Overview & Mindset', 'AI\'s Impact on Marketing', 'Search & Content Shift', 'Automation & Personalization', 'Quiz'],
+            2 => ['ChatGPT Basics for Marketers', 'Context Engineering', 'The CRAFT Framework', 'Building Reusable Workflows', 'Quiz'],
+            3 => ['Research Mindset', 'Customer & Competitor Intel', 'Mining Reviews & Gaps', 'Positioning Framework', 'Quiz'],
+            4 => ['Keyword Strategy with AI', 'Topical Authority Clusters', 'AI Content Briefs', 'Content Refresh System', 'Quiz'],
+            5 => ['AI Content at Scale', 'E-E-A-T & Brand Voice', 'Multimedia & Repurposing', '30-Day Content System', 'Quiz'],
+            6 => ['GEO Fundamentals', 'AI Overview Optimization', 'Entity Signals & Schema', 'AEO Answer Engineering', 'Quiz'],
+            7 => ['Google Performance Max', 'Meta Advantage+ Ads', 'AI Bidding & Signals', 'ROAS Scaling System', 'Quiz'],
+            8 => ['CRO with AI', 'Lead Scoring & Nurturing', 'n8n Workflow Automation', 'Email Sequences', 'Quiz'],
+            9 => ['GA4 Setup & Events', 'Attribution Models', 'CAC, LTV & North Star', 'Marketing Diagnosis', 'Quiz'],
+            10 => ['Build Your AI Marketing OS', 'Capstone: Real Business Plan', 'AI Safety & Ethics', 'Career Roadmap & Next Steps', 'Quiz'],
         ];
+
+        $subTitles = $titles[$moduleNum] ?? ['Part 1', 'Part 2', 'Part 3', 'Part 4', 'Quiz'];
+        $submodules = [];
+
+        foreach ($subTitles as $i => $title) {
+            $isQuiz = ($i === 4);
+            $submodules[] = [
+                'num'   => $i + 1,
+                'key'   => $moduleNum . '-' . ($i + 1),
+                'title' => $title,
+                'type'  => $isQuiz ? 'quiz' : 'lesson',
+                'icon'  => $isQuiz ? '📝' : '📖',
+            ];
+        }
+
+        return $submodules;
     }
 }
+

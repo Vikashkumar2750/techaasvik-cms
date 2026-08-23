@@ -91,6 +91,18 @@ class CertificateService
         $sigPath    = $this->settings->get('cert_signature_path', '');
         $verifyUrl  = "https://techaasvik.com/certificate/{$uid}";
 
+        // Grade calculation
+        $progressModel = new \Models\CourseProgress();
+        $enrollmentId  = (int)($cert['enrollment_id'] ?? 0);
+        $overallScore  = $enrollmentId ? $progressModel->calculateOverallScore($enrollmentId) : 0;
+        $grade         = \Models\CourseProgress::scoreToGrade($overallScore);
+        $gradeLabel    = \Models\CourseProgress::gradeLabel($grade);
+        $gradeColors   = ['A'=>'#059669','B'=>'#6366f1','C'=>'#d97706','Pass'=>'#64748b'];
+        $gradeColor    = $gradeColors[$grade] ?? '#6366f1';
+        $gradeHtmlBadge= $overallScore > 0
+            ? "<div style=\"margin:8px auto 0;display:inline-block;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:100px;padding:4px 18px;font-size:14px;font-weight:700;color:{$gradeColor};\">★ Grade: {$gradeLabel} &middot; {$overallScore}%</div>"
+            : '';
+
         $logoHtml = $logoPath
             ? "<img src=\"{$logoPath}\" alt=\"TechAasvik\" style=\"height:60px;\">"
             : "<div style=\"font-size:28px;font-weight:900;color:#6366f1;letter-spacing:-1px;\">TechAasvik</div>";
@@ -174,6 +186,7 @@ class CertificateService
       <div class="student-name">{$name}</div>
     </div>
     <div class="cert-course">{$course}</div>
+    {$gradeHtmlBadge}
     <p class="cert-desc">
       Demonstrating proficiency in AI-powered marketing strategies, prompt engineering, market research,
       SEO, content creation, and the application of AI tools to build a complete marketing system.

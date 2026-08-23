@@ -59,6 +59,7 @@ class CourseAdminController extends Controller
         $pairs = [];
         $fields = [
             'course_price_original', 'course_price_sale', 'free_modules_count',
+            'processing_fee_pct', 'course_grade_a_min', 'course_grade_b_min', 'course_grade_c_min',
             'video_enabled', 'cert_signatory_name',
             'smtp_provider', 'smtp_host', 'smtp_port', 'smtp_encryption',
             'smtp_user', 'smtp_from_name', 'smtp_from_email',
