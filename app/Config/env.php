@@ -45,5 +45,10 @@ function loadEnv(string $envPath): void
  */
 function env(string $key, mixed $default = null): mixed
 {
-    return $_ENV[$key] ?? getenv($key) ?: $default;
+    // Check all sources — $_ENV may be disabled on some hosts (variables_order without 'E')
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+    $ge = getenv($key);
+    if ($ge !== false && $ge !== '') return $ge;
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') return $_SERVER[$key];
+    return $default;
 }

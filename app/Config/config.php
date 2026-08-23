@@ -147,7 +147,8 @@ foreach ($localPaths as $localConfigFile) {
         $local  = require $localConfigFile;
         $config = array_replace_recursive($config, $local);
 
-        // If config.local.php has razorpay keys, expose them to env() as well
+        // If config.local.php has razorpay keys, expose them to env() immediately
+        // Use empty() not !isset — so we always overwrite blank/missing values
         if (!empty($local['razorpay'])) {
             $rzpMap = [
                 'key_id'         => 'RAZORPAY_KEY_ID',
@@ -155,8 +156,9 @@ foreach ($localPaths as $localConfigFile) {
                 'webhook_secret' => 'RAZORPAY_WEBHOOK_SECRET',
             ];
             foreach ($rzpMap as $cfgKey => $envKey) {
-                if (!empty($local['razorpay'][$cfgKey]) && !isset($_ENV[$envKey])) {
-                    $_ENV[$envKey] = $local['razorpay'][$cfgKey];
+                if (!empty($local['razorpay'][$cfgKey])) {
+                    $_ENV[$envKey]    = $local['razorpay'][$cfgKey];
+                    $_SERVER[$envKey] = $local['razorpay'][$cfgKey];  // belt-and-suspenders
                     putenv("{$envKey}={$local['razorpay'][$cfgKey]}");
                 }
             }

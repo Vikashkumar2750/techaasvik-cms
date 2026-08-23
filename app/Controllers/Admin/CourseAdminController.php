@@ -224,7 +224,7 @@ class CourseAdminController extends Controller
         ]);
     }
 
-    // ── Module Save (POST) ────────────────────────────────────
+    // ── Module Save (POST) — supports both redirect and AJAX ────
     public function saveModule(array $params = []): void
     {
         $this->verifyCsrf();
@@ -245,8 +245,13 @@ class CourseAdminController extends Controller
             );
         }
 
-        // Invalidate settings cache
         \Models\CourseSetting::clearCache();
+
+        // Support AJAX response (from unified content editor)
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            $this->json(['success' => true, 'message' => "Module {$num} saved."]);
+            return;
+        }
 
         $this->flash('success', "Module {$num} saved successfully.");
         $this->redirect("/techaasvik_admin/course/modules/{$num}/edit");
@@ -443,13 +448,21 @@ class CourseAdminController extends Controller
             $hasContent[$r['module_num'] . '-' . $r['submodule_key']] = true;
         }
 
+        // Module settings (for module editor panel)
+        $moduleSettings = [];
+        $mRows = $db->fetchAll("SELECT setting_key, setting_value FROM course_settings WHERE setting_key LIKE 'module_%'");
+        foreach ($mRows as $r) {
+            $moduleSettings[$r['setting_key']] = $r['setting_value'];
+        }
+
         $this->adminView('course/content-editor', [
-            'title'       => 'Content Editor',
-            'slug'        => $slug,
-            'subTitles'   => self::subTitles(),
-            'moduleNames' => self::moduleNames(),
-            'hasContent'  => $hasContent,
-            'flash'       => $this->getFlash(),
+            'title'          => 'Course Editor',
+            'slug'           => $slug,
+            'subTitles'      => self::subTitles(),
+            'moduleNames'    => self::moduleNames(),
+            'hasContent'     => $hasContent,
+            'moduleSettings' => $moduleSettings,
+            'flash'          => $this->getFlash(),
         ]);
     }
 
