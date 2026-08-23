@@ -131,7 +131,7 @@
         'badge'   => '',
         'title'   => 'Content Marketing',
         'tagline' => 'Content That Converts.',
-        'desc'    => 'Strategic content that ranks, answers, and converts. Pillar pages, cluster articles, infographics, and multimedia content built around your audience\'s search intent.',
+        'desc'    => "Strategic content that ranks, answers, and converts. Pillar pages, cluster articles, infographics, and multimedia content built around your audience's search intent.",
         'features'=> ['Pillar Pages', 'Cluster Content', 'Infographics', 'Video Scripts'],
         'learn'   => '/learn/content-marketing',
       ],
