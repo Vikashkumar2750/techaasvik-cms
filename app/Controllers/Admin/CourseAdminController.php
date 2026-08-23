@@ -68,10 +68,25 @@ class CourseAdminController extends Controller
             $pairs[$f] = $this->request->post($f, '');
         }
 
-        // SMTP pass — only update if provided (don't overwrite with blank)
+        // SMTP pass — only update if provided
         $smtpPass = $this->request->post('smtp_pass', '');
         if ($smtpPass !== '') {
             $pairs['smtp_pass'] = $smtpPass;
+        }
+
+        // Razorpay Key ID — always save if provided
+        $rzpKeyId = trim($this->request->post('razorpay_key_id', ''));
+        if ($rzpKeyId !== '') {
+            $pairs['razorpay_key_id'] = $rzpKeyId;
+        }
+        // Razorpay secrets — only update if provided
+        $rzpSecret = $this->request->post('razorpay_key_secret', '');
+        if ($rzpSecret !== '') {
+            $pairs['razorpay_key_secret'] = $rzpSecret;
+        }
+        $rzpWebhook = $this->request->post('razorpay_webhook_secret', '');
+        if ($rzpWebhook !== '') {
+            $pairs['razorpay_webhook_secret'] = $rzpWebhook;
         }
 
         // Handle cert logo upload

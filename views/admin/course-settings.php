@@ -201,34 +201,71 @@ $tabs = ['pricing' => '💰 Pricing', 'cert' => '🎓 Certificate', 'email' => '
 
   <?php elseif($activeTab === 'razorpay'): ?>
   <!-- RAZORPAY TAB -->
-  <div class="admin-table-wrapper" style="max-width:600px;padding:24px;">
+  <div class="admin-table-wrapper" style="max-width:620px;padding:24px;">
     <h3 style="font-size:16px;font-weight:700;margin-bottom:8px;">💳 Razorpay Configuration</h3>
     <div style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:14px;margin-bottom:20px;font-size:13px;color:var(--admin-text-muted);">
-      🔒 <strong>Security:</strong> Razorpay keys are loaded from the <code>.env</code> file on your server — <strong>never stored in the database</strong>. To update keys, edit <code>.env</code> on Hostinger File Manager.
+      🔒 <strong>Security:</strong> Keys are stored <strong>encrypted in DB</strong> — never exposed in code. Leave blank to keep existing key.
     </div>
 
-    <div style="padding:16px;background:var(--admin-bg-elevated);border-radius:8px;margin-bottom:16px;">
-      <div style="font-size:12px;color:var(--admin-text-muted);margin-bottom:4px;">Current Key ID (from .env)</div>
-      <div style="font-family:monospace;font-size:14px;font-weight:600;"><?= htmlspecialchars(env('RAZORPAY_KEY_ID', 'Not configured')) ?></div>
+    <!-- Current status indicator -->
+    <?php
+      $rzpKey = $s['razorpay_key_id'] ?? env('RAZORPAY_KEY_ID','');
+      $rzpOk  = !empty($rzpKey) && str_starts_with($rzpKey, 'rzp_');
+    ?>
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:<?= $rzpOk ? 'rgba(52,211,153,0.06)' : 'rgba(248,113,113,0.06)' ?>;border:1px solid <?= $rzpOk ? 'rgba(52,211,153,0.3)' : 'rgba(248,113,113,0.3)' ?>;border-radius:8px;margin-bottom:20px;">
+      <span style="font-size:20px;"><?= $rzpOk ? '✅' : '❌' ?></span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:<?= $rzpOk ? '#34d399' : '#f87171' ?>;"><?= $rzpOk ? 'Razorpay Connected' : 'Not Configured — Payment will fail!' ?></div>
+        <?php if ($rzpOk): ?>
+        <div style="font-size:12px;color:var(--admin-text-muted);font-family:monospace;"><?= htmlspecialchars(substr($rzpKey,0,18)) ?>••••••</div>
+        <?php endif; ?>
+      </div>
     </div>
 
-    <div style="padding:16px;background:var(--admin-bg-elevated);border-radius:8px;margin-bottom:16px;">
-      <div style="font-size:12px;color:var(--admin-text-muted);margin-bottom:4px;">Secret Key</div>
-      <div style="font-family:monospace;font-size:14px;">••••••••••••••••••••</div>
-      <div style="font-size:11px;color:var(--admin-text-muted);margin-top:4px;">Hidden for security</div>
+    <!-- Editable fields -->
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Key ID <span style="color:var(--admin-text-muted);font-weight:400;">— starts with rzp_live_ or rzp_test_</span></label>
+      <input type="text" name="razorpay_key_id" class="admin-input" value="<?= htmlspecialchars($s['razorpay_key_id'] ?? '') ?>" placeholder="rzp_live_XXXXXXXXXXXXXXXX" autocomplete="off">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Key Secret <span style="color:var(--admin-text-muted);font-weight:400;">— leave blank to keep existing</span></label>
+      <input type="password" name="razorpay_key_secret" class="admin-input" placeholder="••••••••••••••••••••" autocomplete="new-password">
+      <?php if (!empty($s['razorpay_key_secret'])): ?>
+      <div style="font-size:11px;color:#34d399;margin-top:4px;">✓ Secret key saved</div>
+      <?php endif; ?>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Webhook Secret <span style="color:var(--admin-text-muted);font-weight:400;">— from Razorpay Dashboard → Webhooks</span></label>
+      <input type="password" name="razorpay_webhook_secret" class="admin-input" placeholder="••••••••••••••••••••" autocomplete="new-password">
+      <?php if (!empty($s['razorpay_webhook_secret'])): ?>
+      <div style="font-size:11px;color:#34d399;margin-top:4px;">✓ Webhook secret saved</div>
+      <?php endif; ?>
     </div>
 
-    <div style="padding:16px;background:var(--admin-bg-elevated);border-radius:8px;margin-bottom:20px;">
-      <div style="font-size:12px;color:var(--admin-text-muted);margin-bottom:4px;">Webhook Secret</div>
-      <div style="font-family:monospace;font-size:14px;">••••••••••••••••••••</div>
-    </div>
-
-    <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:8px;padding:14px;font-size:13px;">
-      <strong>Webhook URL</strong> (add this in Razorpay Dashboard → Webhooks):<br>
-      <code style="font-size:12px;color:var(--admin-primary);">https://techaasvik.com/courses/webhook</code>
+    <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:8px;padding:14px;font-size:13px;margin-bottom:20px;">
+      <strong>Webhook URL</strong> (paste in Razorpay Dashboard → Webhooks):<br>
+      <code style="font-size:12px;color:var(--admin-primary);">https://t1.techaasvik.com/courses/webhook</code>
       <br><br>
-      <strong>Event to enable:</strong> <code>payment.captured</code>
+      <strong>Events to enable:</strong> <code>payment.captured</code>
     </div>
+
+    <input type="hidden" name="course_price_original" value="<?= htmlspecialchars($s['course_price_original']??'') ?>">
+    <input type="hidden" name="course_price_sale" value="<?= htmlspecialchars($s['course_price_sale']??'') ?>">
+    <input type="hidden" name="free_modules_count" value="<?= htmlspecialchars($s['free_modules_count']??'') ?>">
+    <input type="hidden" name="processing_fee_pct" value="<?= htmlspecialchars($s['processing_fee_pct']??'') ?>">
+    <input type="hidden" name="course_grade_a_min" value="<?= htmlspecialchars($s['course_grade_a_min']??'') ?>">
+    <input type="hidden" name="course_grade_b_min" value="<?= htmlspecialchars($s['course_grade_b_min']??'') ?>">
+    <input type="hidden" name="course_grade_c_min" value="<?= htmlspecialchars($s['course_grade_c_min']??'') ?>">
+    <input type="hidden" name="video_enabled" value="<?= $s['video_enabled']??'0' ?>">
+    <input type="hidden" name="cert_signatory_name" value="<?= htmlspecialchars($s['cert_signatory_name']??'') ?>">
+    <input type="hidden" name="smtp_provider" value="<?= htmlspecialchars($s['smtp_provider']??'') ?>">
+    <input type="hidden" name="smtp_host" value="<?= htmlspecialchars($s['smtp_host']??'') ?>">
+    <input type="hidden" name="smtp_port" value="<?= htmlspecialchars($s['smtp_port']??'') ?>">
+    <input type="hidden" name="smtp_encryption" value="<?= htmlspecialchars($s['smtp_encryption']??'') ?>">
+    <input type="hidden" name="smtp_user" value="<?= htmlspecialchars($s['smtp_user']??'') ?>">
+    <input type="hidden" name="smtp_from_name" value="<?= htmlspecialchars($s['smtp_from_name']??'') ?>">
+    <input type="hidden" name="smtp_from_email" value="<?= htmlspecialchars($s['smtp_from_email']??'') ?>">
+    <button type="submit" class="admin-btn admin-btn-primary">💾 Save Razorpay Keys</button>
   </div>
 
   <?php elseif($activeTab === 'video'): ?>
