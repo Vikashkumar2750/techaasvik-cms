@@ -39,7 +39,7 @@ class CourseSetting extends Model
         }
     }
 
-    public function all(): array
+    public function all(string $orderBy = 'id', string $dir = 'DESC'): array
     {
         $rows = $this->db->fetchAll("SELECT setting_key, setting_value FROM course_settings");
         $result = [];
