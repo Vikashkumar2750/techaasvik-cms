@@ -196,3 +196,18 @@ $router->post('/techaasvik_admin/course/settings/test-smtp', 'Admin\CourseAdminC
 $router->get('/techaasvik_admin/course/enrollments',         'Admin\CourseAdminController@enrollments',       'admin.course.enrollments');
 $router->post('/techaasvik_admin/course/coupons/create',     'Admin\CourseAdminController@createCoupon',      'admin.course.coupon.create');
 $router->post('/techaasvik_admin/course/coupons/{id}/deactivate','Admin\CourseAdminController@deactivateCoupon','admin.course.coupon.deactivate');
+
+// Module Management
+$router->get('/techaasvik_admin/course/modules',             'Admin\CourseAdminController@modules',           'admin.course.modules');
+$router->get('/techaasvik_admin/course/modules/{num}/edit',  'Admin\CourseAdminController@editModule',        'admin.course.module.edit');
+$router->post('/techaasvik_admin/course/modules/{num}/save', 'Admin\CourseAdminController@saveModule',        'admin.course.module.save');
+
+// Enrollment detail + manual grant
+$router->get('/techaasvik_admin/course/enrollments/{id}',    'Admin\CourseAdminController@enrollmentDetail',  'admin.course.enrollment.detail');
+$router->post('/techaasvik_admin/course/enrollments/{id}/grant', 'Admin\CourseAdminController@grantAccess',   'admin.course.enrollment.grant');
+$router->post('/techaasvik_admin/course/enrollments/{id}/revoke', 'Admin\CourseAdminController@revokeAccess', 'admin.course.enrollment.revoke');
+$router->post('/techaasvik_admin/course/enrollments/{id}/delete', 'Admin\CourseAdminController@deleteEnrollment', 'admin.course.enrollment.delete');
+
+// Certificate management
+$router->get('/techaasvik_admin/course/certificates',        'Admin\CourseAdminController@certificates',      'admin.course.certs');
+$router->post('/techaasvik_admin/course/certificates/{id}/revoke', 'Admin\CourseAdminController@revokeCert',  'admin.course.cert.revoke');

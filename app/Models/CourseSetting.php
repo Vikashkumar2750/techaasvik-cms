@@ -7,6 +7,11 @@ class CourseSetting extends Model
     protected string $table = 'course_settings';
     private static array $cache = [];
 
+    public static function clearCache(): void
+    {
+        self::$cache = [];
+    }
+
     public function get(string $key, mixed $default = null): mixed
     {
         if (isset(self::$cache[$key])) {

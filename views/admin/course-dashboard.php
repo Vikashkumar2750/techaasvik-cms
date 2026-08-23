@@ -10,7 +10,9 @@ $csrfToken = Auth::csrfToken();
     <h1 class="admin-page-title">🎓 Course Management</h1>
     <p class="admin-page-subtitle">AI Marketing &amp; ChatGPT SEO — Enrollments, Coupons &amp; Settings</p>
   </div>
-  <div style="display:flex;gap:10px;">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a href="/techaasvik_admin/course/modules" class="admin-btn admin-btn-ghost">📚 Modules</a>
+    <a href="/techaasvik_admin/course/certificates" class="admin-btn admin-btn-ghost">🎓 Certificates</a>
     <a href="/techaasvik_admin/course/settings" class="admin-btn admin-btn-ghost">⚙ Settings</a>
     <a href="/techaasvik_admin/course/enrollments" class="admin-btn admin-btn-primary">📋 All Enrollments</a>
   </div>
@@ -57,13 +59,15 @@ $csrfToken = Auth::csrfToken();
     <table class="admin-table">
       <thead>
         <tr>
-          <th>Name</th><th>Email</th><th>Status</th><th>Enrolled</th>
+          <th>Name</th><th>Email</th><th>Status</th><th>Enrolled</th><th></th>
         </tr>
       </thead>
       <tbody>
         <?php foreach($recent ?? [] as $e): ?>
         <tr>
-          <td style="font-weight:600;"><?= htmlspecialchars($e['user_name']) ?></td>
+          <td style="font-weight:600;">
+            <a href="/techaasvik_admin/course/enrollments/<?= $e['id'] ?>" style="color:var(--admin-primary);"><?= htmlspecialchars($e['user_name']) ?></a>
+          </td>
           <td style="color:var(--admin-text-muted);font-size:13px;"><?= htmlspecialchars($e['user_email']) ?></td>
           <td>
             <span style="background:<?= $e['payment_status']==='paid'?'rgba(52,211,153,0.1)':'rgba(251,191,36,0.1)' ?>;color:<?= $e['payment_status']==='paid'?'#34d399':'#fbbf24' ?>;font-size:11px;font-weight:700;padding:2px 10px;border-radius:100px;text-transform:uppercase;">
@@ -71,6 +75,7 @@ $csrfToken = Auth::csrfToken();
             </span>
           </td>
           <td style="font-size:12px;color:var(--admin-text-muted);"><?= date('d M y', strtotime($e['enrolled_at'])) ?></td>
+          <td><a href="/techaasvik_admin/course/enrollments/<?= $e['id'] ?>" class="admin-btn admin-btn-ghost admin-btn-sm">Detail →</a></td>
         </tr>
         <?php endforeach; ?>
         <?php if(empty($recent)): ?>

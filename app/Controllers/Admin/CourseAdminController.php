@@ -166,6 +166,205 @@ class CourseAdminController extends Controller
         $this->redirect('/techaasvik_admin/course');
     }
 
+    // ── Module Management (GET list) ─────────────────────────
+    public function modules(array $params = []): void
+    {
+        $db = \Core\Database::getInstance();
+
+        // Count completions per module
+        $completions = [];
+        $rows = $db->fetchAll(
+            "SELECT module_number, COUNT(DISTINCT enrollment_id) as cnt
+             FROM course_progress WHERE completed=1 GROUP BY module_number"
+        );
+        foreach ($rows as $r) {
+            $completions[(int)$r['module_number']] = (int)$r['cnt'];
+        }
+
+        // Module metadata from DB overrides
+        $moduleSettings = [];
+        $rows2 = $db->fetchAll("SELECT setting_key, setting_value FROM course_settings WHERE setting_key LIKE 'module_%'");
+        foreach ($rows2 as $r) {
+            $moduleSettings[$r['setting_key']] = $r['setting_value'];
+        }
+
+        $this->adminView('course/modules', [
+            'title'          => 'Module Management',
+            'completions'    => $completions,
+            'moduleSettings' => $moduleSettings,
+            'totalPaid'      => $this->enrollments->countPaid(),
+            'flash'          => $this->getFlash(),
+        ]);
+    }
+
+    // ── Module Edit (GET) ─────────────────────────────────────
+    public function editModule(array $params = []): void
+    {
+        $num = (int)($params['num'] ?? 0);
+        if ($num < 1 || $num > 10) { $this->notFound(); return; }
+
+        $db = \Core\Database::getInstance();
+
+        // Fetch module-specific settings
+        $rows = $db->fetchAll(
+            "SELECT setting_key, setting_value FROM course_settings WHERE setting_key LIKE 'module_{$num}_%'"
+        );
+        $moduleData = [];
+        foreach ($rows as $r) {
+            // strip module_N_ prefix
+            $key = preg_replace("/^module_{$num}_/", '', $r['setting_key']);
+            $moduleData[$key] = $r['setting_value'];
+        }
+
+        $this->adminView('course/module-edit', [
+            'title'      => "Edit Module {$num}",
+            'num'        => $num,
+            'moduleData' => $moduleData,
+            'flash'      => $this->getFlash(),
+        ]);
+    }
+
+    // ── Module Save (POST) ────────────────────────────────────
+    public function saveModule(array $params = []): void
+    {
+        $this->verifyCsrf();
+        $num = (int)($params['num'] ?? 0);
+        if ($num < 1 || $num > 10) { $this->notFound(); return; }
+
+        $fields = ['title', 'description', 'image_url', 'video_url', 'video_embed',
+                   'duration', 'is_free', 'objectives', 'resources'];
+
+        $db = \Core\Database::getInstance();
+        foreach ($fields as $f) {
+            $val = $this->request->post($f, '');
+            $key = "module_{$num}_{$f}";
+            $db->execute(
+                "INSERT INTO course_settings (setting_key, setting_value) VALUES (?,?)
+                 ON DUPLICATE KEY UPDATE setting_value=?",
+                [$key, $val, $val]
+            );
+        }
+
+        // Invalidate settings cache
+        \Models\CourseSetting::clearCache();
+
+        $this->flash('success', "Module {$num} saved successfully.");
+        $this->redirect("/techaasvik_admin/course/modules/{$num}/edit");
+    }
+
+    // ── Enrollment Detail ─────────────────────────────────────
+    public function enrollmentDetail(array $params = []): void
+    {
+        $id = (int)($params['id'] ?? 0);
+        $db = \Core\Database::getInstance();
+
+        $enrollment = $db->fetchOne("SELECT * FROM course_enrollments WHERE id=? LIMIT 1", [$id]);
+        if (!$enrollment) { $this->notFound(); return; }
+
+        $progress = $db->fetchAll(
+            "SELECT * FROM course_progress WHERE enrollment_id=? ORDER BY module_number ASC",
+            [$id]
+        );
+        $subProgress = $db->fetchAll(
+            "SELECT * FROM course_submodule_progress WHERE enrollment_id=? ORDER BY module_number, submodule_key ASC",
+            [$id]
+        );
+        $attempts = $db->fetchAll(
+            "SELECT * FROM course_quiz_attempts WHERE enrollment_id=? ORDER BY attempted_at DESC LIMIT 20",
+            [$id]
+        );
+        $cert = $db->fetchOne(
+            "SELECT * FROM course_certificates WHERE enrollment_id=? LIMIT 1", [$id]
+        );
+
+        $progressModel = new \Models\CourseProgress();
+        $overallScore = $progressModel->calculateOverallScore($id);
+
+        $this->adminView('course/enrollment-detail', [
+            'title'       => "Enrollment #{$id}",
+            'enrollment'  => $enrollment,
+            'progress'    => $progress,
+            'subProgress' => $subProgress,
+            'attempts'    => $attempts,
+            'cert'        => $cert,
+            'overallScore'=> $overallScore,
+            'grade'       => \Models\CourseProgress::scoreToGrade($overallScore),
+            'flash'       => $this->getFlash(),
+        ]);
+    }
+
+    // ── Grant Full Access (manual) ────────────────────────────
+    public function grantAccess(array $params = []): void
+    {
+        $this->verifyCsrf();
+        $id = (int)($params['id'] ?? 0);
+        $db = \Core\Database::getInstance();
+
+        $db->execute(
+            "UPDATE course_enrollments SET payment_status='paid', amount_paid=0,
+             razorpay_payment_id='MANUAL_GRANT', updated_at=NOW() WHERE id=?",
+            [$id]
+        );
+
+        $this->flash('success', "Full access granted to enrollment #{$id}.");
+        $this->redirect("/techaasvik_admin/course/enrollments/{$id}");
+    }
+
+    // ── Revoke Access ─────────────────────────────────────────
+    public function revokeAccess(array $params = []): void
+    {
+        $this->verifyCsrf();
+        $id = (int)($params['id'] ?? 0);
+        $db = \Core\Database::getInstance();
+
+        $db->execute(
+            "UPDATE course_enrollments SET payment_status='revoked', updated_at=NOW() WHERE id=?",
+            [$id]
+        );
+
+        $this->flash('success', "Access revoked for enrollment #{$id}.");
+        $this->redirect("/techaasvik_admin/course/enrollments/{$id}");
+    }
+
+    // ── Delete Enrollment ─────────────────────────────────────
+    public function deleteEnrollment(array $params = []): void
+    {
+        $this->verifyCsrf();
+        $id = (int)($params['id'] ?? 0);
+        $db = \Core\Database::getInstance();
+        $db->execute("DELETE FROM course_enrollments WHERE id=?", [$id]);
+        $this->flash('success', "Enrollment #{$id} deleted.");
+        $this->redirect('/techaasvik_admin/course/enrollments');
+    }
+
+    // ── Certificates List ─────────────────────────────────────
+    public function certificates(array $params = []): void
+    {
+        $db = \Core\Database::getInstance();
+        $certs = $db->fetchAll(
+            "SELECT cc.*, ce.user_name, ce.user_email, ce.amount_paid
+             FROM course_certificates cc
+             JOIN course_enrollments ce ON cc.enrollment_id = ce.id
+             ORDER BY cc.issued_at DESC LIMIT 100"
+        );
+        $this->adminView('course/certificates', [
+            'title' => 'Certificates',
+            'certs' => $certs,
+            'flash' => $this->getFlash(),
+        ]);
+    }
+
+    // ── Revoke Certificate ────────────────────────────────────
+    public function revokeCert(array $params = []): void
+    {
+        $this->verifyCsrf();
+        $id = (int)($params['id'] ?? 0);
+        $db = \Core\Database::getInstance();
+        $db->execute("DELETE FROM course_certificates WHERE id=?", [$id]);
+        $this->flash('success', "Certificate revoked.");
+        $this->redirect('/techaasvik_admin/course/certificates');
+    }
+
     // ── Helpers ───────────────────────────────────────────────
     private function uploadFile(array $file, string $prefix): ?string
     {

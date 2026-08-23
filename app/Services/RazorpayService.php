@@ -15,12 +15,39 @@ class RazorpayService
 
     public function __construct()
     {
+        // Primary: env() reads from $_ENV (populated by .env or config.local.php bridge)
         $this->keyId        = env('RAZORPAY_KEY_ID', '');
         $this->keySecret    = env('RAZORPAY_KEY_SECRET', '');
         $this->webhookSecret = env('RAZORPAY_WEBHOOK_SECRET', '');
 
+        // Fallback: read directly from config.local.php if env() missed it
         if (empty($this->keyId) || empty($this->keySecret)) {
-            throw new \RuntimeException('Razorpay keys not configured. Check .env file.');
+            $localPaths = [
+                '/home/u375939934/config.local.php',
+                dirname(APP_ROOT) . '/config.local.php',
+                APP_PATH . '/Config/config.local.php',
+            ];
+            foreach ($localPaths as $path) {
+                if (file_exists($path)) {
+                    $local = require $path;
+                    if (!empty($local['razorpay']['key_id'])) {
+                        $this->keyId     = $local['razorpay']['key_id'];
+                        $this->keySecret = $local['razorpay']['key_secret'] ?? '';
+                        $this->webhookSecret = $local['razorpay']['webhook_secret'] ?? '';
+                        // Also populate $_ENV for future calls
+                        $_ENV['RAZORPAY_KEY_ID']        = $this->keyId;
+                        $_ENV['RAZORPAY_KEY_SECRET']     = $this->keySecret;
+                        $_ENV['RAZORPAY_WEBHOOK_SECRET'] = $this->webhookSecret;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (empty($this->keyId) || empty($this->keySecret)) {
+            throw new \RuntimeException(
+                'Razorpay keys not configured. Add RAZORPAY_KEY_ID to config.local.php razorpay section.'
+            );
         }
     }
 
