@@ -146,6 +146,21 @@ foreach ($localPaths as $localConfigFile) {
     if (file_exists($localConfigFile)) {
         $local  = require $localConfigFile;
         $config = array_replace_recursive($config, $local);
+
+        // If config.local.php has razorpay keys, expose them to env() as well
+        if (!empty($local['razorpay'])) {
+            $rzpMap = [
+                'key_id'         => 'RAZORPAY_KEY_ID',
+                'key_secret'     => 'RAZORPAY_KEY_SECRET',
+                'webhook_secret' => 'RAZORPAY_WEBHOOK_SECRET',
+            ];
+            foreach ($rzpMap as $cfgKey => $envKey) {
+                if (!empty($local['razorpay'][$cfgKey]) && !isset($_ENV[$envKey])) {
+                    $_ENV[$envKey] = $local['razorpay'][$cfgKey];
+                    putenv("{$envKey}={$local['razorpay'][$cfgKey]}");
+                }
+            }
+        }
         break;
     }
 }

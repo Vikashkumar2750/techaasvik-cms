@@ -66,6 +66,18 @@ class Database
         return $this->query($sql, $params)->fetchColumn();
     }
 
+    // ── Execute (alias for query, returns rowCount) ────────
+    public function execute(string $sql, array $params = []): int
+    {
+        return $this->query($sql, $params)->rowCount();
+    }
+
+    // ── Last insert ID ────────────────────────────────────
+    public function lastInsertId(): string
+    {
+        return $this->pdo->lastInsertId();
+    }
+
     // ── Insert and return last insert ID ──────────────────
     public function insert(string $table, array $data): int
     {

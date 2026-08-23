@@ -57,6 +57,8 @@ require_once APP_PATH . '/Helpers/date.php';
 require_once APP_PATH . '/Helpers/seo.php';
 
 // ── Config ─────────────────────────────────────────────────
+require_once APP_PATH . '/Config/env.php';
+loadEnv(APP_ROOT . '/.env');          // Load .env (gitignored, never committed)
 require_once APP_PATH . '/Config/constants.php';
 require_once APP_PATH . '/Config/config.php';
 

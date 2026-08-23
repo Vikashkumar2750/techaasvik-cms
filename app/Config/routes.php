@@ -62,9 +62,19 @@ $router->get('/research',            'ArchiveController@research',   'research')
 $router->get('/research/{slug}',     'PostController@show',          'research.show');
 $router->get('/videos',              'ArchiveController@videos',     'videos');
 
-// Courses
-$router->get('/courses',             'ArchiveController@courses',    'courses');
-$router->get('/courses/{slug}',      'ArchiveController@course',     'course.show');
+// Courses — Full system
+$router->get('/courses',                            'CourseController@index',          'courses');
+$router->post('/courses/register',                  'CourseController@register',        'course.register');
+$router->post('/courses/apply-coupon',              'CourseController@applyCoupon',     'course.coupon');
+$router->post('/courses/create-order',              'CourseController@createOrder',     'course.order');
+$router->post('/courses/verify-payment',            'CourseController@verifyPayment',   'course.verify');
+$router->post('/courses/webhook',                   'CourseController@webhook',         'course.webhook');
+$router->post('/courses/quiz',                      'CourseController@submitQuiz',      'course.quiz');
+$router->get('/courses/{slug}/learn/{module}',      'CourseController@player',          'course.player');
+$router->get('/courses/{slug}/enroll',              'CourseController@enroll',          'course.enroll');
+$router->get('/courses/{slug}',                     'CourseController@landing',         'course.show');
+$router->get('/certificate/{uid}',                  'CourseController@certificate',     'course.cert');
+$router->get('/verify-certificate/{uid}',           'CourseController@verifyCertificate','course.verify.cert');
 
 // Authors
 $router->get('/authors',             'AuthorController@index',       'authors');
@@ -175,3 +185,12 @@ $router->post('/techaasvik_admin/seo/regenerate-all',        'Admin\SeoToolsCont
 
 // Temp: fix content (remove after use)
 $router->get('/techaasvik_admin/fix-content',                'Admin\SeoToolsController@fixContent',           'admin.fix.content');
+
+// Course Admin
+$router->get('/techaasvik_admin/course',                     'Admin\CourseAdminController@index',             'admin.course');
+$router->get('/techaasvik_admin/course/settings',            'Admin\CourseAdminController@settings',          'admin.course.settings');
+$router->post('/techaasvik_admin/course/settings/save',      'Admin\CourseAdminController@saveSettings',      'admin.course.settings.save');
+$router->post('/techaasvik_admin/course/settings/test-smtp', 'Admin\CourseAdminController@testSmtp',          'admin.course.smtp.test');
+$router->get('/techaasvik_admin/course/enrollments',         'Admin\CourseAdminController@enrollments',       'admin.course.enrollments');
+$router->post('/techaasvik_admin/course/coupons/create',     'Admin\CourseAdminController@createCoupon',      'admin.course.coupon.create');
+$router->post('/techaasvik_admin/course/coupons/{id}/deactivate','Admin\CourseAdminController@deactivateCoupon','admin.course.coupon.deactivate');
