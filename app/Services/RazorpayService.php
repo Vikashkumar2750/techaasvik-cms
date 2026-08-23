@@ -15,30 +15,12 @@ class RazorpayService
 
     public function __construct()
     {
-        // Priority 1: Read from DB (course_settings) — set via admin panel
-        try {
-            $db = \Core\Database::getInstance();
-            $rows = $db->fetchAll(
-                "SELECT setting_key, setting_value FROM course_settings WHERE setting_key IN ('razorpay_key_id','razorpay_key_secret','razorpay_webhook_secret')"
-            );
-            foreach ($rows as $row) {
-                match ($row['setting_key']) {
-                    'razorpay_key_id'         => $this->keyId         = $row['setting_value'],
-                    'razorpay_key_secret'     => $this->keySecret     = $row['setting_value'],
-                    'razorpay_webhook_secret' => $this->webhookSecret = $row['setting_value'],
-                    default => null,
-                };
-            }
-        } catch (\Throwable $e) {
-            // DB not yet available — fall through to env/file
-        }
+        // Primary: env() reads from $_ENV (populated by config.php bridge from config.local.php)
+        $this->keyId        = env('RAZORPAY_KEY_ID', '');
+        $this->keySecret    = env('RAZORPAY_KEY_SECRET', '');
+        $this->webhookSecret = env('RAZORPAY_WEBHOOK_SECRET', '');
 
-        // Priority 2: env() from .env or config.php bridge
-        if (empty($this->keyId))     $this->keyId        = env('RAZORPAY_KEY_ID', '');
-        if (empty($this->keySecret)) $this->keySecret     = env('RAZORPAY_KEY_SECRET', '');
-        if (empty($this->webhookSecret)) $this->webhookSecret = env('RAZORPAY_WEBHOOK_SECRET', '');
-
-        // Priority 3: Direct config.local.php read
+        // Fallback: read directly from config.local.php if env() missed it
         if (empty($this->keyId) || empty($this->keySecret)) {
             $localPaths = [
                 '/home/u375939934/config.local.php',
@@ -60,7 +42,7 @@ class RazorpayService
 
         if (empty($this->keyId) || empty($this->keySecret)) {
             throw new \RuntimeException(
-                'Razorpay keys not configured. Go to Admin → Course Settings → Razorpay tab and enter your keys.'
+                'Razorpay keys not configured. Edit config.local.php on server with your rzp_live_ keys.'
             );
         }
     }

@@ -2,12 +2,30 @@
 /**
  * Submodule content partial
  * Available vars: $moduleNum, $submoduleNum, $currentSub, $module
+ *
+ * Content priority:
+ *  1. DB row in course_submodule_content (set via admin Content Editor)
+ *  2. Hardcoded $infographics array (legacy)
+ *  3. Module-level course-module-N.php partial
  */
 $subKey = ($moduleNum ?? 1) . '-' . ($submoduleNum ?? 1);
 $title  = $currentSub['title'] ?? '';
 $mod    = $module ?? [];
+$courseSlug = $courseSlug ?? 'ai-marketing-course';
 
-// Infographic data per submodule key
+// ── 1. Try DB first ──────────────────────────────────────────────
+$dbContent = null;
+try {
+    $db = \Core\Database::getInstance();
+    $dbContent = $db->fetchOne(
+        "SELECT * FROM course_submodule_content WHERE course_slug=? AND module_num=? AND submodule_key=? LIMIT 1",
+        [$courseSlug, $moduleNum ?? 1, $subKey]
+    );
+} catch (\Throwable $e) {
+    // DB unavailable - fall through to hardcoded
+}
+
+// ── 2. Hardcoded infographic fallback ────────────────────────────
 $infographics = [
     '1-1' => ['title' => 'The AI Marketing Shift', 'steps' => ['AI answers queries directly', 'Search intent changes', 'Zero-click searches rise', 'Content must be AI-readable', 'Human judgment > rote tasks']],
     '1-2' => ['title' => 'What AI Changed in Marketing', 'steps' => ['Content generation speed 10x', 'Personalisation at scale', 'Research in seconds', 'Ad copy testing automated', 'Predictive insights available']],
@@ -52,7 +70,62 @@ $infographics = [
 ];
 
 $info = $infographics[$subKey] ?? ['title' => $title, 'steps' => []];
+
+// ── Merge DB over hardcoded ──────────────────────────────────────
+if ($dbContent) {
+    // Image
+    if (!empty($dbContent['image_url'])) {
+        // Will render below
+    }
+
+    // Video
+    $dbVideoUrl   = $dbContent['video_url']   ?? '';
+    $dbVideoEmbed = $dbContent['video_embed'] ?? '';
+
+    // Key points override
+    if (!empty($dbContent['key_points'])) {
+        $dbSteps = json_decode($dbContent['key_points'], true);
+        if (is_array($dbSteps) && !empty($dbSteps)) {
+            $info['steps'] = $dbSteps;
+        }
+    }
+    if (!empty($dbContent['infographic_title'])) {
+        $info['title'] = $dbContent['infographic_title'];
+    }
+
+    // Content HTML
+    $dbHtml = $dbContent['content_html'] ?? '';
+}
 ?>
+
+<?php /* ── Image (DB override first) ── */ ?>
+<?php if (!empty($dbContent['image_url'])): ?>
+<div style="margin-bottom:20px;">
+  <img src="<?= htmlspecialchars($dbContent['image_url']) ?>"
+       alt="<?= htmlspecialchars($title) ?>"
+       style="width:100%;border-radius:12px;max-height:320px;object-fit:cover;">
+</div>
+<?php endif; ?>
+
+<?php /* ── Video player ── */ ?>
+<?php if (!empty($dbContent['video_embed'] ?? '')): ?>
+<div style="margin-bottom:20px;border-radius:12px;overflow:hidden;aspect-ratio:16/9;">
+  <?= $dbContent['video_embed'] ?>
+</div>
+<?php elseif (!empty($dbContent['video_url'] ?? '')): ?>
+<?php
+$vurl = $dbContent['video_url'];
+// Convert YouTube watch URL to embed
+$vurl = preg_replace('#https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_\-]+).*#', 'https://www.youtube.com/embed/$1', $vurl);
+$vurl = preg_replace('#https?://youtu\.be/([a-zA-Z0-9_\-]+).*#', 'https://www.youtube.com/embed/$1', $vurl);
+// Vimeo
+$vurl = preg_replace('#https?://vimeo\.com/(\d+).*#', 'https://player.vimeo.com/video/$1', $vurl);
+?>
+<div style="margin-bottom:20px;border-radius:12px;overflow:hidden;aspect-ratio:16/9;">
+  <iframe src="<?= htmlspecialchars($vurl) ?>" frameborder="0" allowfullscreen
+          style="width:100%;height:100%;"></iframe>
+</div>
+<?php endif; ?>
 
 <!-- Infographic / Visual Card -->
 <?php if (!empty($info['steps'])): ?>
@@ -69,12 +142,36 @@ $info = $infographics[$subKey] ?? ['title' => $title, 'steps' => []];
 </div>
 <?php endif; ?>
 
-<!-- Module text content (includes the full module content file) -->
+<?php /* ── DB HTML content (if set) ── */ ?>
+<?php if (!empty($dbContent['content_html'] ?? '')): ?>
+<div class="lesson-content" style="margin-top:20px;">
+  <?= $dbContent['content_html'] /* already HTML — admin controls this */ ?>
+</div>
+<?php /* ── Resources (if set) ── */ ?>
+<?php if (!empty($dbContent['resources'] ?? '')): ?>
+<?php $resources = json_decode($dbContent['resources'], true) ?? []; ?>
+<?php if (!empty($resources)): ?>
+<div style="margin-top:24px;padding:16px;background:var(--bg-elevated);border-radius:10px;">
+  <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">📎 Resources</div>
+  <?php foreach ($resources as $res): ?>
+  <a href="<?= htmlspecialchars($res['url'] ?? '#') ?>" target="_blank" rel="noopener"
+     style="display:flex;align-items:center;gap:8px;padding:8px 0;color:var(--text-primary);text-decoration:none;border-bottom:1px solid var(--border-subtle);font-size:13px;">
+    <span style="font-size:16px;">⬇️</span>
+    <?= htmlspecialchars($res['name'] ?? 'Resource') ?>
+  </a>
+  <?php endforeach; ?>
+</div>
+<?php endif; ?>
+<?php endif; ?>
+
+<?php else: ?>
+<?php /* ── Fallback: hardcoded module file ── */ ?>
 <?php
 $contentFile = APP_ROOT . "/views/partials/course-module-{$moduleNum}.php";
 if (file_exists($contentFile)) {
     include $contentFile;
 } else {
-    echo '<p style="color:var(--text-muted);font-style:italic;">Content for this module is loading...</p>';
+    echo '<p style="color:var(--text-muted);font-style:italic;">Content for this module is being prepared. Check back soon!</p>';
 }
 ?>
+<?php endif; ?>

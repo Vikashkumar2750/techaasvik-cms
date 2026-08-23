@@ -211,3 +211,9 @@ $router->post('/techaasvik_admin/course/enrollments/{id}/delete', 'Admin\CourseA
 // Certificate management
 $router->get('/techaasvik_admin/course/certificates',        'Admin\CourseAdminController@certificates',      'admin.course.certs');
 $router->post('/techaasvik_admin/course/certificates/{id}/revoke', 'Admin\CourseAdminController@revokeCert',  'admin.course.cert.revoke');
+
+// Course Content Editor (submodule content CMS)
+$router->get('/techaasvik_admin/course/content-editor',                       'Admin\CourseAdminController@contentEditor',      'admin.course.content.editor');
+$router->get('/techaasvik_admin/course/content-editor/{mod}/{sub}/load',      'Admin\CourseAdminController@contentEditorLoad',  'admin.course.content.load');
+$router->post('/techaasvik_admin/course/content-editor/{mod}/{sub}/save',     'Admin\CourseAdminController@contentEditorSave',  'admin.course.content.save');
+$router->post('/techaasvik_admin/course/content-editor/{mod}/{sub}/delete',   'Admin\CourseAdminController@contentEditorDelete','admin.course.content.delete');
