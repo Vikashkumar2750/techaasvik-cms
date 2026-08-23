@@ -25,7 +25,7 @@ class CourseCertificate extends Model
         );
     }
 
-    public function create(int $enrollmentId): string
+    public function issue(int $enrollmentId): string
     {
         $uid = md5(uniqid($enrollmentId . time(), true));
         $this->db->execute(

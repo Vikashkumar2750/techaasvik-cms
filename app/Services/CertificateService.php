@@ -34,8 +34,8 @@ class CertificateService
         // Mark enrollment as completed
         $this->enrollModel->markCompleted($enrollmentId);
 
-        // Create cert record
-        $uid = $this->certModel->create($enrollmentId);
+        // Issue cert record
+        $uid = $this->certModel->issue($enrollmentId);
 
         // Send email
         $this->emailCertificate($enrollmentId, $uid);
