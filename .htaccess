@@ -61,7 +61,7 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-src https://www.recaptcha.net https://www.youtube.com;"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://www.recaptcha.net https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://api.razorpay.com; frame-src https://www.recaptcha.net https://www.youtube.com https://api.razorpay.com;"
 </IfModule>
 
 # ============================================================
@@ -80,8 +80,8 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 <IfModule mod_expires.c>
     ExpiresActive On
 
-    # HTML — short cache
-    ExpiresByType text/html "access plus 1 hour"
+    # HTML — no cache (PHP pages must reflect immediately after deploy)
+    ExpiresByType text/html "access plus 0 seconds"
 
     # CSS & JS — no aggressive caching; use Cache-Control revalidate instead
     # (filemtime()-based query strings bust cache on deploy)
@@ -101,6 +101,15 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
     ExpiresByType font/woff2              "access plus 1 year"
     ExpiresByType font/woff               "access plus 1 year"
     ExpiresByType application/font-woff2  "access plus 1 year"
+</IfModule>
+
+# HTML — no-store so PHP changes reflect immediately
+<IfModule mod_headers.c>
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+    </FilesMatch>
 </IfModule>
 
 # CSS & JS — must revalidate (no stale serving after deploy)
