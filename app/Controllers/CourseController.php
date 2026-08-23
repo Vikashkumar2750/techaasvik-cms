@@ -933,6 +933,16 @@ class CourseController extends Controller
             ['q' => 'Marketing diagnosis means:', 'options' => ['Finding the highest traffic channel', 'Systematically identifying what\'s broken and prescribing a fix', 'Increasing ad budget', 'A/B testing everything'], 'answer' => 1],
         ];
     }
+    private function module10Quiz(): array {
+        return [
+            ['q' => 'An AI Marketing Operating System primarily consists of:', 'options' => ['Tools only', 'Integrated workflows covering research, content, ads, and analytics', 'Only a content calendar', 'Ad campaigns'], 'answer' => 1],
+            ['q' => 'The first step in a capstone marketing project should be:', 'options' => ['Setting ad budgets', 'Deep customer and market research', 'Building a website', 'Creating social profiles'], 'answer' => 1],
+            ['q' => 'Responsible AI use in marketing requires:', 'options' => ['Ignoring bias in AI outputs', 'Transparency, accuracy checks, and human oversight', 'Publishing all AI content unedited', 'Using AI for every single task'], 'answer' => 1],
+            ['q' => 'A complete AI marketing career roadmap should include:', 'options' => ['Only technical skills', 'Continuous learning, portfolio building, and staying current with tools', 'Certification only', 'Specializing in one tool forever'], 'answer' => 1],
+            ['q' => 'The most important outcome of this course is:', 'options' => ['Memorizing AI tool names', 'Building a real, working AI marketing system you can apply immediately', 'Getting a certificate', 'Learning to code'], 'answer' => 1],
+        ];
+    }
+
     /**
      * Build submodule list for a given module.
      * Structure: 4 lesson submodules + 1 quiz submodule = 5 per module.
