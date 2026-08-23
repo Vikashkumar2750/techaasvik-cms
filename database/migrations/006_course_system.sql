@@ -128,6 +128,7 @@ INSERT IGNORE INTO `course_settings` (`setting_key`, `setting_value`) VALUES
   ('smtp_from_name',           'TechAasvik'),
   ('smtp_from_email',          ''),
   ('razorpay_key_id',          ''),
-  ('razorpay_key_secret_enc',  '') COMMENT 'Encrypted; prefer .env';
+  -- razorpay_key_secret is loaded from config.local.php or .env (never stored in DB)
+  ('razorpay_key_secret_enc',  '');
 
 SET FOREIGN_KEY_CHECKS = 1;
