@@ -4,8 +4,8 @@ use Core\Auth;
 Auth::startSession();
 $csrfToken = Auth::csrfToken();
 $s = $settings ?? [];
-$activeTab = $_GET['tab'] ?? 'pricing';
-$tabs = ['pricing' => '💰 Pricing', 'cert' => '🎓 Certificate', 'email' => '📧 Email SMTP', 'razorpay' => '💳 Razorpay', 'video' => '🎬 Video'];
+$activeTab = $_GET['tab'] ?? 'general';
+$tabs = ['general' => '🌐 General', 'pricing' => '💰 Pricing', 'cert' => '🎓 Certificate', 'email' => '📧 Email SMTP', 'razorpay' => '💳 Razorpay', 'video' => '🎬 Video'];
 ?>
 
 <div class="admin-page-header">
@@ -32,7 +32,50 @@ $tabs = ['pricing' => '💰 Pricing', 'cert' => '🎓 Certificate', 'email' => '
 <form method="POST" action="/techaasvik_admin/course/settings/save" enctype="multipart/form-data">
   <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
-  <?php if($activeTab === 'pricing'): ?>
+  <?php if($activeTab === 'general'): ?>
+  <!-- GENERAL TAB — Courses Enable/Disable -->
+  <div class="admin-table-wrapper" style="max-width:600px;padding:24px;">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:6px;">🌐 Site-Wide Course Control</h3>
+    <p style="font-size:13px;color:var(--admin-text-muted);margin-bottom:24px;">Toggle courses on or off across the entire website — including navigation, footer, course pages, and enrollment.</p>
+
+    <?php $coursesEnabled = ($s['courses_enabled'] ?? '1') === '1'; ?>
+
+    <div style="background:<?= $coursesEnabled ? 'rgba(52,211,153,0.06)' : 'rgba(248,113,113,0.06)' ?>;border:1px solid <?= $coursesEnabled ? 'rgba(52,211,153,0.25)' : 'rgba(248,113,113,0.25)' ?>;border-radius:14px;padding:24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;">
+      <div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:4px;color:<?= $coursesEnabled ? '#34d399' : '#f87171' ?>;"><?= $coursesEnabled ? '✅ Courses are ENABLED' : '❌ Courses are DISABLED' ?></div>
+        <div style="font-size:13px;color:var(--admin-text-muted);"><?= $coursesEnabled ? 'Courses are visible to all visitors. Header, footer, and all course pages are active.' : 'Courses are hidden site-wide. Nav links, footer links, and all /courses/* pages return 404.' ?></div>
+      </div>
+      <label style="position:relative;display:inline-block;width:60px;height:32px;flex-shrink:0;cursor:pointer;">
+        <input type="checkbox" id="coursesEnabledToggle" style="opacity:0;width:0;height:0;" <?= $coursesEnabled ? 'checked' : '' ?> onchange="toggleCoursesEnabled(this)">
+        <span id="toggleTrack" style="position:absolute;cursor:pointer;inset:0;background:<?= $coursesEnabled ? '#34d399' : '#374151' ?>;border-radius:34px;transition:0.3s;">
+          <span id="toggleThumb" style="position:absolute;height:24px;width:24px;left:<?= $coursesEnabled ? '32px' : '4px' ?>;bottom:4px;background:#fff;border-radius:50%;transition:0.3s;"></span>
+        </span>
+      </label>
+    </div>
+
+    <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:14px 18px;font-size:13px;color:#fbbf24;">
+      ⚠️ <strong>Warning:</strong> Disabling courses will immediately hide them from all visitors. Students with existing enrollments will not be able to access course content until you re-enable.
+    </div>
+
+    <input type="hidden" name="courses_enabled" id="coursesEnabledHidden" value="<?= $coursesEnabled ? '1' : '0' ?>">
+    <input type="hidden" name="course_price_original" value="<?= htmlspecialchars($s['course_price_original']??'999') ?>">
+    <input type="hidden" name="course_price_sale" value="<?= htmlspecialchars($s['course_price_sale']??'199') ?>">
+    <input type="hidden" name="free_modules_count" value="<?= htmlspecialchars($s['free_modules_count']??'5') ?>">
+    <input type="hidden" name="video_enabled" value="<?= $s['video_enabled']??'0' ?>">
+    <input type="hidden" name="cert_signatory_name" value="<?= htmlspecialchars($s['cert_signatory_name']??'') ?>">
+    <input type="hidden" name="smtp_provider" value="<?= htmlspecialchars($s['smtp_provider']??'') ?>">
+    <input type="hidden" name="smtp_host" value="<?= htmlspecialchars($s['smtp_host']??'') ?>">
+    <input type="hidden" name="smtp_port" value="<?= htmlspecialchars($s['smtp_port']??'') ?>">
+    <input type="hidden" name="smtp_encryption" value="<?= htmlspecialchars($s['smtp_encryption']??'') ?>">
+    <input type="hidden" name="smtp_user" value="<?= htmlspecialchars($s['smtp_user']??'') ?>">
+    <input type="hidden" name="smtp_pass" value="">
+    <input type="hidden" name="processing_fee_pct" value="<?= htmlspecialchars($s['processing_fee_pct']??'1.5') ?>">
+    <div style="margin-top:24px;">
+      <button type="submit" class="admin-btn admin-btn-primary">💾 Save General Settings</button>
+    </div>
+  </div>
+
+  <?php elseif($activeTab === 'pricing'): ?>
   <!-- PRICING TAB -->
   <div class="admin-table-wrapper" style="max-width:600px;padding:24px;">
     <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">💰 Course Pricing</h3>
@@ -303,5 +346,11 @@ async function testSmtp(){
     result.style.display='block';
   } catch(e){ result.textContent='Error.'; result.style.color='#f87171'; result.style.display='block'; }
   btn.disabled=false; btn.textContent='Send Test';
+}
+
+function toggleCoursesEnabled(checkbox) {
+  const val = checkbox.checked ? '1' : '0';
+  document.getElementById('coursesEnabledHidden').value = val;
+  checkbox.closest('form').submit();
 }
 </script>
