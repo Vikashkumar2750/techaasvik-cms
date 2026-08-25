@@ -71,24 +71,25 @@ $router->post('/courses/verify-payment',                   'CourseController@ver
 $router->post('/courses/webhook',                          'CourseController@webhook',           'course.webhook');
 $router->post('/courses/quiz',                             'CourseController@submitQuiz',        'course.quiz');
 $router->post('/courses/submodule-complete',               'CourseController@markSubmoduleComplete','course.sub.done');
+// Course Student Auth — MUST be before /courses/{slug} to avoid slug matching
+$router->get('/courses/login',                             'CourseController@loginForm',         'course.login');
+$router->post('/courses/login',                            'CourseController@login',             'course.login.post');
+$router->get('/courses/logout',                            'CourseController@logout',            'course.logout');
+$router->get('/courses/verify-email',                      'CourseController@verifyEmail',       'course.verify.email');
+$router->get('/courses/set-password',                      'CourseController@setPasswordForm',   'course.set.password');
+$router->post('/courses/set-password',                     'CourseController@setPassword',       'course.set.password.post');
+$router->get('/courses/forgot-password',                   'CourseController@forgotPasswordForm','course.forgot');
+$router->post('/courses/forgot-password',                  'CourseController@forgotPassword',    'course.forgot.post');
+$router->get('/courses/reset-password',                    'CourseController@resetPasswordForm', 'course.reset');
+$router->post('/courses/reset-password',                   'CourseController@resetPassword',     'course.reset.post');
+
+// Dynamic course routes — {slug} must come AFTER all static /courses/* routes
 $router->get('/courses/{slug}/learn/{module}/{submodule}', 'CourseController@player',            'course.player.sub');
 $router->get('/courses/{slug}/learn/{module}',             'CourseController@player',            'course.player');
 $router->get('/courses/{slug}/enroll',                     'CourseController@enroll',            'course.enroll');
 $router->get('/courses/{slug}',                            'CourseController@landing',           'course.show');
 $router->get('/certificate/{uid}',                         'CourseController@certificate',       'course.cert');
 $router->get('/verify-certificate/{uid}',                  'CourseController@verifyCertificate', 'course.verify.cert');
-
-// Course Student Auth
-$router->get('/courses/verify-email',                      'CourseController@verifyEmail',       'course.verify.email');
-$router->get('/courses/set-password',                      'CourseController@setPasswordForm',   'course.set.password');
-$router->post('/courses/set-password',                     'CourseController@setPassword',       'course.set.password.post');
-$router->get('/courses/login',                             'CourseController@loginForm',         'course.login');
-$router->post('/courses/login',                            'CourseController@login',             'course.login.post');
-$router->get('/courses/logout',                            'CourseController@logout',            'course.logout');
-$router->get('/courses/forgot-password',                   'CourseController@forgotPasswordForm','course.forgot');
-$router->post('/courses/forgot-password',                  'CourseController@forgotPassword',    'course.forgot.post');
-$router->get('/courses/reset-password',                    'CourseController@resetPasswordForm', 'course.reset');
-$router->post('/courses/reset-password',                   'CourseController@resetPassword',     'course.reset.post');
 
 // Authors
 $router->get('/authors',             'AuthorController@index',       'authors');
