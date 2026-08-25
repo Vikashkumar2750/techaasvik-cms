@@ -159,6 +159,27 @@ for ($m = 1; $m <= 10; $m++) {
 .html-btn { padding:3px 8px; background:var(--admin-bg); border:1px solid var(--admin-border); border-radius:4px; font-size:11px; cursor:pointer; color:var(--admin-text); transition:all 0.1s; }
 .html-btn:hover { background:rgba(99,102,241,0.1); border-color:#6366f1; }
 
+/* admin-input alias — used in content editor textareas/inputs */
+.admin-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--admin-bg-elevated, #1a1a2e);
+  border: 1px solid var(--admin-border, rgba(255,255,255,0.1));
+  border-radius: 8px;
+  color: var(--admin-text, #e2e8f0);
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  display: block;
+}
+.admin-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+}
+textarea.admin-input { resize: vertical; min-height: 100px; }
+
 /* Dynamic lists */
 .ce-list-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
 .ce-list-row input { flex:1; }
@@ -337,8 +358,8 @@ for ($m = 1; $m <= 10; $m++) {
                 <button type="button" class="html-btn" onclick="insertHtml('<hr>\n')">HR</button>
                 <button type="button" class="html-btn" onclick="insertHtml('<img src=\"URL\" alt=\"\" style=\"max-width:100%;border-radius:8px;\">\n')">IMG</button>
               </div>
-              <textarea id="f_content_html" class="admin-input" rows="14"
-                style="font-family:monospace;font-size:12px;resize:vertical;min-height:200px;"
+              <textarea id="f_content_html" class="admin-input" rows="20"
+                style="font-family:monospace;font-size:12.5px;resize:vertical;min-height:340px;width:100%;box-sizing:border-box;"
                 placeholder="Enter lesson HTML content...&#10;&#10;Example:&#10;<p>In this lesson you'll learn...</p>&#10;<h2>Key Concepts</h2>&#10;<ul>&#10;  <li>Point 1</li>&#10;</ul>"
                 oninput="markDirty()"></textarea>
             </div>
