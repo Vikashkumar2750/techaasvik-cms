@@ -109,19 +109,25 @@ class CourseAdminController extends Controller
         $to = $this->request->post('test_email', '');
 
         if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
-            $this->json(['success' => false, 'error' => 'Invalid email address.']);
+            $this->json(['success' => false, 'message' => 'Invalid email address.']);
             return;
         }
 
-        $mailer = new MailService();
-        $result = $mailer->sendTest($to);
-
-        $this->json([
-            'success' => $result,
-            'message' => $result
-                ? "Test email sent to {$to}. Check your inbox."
-                : "Failed to send. Check SMTP credentials and try again.",
-        ]);
+        try {
+            $mailer = new MailService();
+            $result = $mailer->sendTest($to);
+            $this->json([
+                'success' => $result,
+                'message' => $result
+                    ? "✅ Test email sent to {$to}. Check your inbox."
+                    : "❌ Failed to send. Check SMTP credentials and try again.",
+            ]);
+        } catch (\Throwable $e) {
+            $this->json([
+                'success' => false,
+                'message' => '❌ SMTP Error: ' . $e->getMessage(),
+            ]);
+        }
     }
 
     // ── Enrollments ───────────────────────────────────────────

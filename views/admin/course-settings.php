@@ -17,9 +17,21 @@ $tabs = ['general' => '🌐 General', 'pricing' => '💰 Pricing', 'cert' => '�
 </div>
 
 <?php if ($flash = ($flash ?? null)): ?>
-<div style="padding:12px 16px;border-radius:8px;margin-bottom:20px;background:<?= $flash['type']==='success'?'rgba(52,211,153,0.1)':'rgba(248,113,113,0.1)' ?>;border:1px solid <?= $flash['type']==='success'?'rgba(52,211,153,0.3)':'rgba(248,113,113,0.3)' ?>;color:<?= $flash['type']==='success'?'#34d399':'#f87171' ?>;">
-  <?= htmlspecialchars($flash['message']) ?>
+<div id="settingsToast" style="position:fixed;top:20px;right:24px;z-index:9999;max-width:380px;padding:14px 18px;border-radius:12px;
+  background:<?= $flash['type']==='success'?'#065f46':'#7f1d1d' ?>;
+  border:1px solid <?= $flash['type']==='success'?'rgba(52,211,153,0.4)':'rgba(248,113,113,0.4)' ?>;
+  color:<?= $flash['type']==='success'?'#34d399':'#fca5a5' ?>;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  animation:toastSlide 0.3s ease;font-weight:600;font-size:14px;">
+  <span style="font-size:20px;"><?= $flash['type']==='success' ? '✅' : '❌' ?></span>
+  <span><?= htmlspecialchars($flash['message']) ?></span>
+  <button onclick="document.getElementById('settingsToast').remove()" style="margin-left:auto;background:none;border:none;color:inherit;font-size:18px;cursor:pointer;opacity:0.7;padding:0 2px;">×</button>
 </div>
+<style>
+@keyframes toastSlide { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+</style>
+<script>setTimeout(()=>{const t=document.getElementById('settingsToast');if(t)t.style.animation='toastSlide 0.3s ease reverse forwards',setTimeout(()=>t.remove(),300);},4000);</script>
 <?php endif; ?>
 
 <!-- Tabs -->
