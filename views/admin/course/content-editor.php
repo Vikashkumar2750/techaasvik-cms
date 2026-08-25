@@ -13,7 +13,7 @@ $hasContent = $hasContent ?? [];
 $moduleSettings = $moduleSettings ?? [];
 $slug       = $slug ?? 'ai-marketing-course';
 
-// Hardcoded default key-points (so editor can show existing content)
+// Hardcoded default key-points
 $defaultKeyPoints = [
     '1-1' => ['AI answers queries directly', 'Search intent changes', 'Zero-click searches rise', 'Content must be AI-readable', 'Human judgment > rote tasks'],
     '1-2' => ['Content generation speed 10x', 'Personalisation at scale', 'Research in seconds', 'Ad copy testing automated', 'Predictive insights available'],
@@ -56,12 +56,30 @@ $defaultKeyPoints = [
     '10-3'=> ['Verify all AI outputs', 'Check for bias', 'Maintain human oversight', 'Disclose AI use', 'Protect user data'],
     '10-4'=> ['AI Marketing Specialist', 'Growth Marketer', 'Marketing Technologist', 'CMO / Head of Growth', 'AI Marketing Consultant'],
 ];
+
+// Load existing PHP module content to pre-fill editor
+$defaultHtml = [];
+for ($m = 1; $m <= 10; $m++) {
+    $f = APP_ROOT . "/views/partials/course-module-{$m}.php";
+    if (file_exists($f)) {
+        ob_start();
+        include $f;
+        $defaultHtml[$m] = ob_get_clean();
+    }
+}
+
+
+// note: $defaultKeyPoints already declared above
 ?>
-<!DOCTYPE html>
-<html><!-- This is a full-page view inside admin layout -->
 <style>
-/* ── Course Editor Layout ────────────────────────── */
-.ce-root { display:flex; height:calc(100vh - 56px); overflow:hidden; margin:-24px; }
+/* ── Course Editor Layout — full bleed inside admin-content ── */
+.ce-root {
+  display:flex;
+  width: calc(100% + 48px);
+  margin: -24px;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
 
 /* Left Tree Sidebar */
 .ce-sidebar { width:280px; flex-shrink:0; background:#141420; border-right:1px solid rgba(255,255,255,0.06); overflow-y:auto; display:flex; flex-direction:column; }
@@ -428,6 +446,9 @@ const SUB_TITLES = <?= json_encode($subTitles) ?>;
 // Module settings cache (from PHP)
 const MODULE_SETTINGS = <?= json_encode($moduleSettings) ?>;
 
+// Existing live PHP content per module (full module HTML)
+const DEFAULT_HTML = <?= json_encode(array_map('trim', $defaultHtml ?? [])) ?>;
+
 // ── Sidebar ──────────────────────────────────────────────────
 function toggleMod(el, mNum) {
   el.classList.toggle('open');
@@ -635,8 +656,30 @@ function populateSubForm(d, sub) {
   document.getElementById('f_video_url').value          = d.video_url        || '';
   document.getElementById('f_video_embed').value        = d.video_embed      || '';
   document.getElementById('f_infographic_title').value  = d.infographic_title|| '';
-  document.getElementById('f_content_html').value       = d.content_html     || '';
   previewImg();
+
+  // Content HTML: if DB has it show that, else show existing live PHP content as reference
+  const mNum = parseInt(d.module_num);
+  const liveHtml = DEFAULT_HTML[mNum] || '';
+  if (d.content_html) {
+    document.getElementById('f_content_html').value = d.content_html;
+    // Remove any existing default-content notice
+    const old = document.getElementById('defaultHtmlNotice');
+    if (old) old.remove();
+  } else {
+    // Pre-fill with live PHP content so admin can see & edit it
+    document.getElementById('f_content_html').value = liveHtml;
+    // Show a notice that this is auto-loaded from the PHP file
+    const ta = document.getElementById('f_content_html');
+    let notice = document.getElementById('defaultHtmlNotice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.id = 'defaultHtmlNotice';
+      notice.style.cssText = 'margin-bottom:8px;padding:10px 14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:7px;font-size:12px;color:#a5b4fc;display:flex;align-items:center;gap:8px;';
+      notice.innerHTML = '<span style="font-size:16px;">📄</span><span><strong>Live content loaded</strong> — this is the current live PHP content for this module. Editing and saving will store it in DB and override the PHP file for this lesson only.</span>';
+      ta.parentNode.insertBefore(notice, ta);
+    }
+  }
 
   // Key points
   document.getElementById('keyPointsList').innerHTML = '';
@@ -649,10 +692,10 @@ function populateSubForm(d, sub) {
   // DB badge
   const badge = document.getElementById('subDbBadge');
   if (d.exists) {
-    badge.innerHTML = '<span class="ce-db-badge db">✅ Custom Content</span>';
+    badge.innerHTML = '<span class="ce-db-badge db">✅ Custom Content in DB</span>';
     document.getElementById('subResetBtn').style.display = '';
   } else {
-    badge.innerHTML = '<span class="ce-db-badge default">○ Default</span>';
+    badge.innerHTML = '<span class="ce-db-badge default">📄 Showing Live PHP Content</span>';
     document.getElementById('subResetBtn').style.display = 'none';
   }
 
