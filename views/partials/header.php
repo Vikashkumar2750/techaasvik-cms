@@ -46,7 +46,7 @@ if (!function_exists('navClass')) {
 
     <!-- Logo -->
     <a href="/" class="site-logo" aria-label="TechAasvik — Home">
-      <img src="/assets/images/logo.png" alt="TechAasvik" width="34" height="34" style="border-radius:6px;object-fit:contain;" loading="eager">
+      <img src="/assets/images/logo.png" alt="TechAasvik" width="36" height="36" style="object-fit:contain;" loading="eager">
       <span class="site-logo-text">TechAasvik</span>
     </a>
 

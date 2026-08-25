@@ -7,7 +7,7 @@
       <!-- Brand Column -->
       <div class="footer-brand">
         <a href="/" class="site-logo" style="margin-bottom:12px;">
-          <img src="/assets/images/logo.png" alt="TechAasvik" width="32" height="32" style="border-radius:6px;object-fit:contain;">
+          <img src="/assets/images/logo.png" alt="TechAasvik" width="34" height="34" style="object-fit:contain;">
           <span class="site-logo-text">TechAasvik</span>
         </a>
         <p>India's most authoritative digital marketing knowledge platform. Expert guides, free tools, and research-backed strategies to help you grow online.</p>
