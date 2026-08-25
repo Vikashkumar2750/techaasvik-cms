@@ -157,34 +157,54 @@ $showEnroll = isset($_GET['enroll']);
 </div>
 
 <!-- Registration Modal -->
-<div id="enrollModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:var(--space-4);" onclick="if(event.target===this)this.classList.remove('active')">
-  <div class="card" style="max-width:440px;width:100%;padding:var(--space-7);position:relative;animation:slideUp 0.25s ease;">
-    <button onclick="document.getElementById('enrollModal').classList.remove('active')" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:var(--text-muted);cursor:pointer;">✕</button>
-    <div style="text-align:center;margin-bottom:var(--space-5);">
-      <div style="font-size:36px;margin-bottom:8px;">🎓</div>
-      <h2 style="font-size:var(--text-xl);margin-bottom:6px;">Start Learning for Free</h2>
-      <p style="font-size:var(--text-sm);color:var(--text-muted);">First <?= $freeCount ?> modules free. Certificate on full completion.</p>
+<div id="enrollModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);" onclick="if(event.target===this)closeModal()">
+  <div class="card" style="max-width:460px;width:100%;padding:40px 36px;position:relative;animation:slideUp 0.25s ease;border-radius:20px;">
+    <button onclick="closeModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;line-height:1;padding:4px;">✕</button>
+
+    <!-- Form state -->
+    <div id="enrollFormWrap">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:40px;margin-bottom:10px;">🎓</div>
+        <h2 style="font-size:var(--text-xl);margin-bottom:6px;">Start Learning for Free</h2>
+        <p style="font-size:var(--text-sm);color:var(--text-muted);">First <?= $freeCount ?> modules free. Certificate on full completion.</p>
+      </div>
+      <form id="enrollForm" onsubmit="submitEnroll(event)">
+        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:7px;">Your Name *</label>
+          <input type="text" name="name" id="enroll-name" class="form-input" placeholder="Rahul Sharma" required style="width:100%;padding:12px 14px;">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:7px;">Email Address *</label>
+          <input type="email" name="email" id="enroll-email" class="form-input" placeholder="you@email.com" required style="width:100%;padding:12px 14px;">
+        </div>
+        <div style="margin-bottom:24px;">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:7px;">Phone Number *</label>
+          <input type="tel" name="phone" id="enroll-phone" class="form-input" placeholder="+91 9876543210" required style="width:100%;padding:12px 14px;">
+        </div>
+        <div id="enrollError" style="display:none;color:#f87171;font-size:13px;margin-bottom:14px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:10px 14px;"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:14px;" id="enrollSubmit">
+          Start Free Course →
+        </button>
+      </form>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;">
+        <p style="font-size:11px;color:var(--text-muted);">No spam, ever. Unsubscribe anytime.</p>
+        <a href="/courses/login" style="font-size:12px;color:var(--brand-400);font-weight:600;">Login →</a>
+      </div>
     </div>
-    <form id="enrollForm" onsubmit="submitEnroll(event)">
-      <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-      <div style="margin-bottom:var(--space-3);">
-        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Your Name *</label>
-        <input type="text" name="name" id="enroll-name" class="form-input" placeholder="Rahul Sharma" required style="width:100%;">
+
+    <!-- Pending email verification state -->
+    <div id="enrollPendingWrap" style="display:none;text-align:center;padding:8px 0;">
+      <div style="font-size:52px;margin-bottom:16px;">📬</div>
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:10px;">Check your email!</h2>
+      <p id="enrollPendingMsg" style="font-size:14px;color:var(--text-muted);margin-bottom:24px;line-height:1.6;"></p>
+      <div style="background:var(--bg-elevated);border-radius:12px;padding:18px 20px;text-align:left;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;color:var(--text-secondary);"><span style="background:var(--brand-500);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">1</span> Open your inbox (check Spam too)</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;color:var(--text-secondary);"><span style="background:var(--brand-500);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">2</span> Click <strong>"Verify &amp; Set Password"</strong></div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="background:var(--brand-500);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">3</span> Set your password &amp; start learning!</div>
       </div>
-      <div style="margin-bottom:var(--space-3);">
-        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Email Address *</label>
-        <input type="email" name="email" id="enroll-email" class="form-input" placeholder="you@email.com" required style="width:100%;">
-      </div>
-      <div style="margin-bottom:var(--space-5);">
-        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Phone Number *</label>
-        <input type="tel" name="phone" id="enroll-phone" class="form-input" placeholder="+91 9876543210" required style="width:100%;">
-      </div>
-      <div id="enrollError" style="display:none;color:#f87171;font-size:13px;margin-bottom:var(--space-3);"></div>
-      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:14px;" id="enrollSubmit">
-        Start Free Course →
-      </button>
-      <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:var(--space-3);">Your certificate will be issued to this name. No spam, ever.</p>
-    </form>
+      <p style="font-size:12px;color:var(--text-muted);">Link valid for 24 hours</p>
+    </div>
   </div>
 </div>
 
@@ -206,11 +226,15 @@ function toggleModule(i){
   chevron.style.transform=open?'rotate(0deg)':'rotate(90deg)';
 }
 
+function closeModal() {
+  document.getElementById('enrollModal').classList.remove('active');
+}
+
 async function submitEnroll(e){
   e.preventDefault();
   const btn=document.getElementById('enrollSubmit');
   const err=document.getElementById('enrollError');
-  btn.disabled=true; btn.textContent='Enrolling...';
+  btn.disabled=true; btn.textContent='Please wait...';
   err.style.display='none';
 
   const form=e.target;
@@ -220,16 +244,24 @@ async function submitEnroll(e){
     const res=await fetch('/courses/register',{method:'POST',body:data});
     const json=await res.json();
     if(json.success){
-      window.location.href=json.redirect;
+      if(json.pending){
+        // Show email verification pending state
+        document.getElementById('enrollFormWrap').style.display='none';
+        document.getElementById('enrollPendingWrap').style.display='block';
+        document.getElementById('enrollPendingMsg').textContent = json.message || 'Please check your inbox.';
+      } else if(json.redirect){
+        window.location.href=json.redirect;
+      }
     } else {
       err.textContent=json.error||'Something went wrong. Try again.';
       err.style.display='block';
+      btn.disabled=false; btn.textContent='Start Free Course →';
     }
   } catch(ex){
     err.textContent='Network error. Please try again.';
     err.style.display='block';
+    btn.disabled=false; btn.textContent='Start Free Course →';
   }
-  btn.disabled=false; btn.textContent='Start Free Course →';
 }
 
 // Auto-open modal if ?enroll=1

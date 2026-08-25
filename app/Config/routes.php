@@ -78,6 +78,18 @@ $router->get('/courses/{slug}',                            'CourseController@lan
 $router->get('/certificate/{uid}',                         'CourseController@certificate',       'course.cert');
 $router->get('/verify-certificate/{uid}',                  'CourseController@verifyCertificate', 'course.verify.cert');
 
+// Course Student Auth
+$router->get('/courses/verify-email',                      'CourseController@verifyEmail',       'course.verify.email');
+$router->get('/courses/set-password',                      'CourseController@setPasswordForm',   'course.set.password');
+$router->post('/courses/set-password',                     'CourseController@setPassword',       'course.set.password.post');
+$router->get('/courses/login',                             'CourseController@loginForm',         'course.login');
+$router->post('/courses/login',                            'CourseController@login',             'course.login.post');
+$router->get('/courses/logout',                            'CourseController@logout',            'course.logout');
+$router->get('/courses/forgot-password',                   'CourseController@forgotPasswordForm','course.forgot');
+$router->post('/courses/forgot-password',                  'CourseController@forgotPassword',    'course.forgot.post');
+$router->get('/courses/reset-password',                    'CourseController@resetPasswordForm', 'course.reset');
+$router->post('/courses/reset-password',                   'CourseController@resetPassword',     'course.reset.post');
+
 // Authors
 $router->get('/authors',             'AuthorController@index',       'authors');
 $router->get('/authors/{slug}',      'AuthorController@show',        'author.show');

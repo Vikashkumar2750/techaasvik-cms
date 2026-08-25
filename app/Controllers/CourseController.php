@@ -10,6 +10,7 @@ use Models\CourseCoupon;
 use Models\CourseSetting;
 use Services\RazorpayService;
 use Services\CertificateService;
+use Services\EmailService;
 
 /**
  * CourseController — handles all course routes:
@@ -36,9 +37,10 @@ class CourseController extends Controller
         $this->settings    = new CourseSetting();
     }
 
-    // ── Courses Index ─────────────────────────────────────────
+    // ── Courses Index ───────────────────────────────────────────
     public function index(array $params = []): void
     {
+        if (!$this->settings->coursesEnabled()) { $this->notFound(); return; }
         $this->view('courses-index', [
             'seo' => [
                 'title'       => 'Free Digital Marketing Courses — TechAasvik',
@@ -51,6 +53,8 @@ class CourseController extends Controller
     // ── Course Landing Page ───────────────────────────────────
     public function landing(array $params = []): void
     {
+        if (!$this->settings->coursesEnabled()) { $this->notFound(); return; }
+        Auth::startSession();
         $slug = $params['slug'] ?? '';
 
         // Only the AI Marketing course is fully built
@@ -82,6 +86,7 @@ class CourseController extends Controller
     // ── Course Player ─────────────────────────────────────────
     public function player(array $params = []): void
     {
+        if (!$this->settings->coursesEnabled()) { $this->notFound(); return; }
         Auth::startSession();
         $slug         = $params['slug']      ?? self::COURSE_SLUG;
         $moduleNum    = max(1, min(self::TOTAL_MODULES, (int)($params['module'] ?? 1)));
@@ -193,6 +198,7 @@ class CourseController extends Controller
 
 
     // ── Registration (POST) ───────────────────────────────────
+    // ── Register (POST /courses/register) ────────────────────
     public function register(array $params = []): void
     {
         Auth::startSession();
@@ -207,28 +213,370 @@ class CourseController extends Controller
             return;
         }
 
-        // Check if already enrolled
+        // Already enrolled?
         $existing = $this->enrollments->findByEmail($email, self::COURSE_SLUG);
         if ($existing) {
-            $this->setEnrollmentCookie($existing['token']);
-            $this->json(['success' => true, 'redirect' => '/courses/' . self::COURSE_SLUG . '/learn/1']);
+            // If already verified and has password, redirect to login
+            if ($existing['email_verified'] && $existing['password_hash']) {
+                $this->json(['success' => true, 'redirect' => '/courses/login?email=' . urlencode($email) . '&exists=1']);
+            } else {
+                // Re-send verification
+                $this->sendVerificationEmail($existing);
+                $this->json(['success' => true, 'pending' => true, 'message' => 'Verification email resent. Please check your inbox.']);
+            }
             return;
         }
 
-        // Create enrollment
-        $token = bin2hex(random_bytes(32));
-        $id    = $this->enrollments->create([
+        // Create enrollment — NOT verified yet
+        $token       = bin2hex(random_bytes(32));
+        $verifyToken = bin2hex(random_bytes(32));
+        $id = $this->enrollments->create([
             'course_slug'    => self::COURSE_SLUG,
             'user_name'      => $name,
             'user_email'     => $email,
             'user_phone'     => $phone,
             'payment_status' => 'free',
             'token'          => $token,
+            'email_verified' => 0,
+            'verify_token'   => $verifyToken,
+            'verify_expires' => date('Y-m-d H:i:s', time() + 86400), // 24h
             'ip_address'     => $_SERVER['REMOTE_ADDR'] ?? null,
         ]);
 
-        $this->setEnrollmentCookie($token);
-        $this->json(['success' => true, 'redirect' => '/courses/' . self::COURSE_SLUG . '/learn/1']);
+        // Fetch the full record and send verification email
+        $enrollment = $this->enrollments->findById($id);
+        $this->sendVerificationEmail($enrollment);
+
+        $this->json([
+            'success' => true,
+            'pending' => true,
+            'message' => "We've sent a verification link to {$email}. Please check your inbox!",
+        ]);
+    }
+
+    /** Send verification email */
+    private function sendVerificationEmail(array $enrollment): void
+    {
+        $token   = $enrollment['verify_token'];
+        $name    = $enrollment['user_name'];
+        $email   = $enrollment['user_email'];
+        $link    = 'https://techaasvik.com/courses/verify-email?token=' . urlencode($token);
+        $mailer  = new EmailService();
+
+        $html = <<<HTML
+<div style="font-family:'Inter',sans-serif;max-width:560px;margin:0 auto;background:#0f172a;border-radius:16px;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px;text-align:center;">
+    <div style="font-size:40px;">🎓</div>
+    <h1 style="color:#fff;font-size:22px;margin:12px 0 4px;">Verify your email</h1>
+    <p style="color:rgba(255,255,255,0.8);font-size:14px;margin:0;">AI Marketing & ChatGPT SEO Course</p>
+  </div>
+  <div style="padding:32px;color:#e2e8f0;">
+    <p style="font-size:16px;">Hi <strong>{$name}</strong>,</p>
+    <p style="font-size:14px;color:#94a3b8;margin-bottom:28px;">Click the button below to verify your email and set your password. The link expires in 24 hours.</p>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="{$link}" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:16px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;display:inline-block;">Verify & Set Password →</a>
+    </div>
+    <p style="font-size:12px;color:#64748b;text-align:center;">Or copy this link:<br><a href="{$link}" style="color:#818cf8;word-break:break-all;">{$link}</a></p>
+    <hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
+    <p style="font-size:12px;color:#64748b;">If you didn't sign up for TechAasvik, you can safely ignore this email.</p>
+  </div>
+</div>
+HTML;
+        $mailer->send($email, 'Verify your email — TechAasvik Course', $html);
+    }
+
+    // ── Verify Email (GET) ─────────────────────────────────────
+    public function verifyEmail(array $params = []): void
+    {
+        Auth::startSession();
+        $token = trim($_GET['token'] ?? '');
+        if (!$token) { $this->redirect('/courses/' . self::COURSE_SLUG); return; }
+
+        $db  = \Core\Database::getInstance();
+        $row = $db->fetchOne(
+            "SELECT * FROM course_enrollments WHERE verify_token=? AND verify_expires > NOW() LIMIT 1",
+            [$token]
+        );
+
+        if (!$row) {
+            $this->view('course-verify-pending', [
+                'seo'   => ['title' => 'Link Expired — TechAasvik', 'noindex' => true],
+                'error' => 'This verification link has expired or is invalid. Please register again.',
+            ]);
+            return;
+        }
+
+        // Mark token valid — store in session so set-password page can use it
+        $_SESSION['course_set_password_token'] = $token;
+        $_SESSION['course_set_password_email'] = $row['user_email'];
+
+        $this->redirect('/courses/set-password');
+    }
+
+    // ── Set Password Form (GET) ───────────────────────────────
+    public function setPasswordForm(array $params = []): void
+    {
+        Auth::startSession();
+        if (empty($_SESSION['course_set_password_token'])) {
+            $this->redirect('/courses/' . self::COURSE_SLUG); return;
+        }
+        $this->view('course-set-password', [
+            'seo'   => ['title' => 'Set Your Password — TechAasvik', 'noindex' => true],
+            'email' => $_SESSION['course_set_password_email'] ?? '',
+        ]);
+    }
+
+    // ── Set Password (POST) ───────────────────────────────────
+    public function setPassword(array $params = []): void
+    {
+        Auth::startSession();
+        $this->verifyCsrf();
+        $token    = $_SESSION['course_set_password_token'] ?? '';
+        $password = $this->request->post('password', '');
+        $confirm  = $this->request->post('confirm_password', '');
+
+        if (!$token) { $this->redirect('/courses/' . self::COURSE_SLUG); return; }
+        if (strlen($password) < 8) {
+            $this->view('course-set-password', [
+                'seo'   => ['title' => 'Set Your Password — TechAasvik', 'noindex' => true],
+                'email' => $_SESSION['course_set_password_email'] ?? '',
+                'error' => 'Password must be at least 8 characters.',
+            ]); return;
+        }
+        if ($password !== $confirm) {
+            $this->view('course-set-password', [
+                'seo'   => ['title' => 'Set Your Password — TechAasvik', 'noindex' => true],
+                'email' => $_SESSION['course_set_password_email'] ?? '',
+                'error' => 'Passwords do not match.',
+            ]); return;
+        }
+
+        $db = \Core\Database::getInstance();
+        $row = $db->fetchOne(
+            "SELECT * FROM course_enrollments WHERE verify_token=? AND verify_expires > NOW() LIMIT 1",
+            [$token]
+        );
+        if (!$row) { $this->redirect('/courses/' . self::COURSE_SLUG); return; }
+
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $db->execute(
+            "UPDATE course_enrollments SET email_verified=1, password_hash=?, verify_token=NULL, verify_expires=NULL WHERE id=?",
+            [$hash, $row['id']]
+        );
+
+        // Log them in
+        unset($_SESSION['course_set_password_token'], $_SESSION['course_set_password_email']);
+        $_SESSION['course_student_id']    = $row['id'];
+        $_SESSION['course_student_email'] = $row['user_email'];
+        $this->setEnrollmentCookie($row['token']);
+
+        // Send welcome email
+        $this->sendWelcomeEmail($row);
+
+        $this->redirect('/courses/' . self::COURSE_SLUG . '/learn/1');
+    }
+
+    /** Send welcome email after account setup */
+    private function sendWelcomeEmail(array $enrollment): void
+    {
+        $mailer = new EmailService();
+        $name   = $enrollment['user_name'];
+        $email  = $enrollment['user_email'];
+        $link   = 'https://techaasvik.com/courses/' . self::COURSE_SLUG . '/learn/1';
+        $login  = 'https://techaasvik.com/courses/login';
+
+        $html = <<<HTML
+<div style="font-family:'Inter',sans-serif;max-width:560px;margin:0 auto;background:#0f172a;border-radius:16px;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px;text-align:center;">
+    <div style="font-size:40px;">🎉</div>
+    <h1 style="color:#fff;font-size:22px;margin:12px 0 4px;">Welcome to the course!</h1>
+    <p style="color:rgba(255,255,255,0.8);font-size:14px;margin:0;">AI Marketing & ChatGPT SEO</p>
+  </div>
+  <div style="padding:32px;color:#e2e8f0;">
+    <p style="font-size:16px;">Hi <strong>{$name}</strong>,</p>
+    <p style="font-size:14px;color:#94a3b8;">Your account is ready! You now have access to the first 5 modules for free.</p>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="{$link}" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:16px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;display:inline-block;">Start Learning Now →</a>
+    </div>
+    <p style="font-size:13px;color:#64748b;">Login anytime at: <a href="{$login}" style="color:#818cf8;">{$login}</a><br>Your login email: <strong style="color:#e2e8f0;">{$email}</strong></p>
+  </div>
+</div>
+HTML;
+        $mailer->send($email, 'Welcome to TechAasvik — Your account is ready!', $html);
+    }
+
+    // ── Login Form (GET) ────────────────────────────────────────
+    public function loginForm(array $params = []): void
+    {
+        Auth::startSession();
+        if (!empty($_SESSION['course_student_id'])) {
+            $this->redirect('/courses/' . self::COURSE_SLUG . '/learn/1'); return;
+        }
+        $this->view('course-login', [
+            'seo'     => ['title' => 'Student Login — TechAasvik', 'noindex' => true],
+            'email'   => htmlspecialchars($_GET['email'] ?? ''),
+            'exists'  => !empty($_GET['exists']),
+            'flash'   => session_id() ? ($_SESSION['_flash'] ?? null) : null,
+        ]);
+        unset($_SESSION['_flash']);
+    }
+
+    // ── Login (POST) ───────────────────────────────────────────
+    public function login(array $params = []): void
+    {
+        Auth::startSession();
+        $this->verifyCsrf();
+        $email    = strtolower(trim($this->request->post('email', '')));
+        $password = $this->request->post('password', '');
+
+        $db  = \Core\Database::getInstance();
+        $row = $db->fetchOne(
+            "SELECT * FROM course_enrollments WHERE user_email=? AND course_slug=? AND email_verified=1 LIMIT 1",
+            [$email, self::COURSE_SLUG]
+        );
+
+        if (!$row || !$row['password_hash'] || !password_verify($password, $row['password_hash'])) {
+            $this->view('course-login', [
+                'seo'   => ['title' => 'Student Login — TechAasvik', 'noindex' => true],
+                'email' => htmlspecialchars($email),
+                'error' => 'Invalid email or password.',
+            ]); return;
+        }
+
+        $_SESSION['course_student_id']    = $row['id'];
+        $_SESSION['course_student_email'] = $row['user_email'];
+        $this->setEnrollmentCookie($row['token']);
+        $redirect = $_POST['redirect'] ?? ('/courses/' . self::COURSE_SLUG . '/learn/1');
+        $this->redirect(filter_var($redirect, FILTER_SANITIZE_URL));
+    }
+
+    // ── Logout ─────────────────────────────────────────────────
+    public function logout(array $params = []): void
+    {
+        Auth::startSession();
+        unset($_SESSION['course_student_id'], $_SESSION['course_student_email']);
+        setcookie(self::COOKIE_NAME, '', time() - 3600, '/', '', true, true);
+        $this->redirect('/courses/login');
+    }
+
+    // ── Forgot Password Form (GET) ──────────────────────────────
+    public function forgotPasswordForm(array $params = []): void
+    {
+        Auth::startSession();
+        $this->view('course-forgot-password', [
+            'seo'   => ['title' => 'Forgot Password — TechAasvik', 'noindex' => true],
+            'flash' => $_SESSION['_flash'] ?? null,
+        ]);
+        unset($_SESSION['_flash']);
+    }
+
+    // ── Forgot Password (POST) ────────────────────────────────
+    public function forgotPassword(array $params = []): void
+    {
+        Auth::startSession();
+        $this->verifyCsrf();
+        $email = strtolower(trim($this->request->post('email', '')));
+
+        $db  = \Core\Database::getInstance();
+        $row = $db->fetchOne(
+            "SELECT * FROM course_enrollments WHERE user_email=? AND course_slug=? AND email_verified=1 LIMIT 1",
+            [$email, self::COURSE_SLUG]
+        );
+
+        // Always show success (security: don't reveal if email exists)
+        if ($row) {
+            $resetToken   = bin2hex(random_bytes(32));
+            $resetExpires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
+            $db->execute(
+                "UPDATE course_enrollments SET password_reset_token=?, password_reset_expires=? WHERE id=?",
+                [$resetToken, $resetExpires, $row['id']]
+            );
+
+            $link   = 'https://techaasvik.com/courses/reset-password?token=' . urlencode($resetToken);
+            $mailer = new EmailService();
+            $html   = <<<HTML
+<div style="font-family:'Inter',sans-serif;max-width:560px;margin:0 auto;background:#0f172a;border-radius:16px;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px;text-align:center;">
+    <div style="font-size:36px;">🔑</div>
+    <h1 style="color:#fff;font-size:20px;margin:12px 0 4px;">Reset your password</h1>
+  </div>
+  <div style="padding:32px;color:#e2e8f0;">
+    <p>Click below to reset your TechAasvik course password. This link expires in 1 hour.</p>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="{$link}" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:15px;font-weight:700;padding:12px 32px;border-radius:10px;text-decoration:none;display:inline-block;">Reset Password →</a>
+    </div>
+    <p style="font-size:12px;color:#64748b;text-align:center;"><a href="{$link}" style="color:#818cf8;word-break:break-all;">{$link}</a></p>
+    <p style="font-size:12px;color:#64748b;">If you didn't request this, you can ignore this email.</p>
+  </div>
+</div>
+HTML;
+            $mailer->send($email, 'Reset your TechAasvik password', $html);
+        }
+
+        $_SESSION['_flash'] = ['type' => 'success', 'message' => "If that email is registered, a reset link has been sent."];
+        $this->redirect('/courses/forgot-password');
+    }
+
+    // ── Reset Password Form (GET) ──────────────────────────────
+    public function resetPasswordForm(array $params = []): void
+    {
+        Auth::startSession();
+        $token = trim($_GET['token'] ?? '');
+        if (!$token) { $this->redirect('/courses/forgot-password'); return; }
+
+        $db  = \Core\Database::getInstance();
+        $row = $db->fetchOne(
+            "SELECT id FROM course_enrollments WHERE password_reset_token=? AND password_reset_expires > NOW() LIMIT 1",
+            [$token]
+        );
+        if (!$row) {
+            $this->view('course-forgot-password', [
+                'seo'   => ['title' => 'Link Expired — TechAasvik', 'noindex' => true],
+                'error' => 'This reset link has expired. Please request a new one.',
+            ]); return;
+        }
+
+        $this->view('course-reset-password', [
+            'seo'   => ['title' => 'Reset Password — TechAasvik', 'noindex' => true],
+            'token' => htmlspecialchars($token),
+        ]);
+    }
+
+    // ── Reset Password (POST) ─────────────────────────────────
+    public function resetPassword(array $params = []): void
+    {
+        Auth::startSession();
+        $this->verifyCsrf();
+        $token    = trim($this->request->post('token', ''));
+        $password = $this->request->post('password', '');
+        $confirm  = $this->request->post('confirm_password', '');
+
+        if (strlen($password) < 8 || $password !== $confirm) {
+            $this->view('course-reset-password', [
+                'seo'   => ['title' => 'Reset Password — TechAasvik', 'noindex' => true],
+                'token' => htmlspecialchars($token),
+                'error' => strlen($password) < 8 ? 'Password must be at least 8 characters.' : 'Passwords do not match.',
+            ]); return;
+        }
+
+        $db  = \Core\Database::getInstance();
+        $row = $db->fetchOne(
+            "SELECT * FROM course_enrollments WHERE password_reset_token=? AND password_reset_expires > NOW() LIMIT 1",
+            [$token]
+        );
+        if (!$row) { $this->redirect('/courses/forgot-password'); return; }
+
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $db->execute(
+            "UPDATE course_enrollments SET password_hash=?, password_reset_token=NULL, password_reset_expires=NULL WHERE id=?",
+            [$hash, $row['id']]
+        );
+
+        // Auto-login
+        $_SESSION['course_student_id']    = $row['id'];
+        $_SESSION['course_student_email'] = $row['user_email'];
+        $this->setEnrollmentCookie($row['token']);
+        $this->redirect('/courses/' . self::COURSE_SLUG . '/learn/1');
     }
 
     // ── Enroll Page (Razorpay payment) ────────────────────────

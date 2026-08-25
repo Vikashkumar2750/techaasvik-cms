@@ -21,17 +21,28 @@ class CourseEnrollment extends Model
         );
     }
 
+    public function findById(int $id): ?array
+    {
+        return $this->db->fetchOne(
+            "SELECT * FROM course_enrollments WHERE id = ? LIMIT 1", [$id]
+        );
+    }
+
     public function create(array $data): int
     {
         $this->db->execute(
             "INSERT INTO course_enrollments
              (course_slug, user_name, user_email, user_phone, payment_status,
-              token, ip_address, enrolled_at)
-             VALUES (?,?,?,?,?,?,?,NOW())",
+              token, email_verified, verify_token, verify_expires, ip_address, enrolled_at)
+             VALUES (?,?,?,?,?,?,?,?,?,?,NOW())",
             [
                 $data['course_slug'], $data['user_name'], $data['user_email'],
                 $data['user_phone'], $data['payment_status'] ?? 'free',
-                $data['token'], $data['ip_address'] ?? null,
+                $data['token'],
+                $data['email_verified'] ?? 1,
+                $data['verify_token'] ?? null,
+                $data['verify_expires'] ?? null,
+                $data['ip_address'] ?? null,
             ]
         );
         return (int)$this->db->lastInsertId();

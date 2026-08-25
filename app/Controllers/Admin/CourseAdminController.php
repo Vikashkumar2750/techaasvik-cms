@@ -58,6 +58,7 @@ class CourseAdminController extends Controller
 
         $pairs = [];
         $fields = [
+            'courses_enabled',
             'course_price_original', 'course_price_sale', 'free_modules_count',
             'processing_fee_pct', 'course_grade_a_min', 'course_grade_b_min', 'course_grade_c_min',
             'video_enabled', 'cert_signatory_name',

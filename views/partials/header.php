@@ -7,6 +7,14 @@
  */
 
 $currentPath = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/');
+
+// Courses visibility toggle
+$_coursesEnabled = true;
+try {
+    $__cs = new \Models\CourseSetting();
+    $_coursesEnabled = $__cs->coursesEnabled();
+} catch (\Throwable $e) { /* DB not ready - show by default */ }
+
 $navItems = [
     ['Learn',        '/learn'],
     ['Blog',         '/blog'],
@@ -14,8 +22,10 @@ $navItems = [
     ['Tools',        '/tools'],
     ['Glossary',     '/glossary'],
     ['Case Studies', '/case-studies'],
-    ['Courses',      '/courses'],
 ];
+if ($_coursesEnabled) {
+    $navItems[] = ['Courses', '/courses'];
+}
 
 if (!function_exists('navClass')) {
     function navClass(string $path): string {

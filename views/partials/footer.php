@@ -55,7 +55,9 @@
           <li><a href="/tools">Free Tools</a></li>
           <li><a href="/calculators">Calculators</a></li>
           <li><a href="/case-studies">Case Studies</a></li>
+          <?php if (!isset($_coursesEnabled) || $_coursesEnabled): ?>
           <li><a href="/courses">Free Courses</a></li>
+          <?php endif; ?>
           <li><a href="/search">Search</a></li>
           <li><a href="/sitemap">Site Map</a></li>
         </ul>

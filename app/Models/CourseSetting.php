@@ -92,4 +92,10 @@ class CourseSetting extends Model
     {
         return (bool)(int)$this->get('video_enabled', 0);
     }
+
+    /** Is the Courses section enabled site-wide? (Super admin toggle) */
+    public function coursesEnabled(): bool
+    {
+        return (bool)(int)$this->get('courses_enabled', 1); // default ON
+    }
 }
