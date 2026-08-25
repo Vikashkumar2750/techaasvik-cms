@@ -87,8 +87,7 @@ class MailService
 
         $socket = @fsockopen($prefix . $host, $port, $errno, $errstr, 10);
         if (!$socket) {
-            error_log("MailService: Cannot connect to {$host}:{$port} — {$errstr} ({$errno})");
-            return false;
+            throw new \RuntimeException("Cannot connect to {$host}:{$port} — {$errstr} (errno:{$errno})");
         }
 
         try {
@@ -115,8 +114,7 @@ class MailService
             $r = $this->readResponse($socket);
 
             if (!str_starts_with($r, '235')) {
-                error_log("MailService: AUTH failed — {$r}");
-                return false;
+                throw new \RuntimeException("AUTH failed — " . trim($r));
             }
 
             $fromEmail = $this->config['from_email'] ?: $this->config['user'];
@@ -136,10 +134,13 @@ class MailService
             fclose($socket);
 
             return str_starts_with($r, '250');
+        } catch (\RuntimeException $e) {
+            @fclose($socket);
+            throw $e; // Re-throw so caller sees real error
         } catch (\Exception $e) {
             error_log("MailService: " . $e->getMessage());
             @fclose($socket);
-            return false;
+            throw new \RuntimeException($e->getMessage());
         }
     }
 
