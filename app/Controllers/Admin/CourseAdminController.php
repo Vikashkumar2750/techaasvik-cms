@@ -65,8 +65,14 @@ class CourseAdminController extends Controller
             'smtp_provider', 'smtp_host', 'smtp_port', 'smtp_encryption',
             'smtp_user', 'smtp_from_name', 'smtp_from_email',
         ];
+
+        // ⚠️ CRITICAL: Only save fields that are actually present in POST.
+        // If a field is missing (different tab was submitted), don't overwrite
+        // existing DB value with empty string.
         foreach ($fields as $f) {
-            $pairs[$f] = $this->request->post($f, '');
+            if (array_key_exists($f, $_POST)) {
+                $pairs[$f] = $this->request->post($f, '');
+            }
         }
 
         // SMTP pass — only update if provided
@@ -86,9 +92,14 @@ class CourseAdminController extends Controller
             if ($path) $pairs['cert_signature_path'] = $path;
         }
 
-        $this->settings->setMany($pairs);
+        if (!empty($pairs)) {
+            $this->settings->setMany($pairs);
+        }
+
+        // Redirect back to the same tab that was active
+        $tab = $this->request->post('_tab', 'general');
         $this->flash('success', 'Settings saved successfully.');
-        $this->redirect('/techaasvik_admin/course/settings');
+        $this->redirect('/techaasvik_admin/course/settings?tab=' . urlencode($tab));
     }
 
     // ── SMTP Test ─────────────────────────────────────────────

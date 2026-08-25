@@ -130,6 +130,7 @@ $tabs = ['general' => '🌐 General', 'pricing' => '💰 Pricing', 'cert' => '�
     <input type="hidden" name="smtp_user" value="<?= htmlspecialchars($s['smtp_user']??'') ?>">
     <input type="hidden" name="smtp_from_name" value="<?= htmlspecialchars($s['smtp_from_name']??'') ?>">
     <input type="hidden" name="smtp_from_email" value="<?= htmlspecialchars($s['smtp_from_email']??'') ?>">
+    <input type="hidden" name="_tab" value="pricing">
     <button type="submit" class="admin-btn admin-btn-primary">Save Pricing & Settings</button>
   </div>
 
@@ -173,6 +174,7 @@ $tabs = ['general' => '🌐 General', 'pricing' => '💰 Pricing', 'cert' => '�
     <input type="hidden" name="smtp_user" value="<?= htmlspecialchars($s['smtp_user']??'') ?>">
     <input type="hidden" name="smtp_from_name" value="<?= htmlspecialchars($s['smtp_from_name']??'') ?>">
     <input type="hidden" name="smtp_from_email" value="<?= htmlspecialchars($s['smtp_from_email']??'') ?>">
+    <input type="hidden" name="_tab" value="cert">
     <button type="submit" class="admin-btn admin-btn-primary">Save Certificate Settings</button>
   </div>
 
@@ -239,6 +241,7 @@ $tabs = ['general' => '🌐 General', 'pricing' => '💰 Pricing', 'cert' => '�
     <input type="hidden" name="free_modules_count" value="<?= htmlspecialchars($s['free_modules_count']??'') ?>">
     <input type="hidden" name="video_enabled" value="<?= $s['video_enabled']??'0' ?>">
     <input type="hidden" name="cert_signatory_name" value="<?= htmlspecialchars($s['cert_signatory_name']??'') ?>">
+    <input type="hidden" name="_tab" value="email">
     <button type="submit" class="admin-btn admin-btn-primary">Save Email Settings</button>
   </div>
 
