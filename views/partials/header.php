@@ -10,10 +10,15 @@ $currentPath = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) 
 
 // Courses visibility toggle
 $_coursesEnabled = true;
+$_studentLoggedIn = false;
 try {
     $__cs = new \Models\CourseSetting();
     $_coursesEnabled = $__cs->coursesEnabled();
-} catch (\Throwable $e) { /* DB not ready - show by default */ }
+} catch (\Throwable $e) { /* DB not ready */ }
+
+// Check if student is logged in (session-based)
+if (session_status() === PHP_SESSION_NONE) @session_start();
+$_studentLoggedIn = !empty($_SESSION['course_student_id']);
 
 $navItems = [
     ['Learn',        '/learn'],
@@ -41,11 +46,7 @@ if (!function_exists('navClass')) {
 
     <!-- Logo -->
     <a href="/" class="site-logo" aria-label="TechAasvik — Home">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="32" height="32" rx="8" fill="#6366f1"/>
-        <path d="M8 10h16M8 16h10M8 22h13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="24" cy="22" r="3.5" fill="#34d399"/>
-      </svg>
+      <img src="/assets/images/logo.png" alt="TechAasvik" width="34" height="34" style="border-radius:6px;object-fit:contain;" loading="eager">
       <span class="site-logo-text">TechAasvik</span>
     </a>
 
@@ -81,6 +82,21 @@ if (!function_exists('navClass')) {
         </svg>
       </button>
 
+      <?php if ($_coursesEnabled): ?>
+      <!-- Course Login / My Course -->
+      <?php if ($_studentLoggedIn): ?>
+      <a href="/courses/ai-marketing-course/learn/1" class="btn btn-ghost btn-sm" title="My Course" style="gap:6px;display:flex;align-items:center;" id="headerCourseLogin">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
+        <span style="font-size:12px;font-weight:600;">My Course</span>
+      </a>
+      <?php else: ?>
+      <a href="/courses/login" class="btn btn-ghost btn-sm" title="Student Login" style="gap:6px;display:flex;align-items:center;" id="headerCourseLogin">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+        <span style="font-size:12px;font-weight:600;">Login</span>
+      </a>
+      <?php endif; ?>
+      <?php endif; ?>
+
       <!-- CTA (hidden on very small screens via .header-cta-btn CSS) -->
       <a href="/free-audit" class="btn btn-primary btn-sm header-cta-btn" id="headerCta">
         Free Audit ↗
@@ -110,6 +126,11 @@ if (!function_exists('navClass')) {
     <?php $isActive = str_starts_with(rtrim($currentPath, '/'), $path); ?>
     <a href="<?= $path ?>" class="mobile-nav-link<?= $isActive ? ' active' : '' ?>"><?= $label ?></a>
     <?php endforeach; ?>
+    <?php if ($_coursesEnabled): ?>
+    <a href="<?= $_studentLoggedIn ? '/courses/ai-marketing-course/learn/1' : '/courses/login' ?>" class="mobile-nav-link" style="color:var(--brand-400);font-weight:600;">
+      <?= $_studentLoggedIn ? '🎓 My Course' : '🔑 Student Login' ?>
+    </a>
+    <?php endif; ?>
   </div>
 </nav>
 <!-- Mobile nav backdrop -->

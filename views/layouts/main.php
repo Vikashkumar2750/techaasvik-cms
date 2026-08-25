@@ -14,6 +14,11 @@ $gtmId  = $config['analytics']['gtm_id'] ?? '';
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+<!-- ── Favicon ── -->
+<link rel="icon" type="image/png" href="/assets/images/favicon.png">
+<link rel="apple-touch-icon" href="/assets/images/favicon.png">
+<link rel="shortcut icon" href="/assets/images/favicon.png">
+
 <!-- ── SEO ── -->
 <?= !empty($seo) ? render_meta($seo) : '<title>TechAasvik</title>' ?>
 
