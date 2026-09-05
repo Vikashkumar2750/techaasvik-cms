@@ -1,258 +1,677 @@
-<!-- ══════════════════════════════════════════════════════
-     HOMEPAGE — TECHAASVIK.COM
-     India's Digital Marketing Authority Platform
-════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════
+     HOMEPAGE V2 — TECHAASVIK AI MARKETING PLATFORM
+     
+     Data from HomeController (unchanged):
+       $latestPosts, $pillars, $caseStudies, $tools, $topCategories
+     
+     Form endpoints (handled by existing main.js — NOT modified):
+       #heroNewsletter → POST /lead/newsletter
+       #auditForm      → POST /lead/audit
+     
+     Page-specific scripts loaded at bottom (NOT globally):
+       Three.js r160, GSAP 3.12 + ScrollTrigger, homepage-v2.js
+     ═══════════════════════════════════════════════════════════ -->
 
-<!-- ── HERO ── -->
-<section class="hero" id="home-hero">
-  <div class="container">
-    <div class="hero-badge">
-      <span class="hero-badge-dot"></span>
-      India's #1 Digital Marketing Knowledge Platform
-    </div>
 
-    <h1 class="hero-title">
-      Master Digital Marketing.<br>
-      <span class="gradient-text">Rank. Convert. Grow.</span>
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║  ACT I — THE SHIFT                                      ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+
+<!-- ── 1. HERO ─────────────────────────────────────────────── -->
+<section class="hv2-hero" id="hv2-hero">
+  <!-- 3D Canvas — desktop only, hidden on mobile + reduced-motion via CSS -->
+  <div class="hv2-hero-canvas" id="hv2-hero-canvas" aria-hidden="true"></div>
+  <!-- Mobile/reduced-motion fallback gradient -->
+  <div class="hv2-hero-gradient-bg" aria-hidden="true"></div>
+  
+  <div class="container hv2-hero-content">
+    <div class="hv2-hero-badge">AI-Driven Digital Marketing</div>
+    
+    <h1 class="hv2-hero-title">
+      Search. Content.<br>Performance.
+      <span class="hv2-gradient-text">Connected Through Intelligence.</span>
     </h1>
-
-    <p class="hero-subtitle">
-      India's most authoritative platform for SEO, AEO, GEO, Google Ads, Meta Ads, Content Marketing, Analytics — everything you need to dominate digital marketing in 2025.
+    
+    <p class="hv2-hero-subtitle">
+      Techaasvik builds the AI-assisted marketing platform where SEO, AEO, GEO, 
+      content strategy, performance advertising, and analytics work as one 
+      connected system.
     </p>
-
-    <div class="hero-actions">
-      <a href="/learn" class="btn btn-gradient btn-lg" id="heroStartLearning">
-        🚀 Start Learning Free
+    
+    <div class="hv2-hero-actions">
+      <a href="#hv2-ai-engine" class="btn btn-gradient btn-lg" id="heroExploreEngine">
+        Explore the AI Engine ↓
       </a>
-      <a href="/glossary" class="btn btn-secondary btn-lg">
-        📖 Browse Glossary →
+      <a href="#hv2-final-cta" class="btn btn-secondary btn-lg" id="heroGetAudit">
+        Get Free AI Audit →
       </a>
     </div>
+  </div>
+</section>
 
-    <!-- Trust Badges -->
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-value">2,000+</div>
-        <div class="hero-stat-label">Expert Guides Published</div>
+
+<!-- ── 2. MARKETING EVOLVED ────────────────────────────────── -->
+<section class="hv2-evolved" id="hv2-evolved">
+  <div class="container">
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">The Evolution</span>
+      <h2 class="hv2-section-title">Marketing Has Evolved</h2>
+      <p class="hv2-section-desc">
+        From fragmented tools and siloed campaigns to AI-assisted, 
+        connected marketing workflows.
+      </p>
+    </div>
+    
+    <div class="hv2-evolved-grid">
+      <!-- Traditional Approach -->
+      <div class="hv2-evolved-old">
+        <h3 class="hv2-compare-heading">Traditional Approach</h3>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◻</span>
+          <div>
+            <strong>Disconnected Platforms</strong>
+            <p>Separate tools for SEO, ads, content, and analytics with no shared intelligence</p>
+          </div>
+        </div>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◻</span>
+          <div>
+            <strong>Manual Keyword Research</strong>
+            <p>Periodic spreadsheet-based analysis disconnected from content strategy</p>
+          </div>
+        </div>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◻</span>
+          <div>
+            <strong>Siloed Campaign Management</strong>
+            <p>Search, social, and display campaigns managed independently</p>
+          </div>
+        </div>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◻</span>
+          <div>
+            <strong>Periodic Manual Reporting</strong>
+            <p>Monthly reports assembled from multiple disconnected dashboards</p>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="hero-stat-value">500+</div>
-        <div class="hero-stat-label">Marketing Terms Defined</div>
+      
+      <!-- Divider -->
+      <div class="hv2-evolved-divider" aria-hidden="true">
+        <div class="hv2-evolved-arrow">→</div>
       </div>
-      <div>
-        <div class="hero-stat-value">50+</div>
-        <div class="hero-stat-label">Free Tools & Calculators</div>
-      </div>
-      <div>
-        <div class="hero-stat-value">100%</div>
-        <div class="hero-stat-label">Free, Always</div>
+      
+      <!-- AI-Assisted Approach -->
+      <div class="hv2-evolved-new">
+        <h3 class="hv2-compare-heading">AI-Assisted Approach</h3>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◼</span>
+          <div>
+            <strong>Connected Marketing System</strong>
+            <p>Integrated platform where search, content, and advertising inform each other</p>
+          </div>
+        </div>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◼</span>
+          <div>
+            <strong>Semantic Entity Mapping</strong>
+            <p>AI-assisted topic discovery tied to content creation and search optimization</p>
+          </div>
+        </div>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◼</span>
+          <div>
+            <strong>Cross-Channel Optimization</strong>
+            <p>Campaigns that share data and adjust across search, social, and display</p>
+          </div>
+        </div>
+        
+        <div class="hv2-compare-item">
+          <span class="hv2-compare-icon">◼</span>
+          <div>
+            <strong>Real-Time Attribution</strong>
+            <p>Automated, data-driven attribution connecting marketing to business outcomes</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── TOPIC PILLARS ── -->
-<section class="section-sm" style="background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);">
+
+<!-- ── 3. SEARCH EVOLUTION ─────────────────────────────────── -->
+<section class="hv2-search" id="hv2-search">
   <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-8);">
-      <div>
-        <h2 style="font-size:var(--text-2xl);">Master Every Channel</h2>
-        <p style="color:var(--text-muted);margin:0;font-size:var(--text-sm);">Deep-dive knowledge centers for every digital marketing discipline</p>
-      </div>
-      <a href="/learn" class="btn btn-secondary btn-sm">View All Topics →</a>
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">Search Landscape</span>
+      <h2 class="hv2-section-title">Search Is No Longer Just SEO</h2>
+      <p class="hv2-section-desc">
+        People discover brands through Google, ChatGPT, Perplexity, and AI Overviews. 
+        Visibility now requires coverage across all four discovery layers.
+      </p>
     </div>
+    
+    <div class="hv2-search-landscape">
+      <div class="hv2-search-node" id="hv2-seo-node">
+        <div class="hv2-search-node-icon">🔍</div>
+        <div class="hv2-search-node-label">Traditional SEO</div>
+        <p class="hv2-search-node-desc">Technical health, on-page optimization, backlink authority, and crawlability</p>
+        <a href="/learn/seo" class="hv2-search-node-link">Explore SEO →</a>
+      </div>
+      
+      <div class="hv2-search-node" id="hv2-aeo-node">
+        <div class="hv2-search-node-icon">💬</div>
+        <div class="hv2-search-node-label">Answer Engine (AEO)</div>
+        <p class="hv2-search-node-desc">Featured snippets, People Also Ask, and direct answer placement</p>
+        <a href="/learn/aeo-complete-guide" class="hv2-search-node-link">Explore AEO →</a>
+      </div>
+      
+      <div class="hv2-search-node" id="hv2-geo-node">
+        <div class="hv2-search-node-icon">🤖</div>
+        <div class="hv2-search-node-label">Generative Engine (GEO)</div>
+        <p class="hv2-search-node-desc">Citation and visibility in ChatGPT, Gemini, Perplexity, and AI assistants</p>
+        <a href="/learn/geo-complete-guide" class="hv2-search-node-link">Explore GEO →</a>
+      </div>
+      
+      <div class="hv2-search-node" id="hv2-aio-node">
+        <div class="hv2-search-node-icon">⚡</div>
+        <div class="hv2-search-node-label">AI Overviews</div>
+        <p class="hv2-search-node-desc">Entity authority and direct answer placement in AI-generated summaries</p>
+        <a href="/learn/ai-marketing" class="hv2-search-node-link">Explore AI Search →</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <?php
-    $topics = [
-      ['SEO', '/learn/seo', '🔍', 'From technical to off-page. Rank higher on Google.', 'bg: rgba(99,102,241,0.1)'],
-      ['AEO', '/learn/aeo-complete-guide', '💬', 'Answer Engine Optimization. Win featured snippets & AI answers.', ''],
-      ['GEO', '/learn/geo-complete-guide', '🤖', 'Get cited by ChatGPT, Gemini & Perplexity.', ''],
-      ['Google Ads', '/learn/google-ads-complete-guide', '📢', 'Search, Shopping, Display & YouTube campaigns.', ''],
-      ['Meta Ads', '/learn/meta-ads-complete-guide', '📱', 'Facebook & Instagram advertising mastery.', ''],
-      ['Content Marketing', '/learn/content-marketing', '✍️', 'Strategy, creation, distribution & measurement.', ''],
-      ['Analytics & GA4', '/learn/analytics', '📊', 'GA4, GTM, Looker Studio & attribution modeling.', ''],
-      ['AI Marketing', '/learn/ai-marketing', '⚡', 'Prompt engineering, AI tools & automation.', ''],
-    ];
-    ?>
 
-    <div class="grid grid-4 gap-4">
-      <?php foreach ($topics as [$name, $url, $icon, $desc, $bg]): ?>
-      <a href="<?= $url ?>" class="card card-interactive" style="text-decoration:none;" id="topic-<?= str_slug($name) ?>">
-        <div style="font-size:28px;margin-bottom:12px;"><?= $icon ?></div>
-        <h3 style="font-size:var(--text-base);font-weight:var(--fw-semibold);color:var(--text-primary);margin-bottom:6px;"><?= $name ?></h3>
-        <p style="font-size:var(--text-xs);color:var(--text-muted);margin:0;line-height:1.5;"><?= $desc ?></p>
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║  ACT II — THE ENGINE                                    ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+
+<!-- ── 4. PERFORMANCE ──────────────────────────────────────── -->
+<section class="hv2-performance" id="hv2-performance">
+  <div class="container">
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">Performance Marketing</span>
+      <h2 class="hv2-section-title">AI-Assisted Performance Marketing</h2>
+      <p class="hv2-section-desc">
+        From manual bid management to AI-driven campaign optimization 
+        across Google and Meta advertising platforms.
+      </p>
+    </div>
+    
+    <div class="hv2-perf-grid">
+      <div class="hv2-perf-card">
+        <div class="hv2-perf-card-icon">📢</div>
+        <h4>Google Performance Max</h4>
+        <p>AI-optimized campaigns across Search, Shopping, Display, YouTube, and Discovery from a single campaign</p>
+      </div>
+      
+      <div class="hv2-perf-card">
+        <div class="hv2-perf-card-icon">📱</div>
+        <h4>Meta Advantage+</h4>
+        <p>Machine learning-driven audience targeting, creative optimization, and automated placements across Facebook and Instagram</p>
+      </div>
+      
+      <div class="hv2-perf-card">
+        <div class="hv2-perf-card-icon">🎯</div>
+        <h4>Automated Creative Testing</h4>
+        <p>AI-assisted creative generation and multivariate testing to identify high-performing ad combinations</p>
+      </div>
+      
+      <div class="hv2-perf-card">
+        <div class="hv2-perf-card-icon">📊</div>
+        <h4>Cross-Platform Attribution</h4>
+        <p>Data-driven attribution models connecting advertising spend to conversions across channels</p>
+      </div>
+    </div>
+    
+    <div class="hv2-perf-links">
+      <a href="/learn/google-ads-complete-guide" class="btn btn-secondary btn-sm">Google Ads Guide →</a>
+      <a href="/learn/meta-ads-complete-guide" class="btn btn-secondary btn-sm">Meta Ads Guide →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 5. CONTENT ENGINE ───────────────────────────────────── -->
+<section class="hv2-content-engine" id="hv2-content-engine">
+  <div class="container">
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">Content Intelligence</span>
+      <h2 class="hv2-section-title">AI-Assisted Content Engine</h2>
+      <p class="hv2-section-desc">
+        From topic research to distribution — a connected content workflow 
+        that maintains E-E-A-T quality at every stage.
+      </p>
+    </div>
+    
+    <div class="hv2-pipeline">
+      <div class="hv2-pipeline-stage">
+        <div class="hv2-pipeline-num">1</div>
+        <h4>Semantic Topic Discovery</h4>
+        <p>AI-assisted topic cluster analysis and content gap identification</p>
+        <span class="hv2-pipeline-arrow" aria-hidden="true">→</span>
+      </div>
+      
+      <div class="hv2-pipeline-stage">
+        <div class="hv2-pipeline-num">2</div>
+        <h4>AI First-Draft Generation</h4>
+        <p>Structured draft creation with source citations and outline optimization</p>
+        <span class="hv2-pipeline-arrow" aria-hidden="true">→</span>
+      </div>
+      
+      <div class="hv2-pipeline-stage">
+        <div class="hv2-pipeline-num">3</div>
+        <h4>Human E-E-A-T Review</h4>
+        <p>Expert fact-checking, experience verification, and authority validation</p>
+        <span class="hv2-pipeline-arrow" aria-hidden="true">→</span>
+      </div>
+      
+      <div class="hv2-pipeline-stage">
+        <div class="hv2-pipeline-num">4</div>
+        <h4>Omnichannel Distribution</h4>
+        <p>Automated publishing, syndication, and cross-platform content adaptation</p>
+      </div>
+    </div>
+    
+    <div class="hv2-content-links">
+      <a href="/learn/content-marketing" class="btn btn-secondary btn-sm">Content Marketing Guide →</a>
+      <a href="/tools" class="btn btn-secondary btn-sm">Explore Free Tools →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 6. AI MARKETING ENGINE — VISUAL CLIMAX ──────────────── -->
+<section class="hv2-ai-engine" id="hv2-ai-engine">
+  <div class="container">
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">The Core</span>
+      <h2 class="hv2-section-title">The AI Marketing Engine</h2>
+      <p class="hv2-section-desc">
+        Five interconnected stages that transform marketing from disconnected campaigns 
+        into a continuously learning, self-optimizing system.
+      </p>
+    </div>
+    
+    <div class="hv2-flywheel">
+      <!-- Left stages -->
+      <div class="hv2-flywheel-left">
+        <div class="hv2-flywheel-stage" data-stage="1">
+          <div class="hv2-flywheel-stage-num">01</div>
+          <h4>Data &amp; Intelligence</h4>
+          <p>Customer sentiment analysis, competitor gap detection, and market signal processing</p>
+        </div>
+        
+        <div class="hv2-flywheel-stage" data-stage="2">
+          <div class="hv2-flywheel-stage-num">02</div>
+          <h4>Predictive Strategy</h4>
+          <p>Topical authority modeling, audience segmentation, and opportunity scoring</p>
+        </div>
+      </div>
+      
+      <!-- Center flywheel diagram -->
+      <div class="hv2-flywheel-center">
+        <svg class="hv2-flywheel-svg" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Rings -->
+          <circle cx="140" cy="140" r="130" stroke="rgba(99,102,241,0.08)" stroke-width="1"/>
+          <circle cx="140" cy="140" r="100" stroke="rgba(99,102,241,0.06)" stroke-width="1"/>
+          <circle cx="140" cy="140" r="70"  stroke="rgba(99,102,241,0.05)" stroke-width="1"/>
+          <!-- Core -->
+          <circle cx="140" cy="140" r="40" stroke="rgba(99,102,241,0.12)" stroke-width="1" fill="rgba(99,102,241,0.02)"/>
+          <!-- 5 stage nodes positioned on outer ring -->
+          <circle cx="140" cy="10"  r="3.5" fill="rgba(99,102,241,0.35)"/>
+          <circle cx="264" cy="90"  r="3.5" fill="rgba(129,140,248,0.35)"/>
+          <circle cx="217" cy="247" r="3.5" fill="rgba(165,180,252,0.35)"/>
+          <circle cx="63"  cy="247" r="3.5" fill="rgba(148,163,184,0.35)"/>
+          <circle cx="16"  cy="90"  r="3.5" fill="rgba(100,116,139,0.35)"/>
+          <!-- Subtle arc connections -->
+          <path d="M140 10 Q264 10 264 90"   stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
+          <path d="M264 90 Q280 247 217 247"  stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
+          <path d="M217 247 Q140 290 63 247"  stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
+          <path d="M63 247 Q0 90 16 90"       stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
+          <path d="M16 90 Q16 10 140 10"      stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
+        </svg>
+        
+        <div class="hv2-flywheel-core-label">
+          <strong>AI Engine</strong>
+          <span>Continuous Learning</span>
+        </div>
+      </div>
+      
+      <!-- Right stages -->
+      <div class="hv2-flywheel-right">
+        <div class="hv2-flywheel-stage" data-stage="3">
+          <div class="hv2-flywheel-stage-num">03</div>
+          <h4>Omnichannel Execution</h4>
+          <p>Coordinated deployment across AI search, automated ads, and content syndication</p>
+        </div>
+        
+        <div class="hv2-flywheel-stage" data-stage="4">
+          <div class="hv2-flywheel-stage-num">04</div>
+          <h4>Measurement &amp; Attribution</h4>
+          <p>GA4 data-driven models connecting marketing activity to CAC, LTV, and revenue</p>
+        </div>
+        
+        <div class="hv2-flywheel-stage" data-stage="5">
+          <div class="hv2-flywheel-stage-num">05</div>
+          <h4>Continuous Learning</h4>
+          <p>Machine learning feedback loops that automatically refine targeting, bidding, and content</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║  ACT III — THE ECOSYSTEM                                ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+
+<!-- ── 7. SERVICES ─────────────────────────────────────────── -->
+<!--
+  NOTE: HomeController does not expose service data.
+  These are navigation labels linking to /services, NOT a duplicate dataset.
+  Structurally compatible with existing /services routes.
+-->
+<section class="hv2-services" id="hv2-services">
+  <div class="container">
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">Services</span>
+      <h2 class="hv2-section-title">Connected Marketing Services</h2>
+      <p class="hv2-section-desc">
+        Every channel, every platform — managed as one connected system.
+      </p>
+    </div>
+    
+    <div class="hv2-services-grid">
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">🔍</div>
+        <h4>SEO</h4>
+        <p>Technical optimization, authority building, and organic growth</p>
       </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">💬</div>
+        <h4>AEO</h4>
+        <p>Answer engine optimization for featured snippets and direct answers</p>
+      </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">🤖</div>
+        <h4>GEO</h4>
+        <p>Generative engine optimization for AI assistant visibility</p>
+      </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">📢</div>
+        <h4>Google Ads</h4>
+        <p>Search, Shopping, Display, and YouTube campaign management</p>
+      </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">📱</div>
+        <h4>Meta Ads</h4>
+        <p>Facebook and Instagram advertising strategy and execution</p>
+      </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">✍️</div>
+        <h4>Content Marketing</h4>
+        <p>Strategy, creation, distribution, and performance measurement</p>
+      </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">📊</div>
+        <h4>Analytics &amp; GA4</h4>
+        <p>Implementation, custom reporting, and attribution modeling</p>
+      </a>
+      
+      <a href="/services" class="hv2-service-card">
+        <div class="hv2-service-card-icon">⚡</div>
+        <h4>AI Marketing Strategy</h4>
+        <p>AI integration roadmap, automation, and prompt engineering</p>
+      </a>
+    </div>
+    
+    <div class="hv2-services-cta">
+      <a href="/services" class="btn btn-secondary">Explore All Services →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 8. PORTFOLIO / PROOF ────────────────────────────────── -->
+<?php if (!empty($caseStudies)): ?>
+<section class="hv2-portfolio" id="hv2-portfolio">
+  <div class="container">
+    <div class="hv2-section-header">
+      <span class="hv2-eyebrow">Results</span>
+      <h2 class="hv2-section-title">Real Campaign Results</h2>
+      <p class="hv2-section-desc">
+        Case studies from real digital marketing campaigns.
+      </p>
+    </div>
+    
+    <div class="hv2-case-grid">
+      <?php foreach ($caseStudies as $cs): ?>
+      <article class="hv2-case-card">
+        <div class="hv2-case-card-badge">Case Study</div>
+        <h3>
+          <a href="/case-studies/<?= e($cs['slug']) ?>"><?= e($cs['title']) ?></a>
+        </h3>
+        <?php if (!empty($cs['excerpt'])): ?>
+        <p><?= str_truncate($cs['excerpt'], 120) ?></p>
+        <?php endif; ?>
+        <a href="/case-studies/<?= e($cs['slug']) ?>" class="hv2-case-card-link">Read Case Study →</a>
+      </article>
       <?php endforeach; ?>
     </div>
+    
+    <div class="hv2-services-cta">
+      <a href="/case-studies" class="btn btn-secondary">All Case Studies →</a>
+    </div>
   </div>
 </section>
+<?php endif; ?>
 
-<!-- ── LATEST BLOG POSTS ── -->
-<section class="section">
+
+<!-- ── 9. FREE LEARNING & TOOLS ────────────────────────────── -->
+<section class="hv2-learning" id="hv2-learning">
   <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-8);">
-      <div>
-        <h2>Latest Articles</h2>
-        <p style="color:var(--text-muted);margin:0;font-size:var(--text-sm);">Expert-authored, research-backed digital marketing guides</p>
-      </div>
-      <a href="/blog" class="btn btn-secondary btn-sm">All Articles →</a>
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">Knowledge</span>
+      <h2 class="hv2-section-title">Free Learning &amp; Tools</h2>
+      <p class="hv2-section-desc">
+        Expert-authored guides, interactive tools, and a comprehensive marketing glossary.
+      </p>
     </div>
-
-    <?php if (!empty($latestPosts)): ?>
-    <div class="grid grid-3 gap-6">
-      <?php foreach ($latestPosts as $post): ?>
-      <article class="post-card">
-        <?php if (!empty($post['featured_image_id'])): ?>
-        <div class="post-card-image">
-          <img src="/assets/images/static/placeholder.jpg" alt="<?= e($post['title']) ?>" loading="lazy">
-        </div>
-        <?php else: ?>
-        <div class="post-card-image" style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));display:flex;align-items:center;justify-content:center;">
-          <span style="font-size:40px;opacity:0.5;">📝</span>
-        </div>
-        <?php endif; ?>
-
-        <div class="post-card-body">
-          <div class="post-card-meta">
-            <span><?= format_date($post['published_at']) ?></span>
+    
+    <!-- Tab Navigation -->
+    <div class="hv2-tabs" role="tablist">
+      <button class="hv2-tab-btn active" data-tab="hv2-panel-articles" type="button" role="tab" aria-selected="true">Latest Articles</button>
+      <button class="hv2-tab-btn" data-tab="hv2-panel-pillars" type="button" role="tab" aria-selected="false">Knowledge Pillars</button>
+      <button class="hv2-tab-btn" data-tab="hv2-panel-tools" type="button" role="tab" aria-selected="false">Free Tools</button>
+    </div>
+    
+    <!-- Tab: Latest Articles -->
+    <div class="hv2-tab-panel active" id="hv2-panel-articles" role="tabpanel">
+      <?php if (!empty($latestPosts)): ?>
+      <div class="hv2-learning-grid">
+        <?php foreach ($latestPosts as $post): ?>
+        <a href="/blog/<?= e($post['slug']) ?>" class="hv2-learning-card">
+          <div class="hv2-learning-card-meta">
+            <?= format_date($post['published_at']) ?>
             <?php if (!empty($post['read_time'])): ?>
-            <span>·</span>
-            <span><?= $post['read_time'] ?> min read</span>
+             · <?= $post['read_time'] ?> min read
             <?php endif; ?>
           </div>
-          <h3 class="post-card-title">
-            <a href="/blog/<?= e($post['slug']) ?>" style="color:inherit;text-decoration:none;"><?= e($post['title']) ?></a>
-          </h3>
+          <h4><?= e($post['title']) ?></h4>
           <?php if (!empty($post['excerpt'])): ?>
-          <p class="post-card-excerpt"><?= str_truncate($post['excerpt'], 120) ?></p>
+          <p><?= str_truncate($post['excerpt'], 100) ?></p>
           <?php endif; ?>
-        </div>
-
-        <div class="post-card-footer">
-          <span style="font-size:var(--text-xs);color:var(--text-muted);">By <?= e($post['author_name'] ?? 'TechAasvik') ?></span>
-          <a href="/blog/<?= e($post['slug']) ?>" class="btn btn-ghost btn-sm">Read →</a>
-        </div>
-      </article>
-      <?php endforeach; ?>
-    </div>
-    <?php else: ?>
-    <div style="text-align:center;padding:60px;color:var(--text-muted);">
-      <p>Content is being published. Check back soon! 🚀</p>
-    </div>
-    <?php endif; ?>
-  </div>
-</section>
-
-<!-- ── FREE TOOLS ── -->
-<?php if (!empty($tools)): ?>
-<section class="section-sm" style="background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:var(--space-10);">
-      <h2>Free Digital Marketing Tools</h2>
-      <p style="color:var(--text-secondary);max-width:560px;margin:var(--space-3) auto 0;">No signup required. Use 50+ professional marketing tools instantly.</p>
-    </div>
-    <div class="grid grid-3 gap-4">
-      <?php foreach (array_slice($tools, 0, 6) as $tool): ?>
-      <a href="/tools/<?= e($tool['slug']) ?>" class="card" style="text-decoration:none;display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">⚙️</div>
-        <div>
-          <h3 style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-primary);margin-bottom:4px;"><?= e($tool['title']) ?></h3>
-          <p style="font-size:var(--text-xs);color:var(--text-muted);margin:0;"><?= str_truncate($tool['excerpt'] ?? '', 80) ?></p>
-        </div>
-      </a>
-      <?php endforeach; ?>
-    </div>
-    <div style="text-align:center;margin-top:var(--space-8);">
-      <a href="/tools" class="btn btn-secondary">View All 50+ Tools →</a>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
-<!-- ── CASE STUDIES ── -->
-<?php if (!empty($caseStudies)): ?>
-<section class="section">
-  <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-8);">
-      <div>
-        <h2>Real Results. Proven Strategies.</h2>
-        <p style="color:var(--text-muted);margin:0;font-size:var(--text-sm);">Learn from real digital marketing campaigns with measurable ROI</p>
-      </div>
-      <a href="/case-studies" class="btn btn-secondary btn-sm">All Case Studies →</a>
-    </div>
-    <div class="grid grid-3 gap-6">
-      <?php foreach ($caseStudies as $cs): ?>
-      <article class="card card-interactive">
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
-          <span class="badge badge-success">📊 Case Study</span>
-        </div>
-        <h3 style="font-size:var(--text-base);font-weight:var(--fw-semibold);color:var(--text-primary);margin-bottom:8px;line-height:1.4;">
-          <a href="/case-studies/<?= e($cs['slug']) ?>" style="color:inherit;text-decoration:none;"><?= e($cs['title']) ?></a>
-        </h3>
-        <p style="font-size:var(--text-sm);color:var(--text-secondary);margin:0;"><?= str_truncate($cs['excerpt'] ?? '', 100) ?></p>
-        <a href="/case-studies/<?= e($cs['slug']) ?>" class="btn btn-ghost btn-sm" style="margin-top:12px;padding-left:0;">Read Case Study →</a>
-      </article>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
-<!-- ── NEWSLETTER / LEAD CTA ── -->
-<section class="section-sm">
-  <div class="container container-md">
-    <div class="newsletter-box">
-      <div style="font-size:32px;margin-bottom:12px;">📧</div>
-      <h2 style="font-size:var(--text-2xl);margin-bottom:var(--space-3);">Weekly Digital Marketing Digest</h2>
-      <p>Join 10,000+ Indian marketers who get our curated weekly digest of the best SEO strategies, algorithm updates, ad tips, and tools. No spam.</p>
-      <form class="newsletter-form" id="heroNewsletter" novalidate>
-        <input type="email" name="email" placeholder="your@email.com" class="form-input" required id="heroEmail" aria-label="Email address">
-        <button type="submit" class="btn btn-primary">Subscribe Free →</button>
-      </form>
-      <p style="font-size:var(--text-xs);color:var(--text-muted);margin-top:12px;">✅ Free forever &nbsp;·&nbsp; 📌 Unsubscribe anytime &nbsp;·&nbsp; 🔒 No spam ever</p>
-    </div>
-  </div>
-</section>
-
-<!-- ── FREE AUDIT CTA ── -->
-<section class="section" style="background:var(--bg-surface);border-top:1px solid var(--border-subtle);">
-  <div class="container">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-12);align-items:center;">
-      <div>
-        <span class="badge badge-brand" style="margin-bottom:16px;">🎁 Limited Time Offer</span>
-        <h2 style="margin-bottom:var(--space-4);">Get Your Free Digital Marketing Audit</h2>
-        <p style="color:var(--text-secondary);margin-bottom:var(--space-6);">Our experts will analyze your website's SEO, ad performance, content strategy, and analytics — then give you a personalized growth roadmap. Completely free.</p>
-        <ul style="display:flex;flex-direction:column;gap:10px;margin-bottom:var(--space-8);color:var(--text-secondary);font-size:var(--text-sm);">
-          <li>✅ Complete SEO technical audit</li>
-          <li>✅ Competitor gap analysis</li>
-          <li>✅ Keyword opportunity report</li>
-          <li>✅ Content strategy recommendations</li>
-          <li>✅ Delivered within 24 hours</li>
-        </ul>
-        <form id="auditForm" novalidate style="display:flex;gap:12px;flex-wrap:wrap;">
-          <input type="text"  name="name"    placeholder="Your Name"    class="form-input" style="flex:1;min-width:160px;" id="auditName" required>
-          <input type="email" name="email"   placeholder="Your Email"   class="form-input" style="flex:1;min-width:160px;" id="auditEmail" required>
-          <input type="url"   name="website" placeholder="Your Website" class="form-input" style="flex:1;min-width:200px;" id="auditWebsite">
-          <button type="submit" class="btn btn-gradient btn-lg" style="white-space:nowrap;">Get Free Audit 🚀</button>
-        </form>
-        <p id="auditMsg" style="font-size:var(--text-sm);color:var(--accent-400);margin-top:10px;display:none;"></p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <?php foreach ([
-          ['🔍', 'SEO Score', 'Technical health & keyword rankings'],
-          ['📊', 'Analytics Review', 'GA4 setup, tracking gaps, attribution'],
-          ['🎯', 'Competitor Analysis', 'Gap identification & opportunity mapping'],
-          ['✍️', 'Content Audit', 'Existing content quality & topical gaps'],
-        ] as [$icon, $title, $desc]): ?>
-        <div class="card" style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="font-size:24px;flex-shrink:0;"><?= $icon ?></div>
-          <div>
-            <h3 style="font-size:var(--text-sm);font-weight:var(--fw-semibold);color:var(--text-primary);"><?= $title ?></h3>
-            <p style="font-size:var(--text-xs);color:var(--text-muted);margin:0;"><?= $desc ?></p>
-          </div>
-        </div>
+        </a>
         <?php endforeach; ?>
       </div>
+      <div style="text-align:center;margin-top:var(--space-6);">
+        <a href="/blog" class="btn btn-secondary btn-sm">All Articles →</a>
+      </div>
+      <?php else: ?>
+      <p style="text-align:center;color:var(--text-muted);padding:var(--space-8) 0;">Articles coming soon.</p>
+      <?php endif; ?>
+    </div>
+    
+    <!-- Tab: Knowledge Pillars -->
+    <div class="hv2-tab-panel" id="hv2-panel-pillars" role="tabpanel">
+      <?php if (!empty($pillars)): ?>
+      <div class="hv2-learning-grid">
+        <?php foreach ($pillars as $pillar): ?>
+        <a href="/learn/<?= e($pillar['slug']) ?>" class="hv2-learning-card">
+          <h4><?= e($pillar['title']) ?></h4>
+          <?php if (!empty($pillar['excerpt'])): ?>
+          <p><?= str_truncate($pillar['excerpt'], 100) ?></p>
+          <?php endif; ?>
+        </a>
+        <?php endforeach; ?>
+      </div>
+      <div style="text-align:center;margin-top:var(--space-6);">
+        <a href="/learn" class="btn btn-secondary btn-sm">All Knowledge Pillars →</a>
+      </div>
+      <?php else: ?>
+      <p style="text-align:center;color:var(--text-muted);padding:var(--space-8) 0;">Knowledge pillars coming soon.</p>
+      <?php endif; ?>
+    </div>
+    
+    <!-- Tab: Free Tools -->
+    <div class="hv2-tab-panel" id="hv2-panel-tools" role="tabpanel">
+      <?php if (!empty($tools)): ?>
+      <div class="hv2-learning-grid">
+        <?php foreach ($tools as $tool): ?>
+        <a href="/tools/<?= e($tool['slug']) ?>" class="hv2-learning-card">
+          <h4><?= e($tool['title']) ?></h4>
+          <?php if (!empty($tool['excerpt'])): ?>
+          <p><?= str_truncate($tool['excerpt'], 80) ?></p>
+          <?php endif; ?>
+        </a>
+        <?php endforeach; ?>
+      </div>
+      <div style="text-align:center;margin-top:var(--space-6);">
+        <a href="/tools" class="btn btn-secondary btn-sm">All Free Tools →</a>
+      </div>
+      <?php else: ?>
+      <p style="text-align:center;color:var(--text-muted);padding:var(--space-8) 0;">Tools coming soon.</p>
+      <?php endif; ?>
+    </div>
+    
+    <!-- Glossary CTA -->
+    <div class="hv2-glossary-cta">
+      <div>
+        <strong style="color:var(--text-primary);display:block;margin-bottom:4px;">Marketing Glossary</strong>
+        <p>Comprehensive A–Z digital marketing terminology reference</p>
+      </div>
+      <a href="/glossary" class="btn btn-secondary btn-sm">Browse Glossary →</a>
     </div>
   </div>
 </section>
+
+
+<!-- ── 10. EBOOK / KNOWLEDGE COMMERCE (PLACEHOLDER) ────────── -->
+<!--
+  NO fake ebook products. This is an extensible placeholder structure
+  designed to be replaced later with real CMS-driven ebook data
+  (e.g. content_type = 'ebook') from a future ecommerce phase.
+-->
+<section class="hv2-ebook" id="hv2-ebook">
+  <div class="container">
+    <div class="hv2-section-header hv2-section-header--centered">
+      <span class="hv2-eyebrow">Coming Soon</span>
+      <h2 class="hv2-section-title">Knowledge Commerce</h2>
+    </div>
+    
+    <div class="hv2-ebook-placeholder">
+      <h3>Premium digital publications are coming.</h3>
+      <p>
+        In-depth playbooks, frameworks, and implementation guides for 
+        AI-driven digital marketing — authored by practitioners, not aggregators.
+      </p>
+      <div class="hv2-ebook-coming">Coming Soon</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║  ACT IV — ACTION                                        ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+
+<!-- ── 11. FINAL CTA — AI AUDIT ────────────────────────────── -->
+<section class="hv2-final-cta" id="hv2-final-cta">
+  <div class="container">
+    <div class="hv2-cta-content">
+      <span class="hv2-eyebrow">Free Assessment</span>
+      <h2>Build Your AI Marketing Engine</h2>
+      <p>
+        Our team will analyze your current digital marketing setup and deliver a 
+        personalized AI-readiness assessment with actionable recommendations.
+      </p>
+      
+      <!-- Audit form — IDs preserved for existing main.js handler -->
+      <form id="auditForm" class="hv2-audit-form" novalidate>
+        <input type="text"  name="name"    placeholder="Your Name"    class="form-input" id="auditName"    required aria-label="Your name">
+        <input type="email" name="email"   placeholder="Your Email"   class="form-input" id="auditEmail"   required aria-label="Your email">
+        <input type="url"   name="website" placeholder="Your Website" class="form-input" id="auditWebsite"          aria-label="Your website">
+        <button type="submit" class="btn btn-gradient btn-lg">Get Free Audit →</button>
+      </form>
+      <p id="auditMsg" style="font-size:var(--text-sm);margin-top:10px;display:none;"></p>
+      
+      <div class="hv2-audit-checks">
+        <span class="hv2-audit-check"><span class="hv2-audit-check-icon">✓</span> SEO technical audit</span>
+        <span class="hv2-audit-check"><span class="hv2-audit-check-icon">✓</span> Competitor analysis</span>
+        <span class="hv2-audit-check"><span class="hv2-audit-check-icon">✓</span> Content assessment</span>
+        <span class="hv2-audit-check"><span class="hv2-audit-check-icon">✓</span> AI readiness score</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── NEWSLETTER (preserving #heroNewsletter ID for main.js) ── -->
+<section class="hv2-newsletter">
+  <div class="container hv2-newsletter-inner">
+    <h2>Weekly Marketing Intelligence</h2>
+    <p>Curated AI marketing insights, algorithm updates, and strategy frameworks. No spam.</p>
+    <form class="newsletter-form" id="heroNewsletter" novalidate>
+      <input type="email" name="email" placeholder="your@email.com" class="form-input" required id="heroEmail" aria-label="Email address">
+      <button type="submit" class="btn btn-primary">Subscribe →</button>
+    </form>
+    <p class="hv2-newsletter-fine">Free forever · Unsubscribe anytime · No spam</p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HOMEPAGE V2 — PAGE-SPECIFIC SCRIPTS
+     Loaded ONLY on this page (not in main.php / globally).
+     main.js handles newsletter + audit form submissions.
+     ══════════════════════════════════════════════════════════ -->
+<?php
+  $_hv2JsV = @filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/js/homepage-v2.js') ?: '1';
+?>
+
+<!-- Three.js r160 — lightweight CDN (deferred, used for desktop 3D only) -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
+
+<!-- GSAP 3.12 + ScrollTrigger — scroll-driven animations (deferred) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+
+<!-- Homepage V2 Controller — namespaced, DOM-gated -->
+<script src="/assets/js/homepage-v2.js?v=<?= $_hv2JsV ?>" defer></script>
