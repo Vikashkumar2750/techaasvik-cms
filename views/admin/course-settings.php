@@ -1,4 +1,4 @@
-<!-- Admin: Course Settings -->
+﻿<!-- Admin: Course Settings -->
 <?php
 use Core\Auth;
 Auth::startSession();
@@ -293,7 +293,7 @@ $tabs = ['general' => '🌐 General', 'pricing' => '💰 Pricing', 'cert' => '�
 
     <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:8px;padding:14px;font-size:13px;">
       <strong>Webhook URL</strong> (paste in Razorpay Dashboard → Webhooks):<br>
-      <code style="font-size:12px;color:var(--admin-primary);display:inline-block;margin-top:6px;">https://t1.techaasvik.com/courses/webhook</code>
+      <code style="font-size:12px;color:var(--admin-primary);display:inline-block;margin-top:6px;">https://www.techaasvik.com/courses/webhook</code>
       <br><br>
       <strong>Event to enable:</strong> <code>payment.captured</code>
     </div>

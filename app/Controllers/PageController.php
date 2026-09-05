@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -19,7 +19,7 @@ class PageController extends Controller
         $seo = $seoSvc->buildStatic(
             'About TechAasvik — India\'s Digital Marketing Authority',
             'TechAasvik is India\'s most authoritative digital marketing platform. We create research-backed guides, tools, and resources to help marketers, businesses, and agencies grow online.',
-            'https://t1.techaasvik.com/about'
+            'https://www.techaasvik.com/about'
         );
         $this->view('about', ['seo' => $seo]);
     }
@@ -30,7 +30,7 @@ class PageController extends Controller
         $seo = $seoSvc->buildStatic(
             'Contact TechAasvik — Get in Touch',
             'Have a question, partnership proposal, or want a free digital marketing audit? Get in touch with the TechAasvik team.',
-            'https://t1.techaasvik.com/contact'
+            'https://www.techaasvik.com/contact'
         );
         $this->view('contact', [
             'seo'    => $seo,
@@ -49,7 +49,7 @@ class PageController extends Controller
 
         if ($errors) {
             $seoSvc = new SeoService();
-            $seo = $seoSvc->buildStatic('Contact TechAasvik', '', 'https://t1.techaasvik.com/contact');
+            $seo = $seoSvc->buildStatic('Contact TechAasvik', '', 'https://www.techaasvik.com/contact');
             $this->view('contact', ['seo' => $seo, 'flash' => null, 'errors' => $errors]);
             return;
         }
@@ -74,7 +74,7 @@ class PageController extends Controller
         $seo = $seoSvc->buildStatic(
             'Digital Marketing Services — SEO, GEO, AI Marketing & More | TechAasvik',
             'Expert digital marketing services including SEO, GEO, AEO, AI Marketing, Google Ads, Meta Ads, content marketing, CRO, and video marketing for businesses in India and globally.',
-            'https://t1.techaasvik.com/services'
+            'https://www.techaasvik.com/services'
         );
         $this->view('services', ['seo' => $seo]);
     }
@@ -85,7 +85,7 @@ class PageController extends Controller
         $seo = $seoSvc->buildStatic(
             'Get a Free Digital Marketing Audit — TechAasvik',
             'Request your free digital marketing audit. Our certified experts will analyse your SEO, GEO visibility, Google Ads, Meta Ads, and deliver a personalised 90-day action plan within 24 hours.',
-            'https://t1.techaasvik.com/free-audit'
+            'https://www.techaasvik.com/free-audit'
         );
         $this->view('free-audit', ['seo' => $seo]);
     }
@@ -114,7 +114,7 @@ class PageController extends Controller
         $seoSvc = new SeoService();
         $seo    = $page
             ? $seoSvc->buildForContent($page)
-            : $seoSvc->buildStatic(ucwords(str_replace('-', ' ', $slug)) . ' Services | TechAasvik', '', 'https://t1.techaasvik.com/services/' . $slug);
+            : $seoSvc->buildStatic(ucwords(str_replace('-', ' ', $slug)) . ' Services | TechAasvik', '', 'https://www.techaasvik.com/services/' . $slug);
 
         $this->view('service', ['seo' => $seo, 'page' => $page, 'slug' => $slug]);
     }

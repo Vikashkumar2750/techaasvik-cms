@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -31,7 +31,7 @@ class GlossaryController extends Controller
         $seo    = $seoSvc->buildStatic(
             'Digital Marketing Glossary — 2000+ Terms Explained',
             'Complete digital marketing glossary with 2000+ terms explained in plain English. From A/B testing to Zero-click searches — every marketing term defined.',
-            'https://t1.techaasvik.com/glossary'
+            'https://www.techaasvik.com/glossary'
         );
 
         $schemaSvc = new SchemaService();
@@ -64,7 +64,7 @@ class GlossaryController extends Controller
         $seo    = $seoSvc->buildStatic(
             "Digital Marketing Terms Starting with '$letter' | Glossary",
             "All digital marketing terms starting with the letter $letter. Definitions and explanations for every $letter-category marketing term.",
-            'https://t1.techaasvik.com/glossary/' . strtolower($letter)
+            'https://www.techaasvik.com/glossary/' . strtolower($letter)
         );
 
         $this->view('glossary-letter', [
@@ -87,7 +87,7 @@ class GlossaryController extends Controller
         $seoSvc    = new SeoService();
         $schemaSvc = new SchemaService();
         $seo       = $seoSvc->buildForContent($term);
-        $termUrl   = 'https://t1.techaasvik.com/glossary/term/' . $term['slug'];
+        $termUrl   = 'https://www.techaasvik.com/glossary/term/' . $term['slug'];
 
         $schemas = [
             $schemaSvc->definedTerm($term, $termUrl),

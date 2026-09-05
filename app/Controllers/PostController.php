@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -38,7 +38,7 @@ class PostController extends Controller
         $seo = $this->seoSvc->buildStatic(
             'Digital Marketing Blog — Latest Articles & Guides',
             'Expert digital marketing articles covering SEO, Google Ads, Meta Ads, content marketing, analytics, and more. Written by certified marketing professionals.',
-            'https://t1.techaasvik.com/blog'
+            'https://www.techaasvik.com/blog'
         );
 
         $this->view('blog-index', [
@@ -125,7 +125,7 @@ class PostController extends Controller
         $seo = $this->seoSvc->buildStatic(
             'Digital Marketing Knowledge Center — Learn Everything',
             'India\'s most comprehensive digital marketing knowledge center. Deep-dive guides on SEO, GEO, AEO, Google Ads, Meta Ads, analytics, and every digital marketing topic.',
-            'https://t1.techaasvik.com/learn'
+            'https://www.techaasvik.com/learn'
         );
 
         $this->view('learn-index', [
@@ -279,7 +279,7 @@ class PostController extends Controller
         $seo = $this->seoSvc->buildStatic(
             'Digital Marketing News — Latest Industry Updates',
             'Stay updated with the latest digital marketing news, algorithm updates, platform changes, and industry trends.',
-            'https://t1.techaasvik.com/news'
+            'https://www.techaasvik.com/news'
         );
 
         $this->view('news-index', [
@@ -345,7 +345,7 @@ class PostController extends Controller
         $seo = $this->seoSvc->buildStatic(
             'Free Digital Marketing Courses — TechAasvik',
             'Free online courses on SEO, Google Ads, Meta Ads, GA4, content marketing, and AI marketing. Learn at your own pace.',
-            'https://t1.techaasvik.com/courses'
+            'https://www.techaasvik.com/courses'
         );
         $this->view('courses-index', ['seo' => $seo, 'schemas' => [], 'courses' => $courses]);
     }

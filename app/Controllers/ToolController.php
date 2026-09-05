@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -30,7 +30,7 @@ class ToolController extends Controller
         $seo = $seoSvc->buildStatic(
             'Free Digital Marketing Tools — SEO, Ads, Content Tools',
             '50+ free digital marketing tools for SEO analysis, keyword research, ad copy generation, content optimization, schema markup, and more. No signup required.',
-            'https://t1.techaasvik.com/tools'
+            'https://www.techaasvik.com/tools'
         );
 
         $schemas = [$schemaSvc->breadcrumbs([['name'=>'Home','url'=>'/'],['name'=>'Tools']])];
@@ -82,7 +82,7 @@ class ToolController extends Controller
         $seo = $seoSvc->buildStatic(
             'Free Marketing Calculators — ROI, ROAS, CAC, LTV & More',
             'Free marketing calculators for ROI, ROAS, CAC, LTV, PPC budget, conversion rate, email revenue, and more. Make data-driven marketing decisions.',
-            'https://t1.techaasvik.com/calculators'
+            'https://www.techaasvik.com/calculators'
         );
 
         $this->view('calculators-index', [

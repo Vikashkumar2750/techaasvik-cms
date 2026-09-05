@@ -1,4 +1,4 @@
-<!-- Admin Content Editor -->
+﻿<!-- Admin Content Editor -->
 <?php
 $isNew   = empty($item);
 $itemId  = $item['id'] ?? '';
@@ -139,7 +139,7 @@ $actionUrl = $isNew ? '/techaasvik_admin/content/store' : "/techaasvik_admin/con
           </div>
           <div class="admin-form-group">
             <label class="admin-form-label" for="canonical_url">Canonical URL</label>
-            <input type="url" id="canonical_url" name="canonical_url" class="admin-form-input" value="<?= e($canonical) ?>" placeholder="https://t1.techaasvik.com/…">
+            <input type="url" id="canonical_url" name="canonical_url" class="admin-form-input" value="<?= e($canonical) ?>" placeholder="https://www.techaasvik.com/…">
             <span class="admin-form-hint">Leave empty to auto-generate.</span>
           </div>
           <div style="display:flex;gap:16px;margin-top:8px;">

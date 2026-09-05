@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -36,7 +36,7 @@ class ArchiveController extends Controller
         $seo    = $seoSvc->buildStatic(
             ($cat['meta_title'] ?: $cat['name'] . ' — Digital Marketing Guides'),
             ($cat['meta_description'] ?: $cat['description'] ?? ''),
-            'https://t1.techaasvik.com/category/' . $cat['slug']
+            'https://www.techaasvik.com/category/' . $cat['slug']
         );
 
         $schemaSvc = new SchemaService();
@@ -69,7 +69,7 @@ class ArchiveController extends Controller
         $seo = $seoSvc->buildStatic(
             '#' . $tag['name'] . ' Articles — TechAasvik',
             'Browse all digital marketing content tagged with "' . $tag['name'] . '".',
-            'https://t1.techaasvik.com/tag/' . $tag['slug']
+            'https://www.techaasvik.com/tag/' . $tag['slug']
         );
         $seo['noindex'] = true; // Tag archives are typically noindexed
 
@@ -96,7 +96,7 @@ class ArchiveController extends Controller
         $seo = $seoSvc->buildStatic(
             'Free Digital Marketing Courses — Learn Online',
             'Free online digital marketing courses covering SEO, Google Ads, Meta Ads, content marketing, analytics, and AI marketing tools. Certificates available.',
-            'https://t1.techaasvik.com/courses'
+            'https://www.techaasvik.com/courses'
         );
         $schemaSvc = new SchemaService();
         $this->view('courses-index', [
@@ -179,7 +179,7 @@ class ArchiveController extends Controller
         $seo    = $seoSvc->buildStatic(
             $query ? "Search: \"{$query}\" — TechAasvik" : 'Search — TechAasvik',
             '',
-            'https://t1.techaasvik.com/search'
+            'https://www.techaasvik.com/search'
         );
         $seo['noindex'] = true;
 
@@ -206,7 +206,7 @@ class ArchiveController extends Controller
         $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM content WHERE type = ? AND status = 'published' AND lang = 'en'", [$type]);
 
         $seoSvc = new SeoService();
-        $seo    = $seoSvc->buildStatic($title . ' — TechAasvik', $desc, 'https://t1.techaasvik.com/' . $path);
+        $seo    = $seoSvc->buildStatic($title . ' — TechAasvik', $desc, 'https://www.techaasvik.com/' . $path);
 
         $this->view('resource-index', [
             'seo'     => $seo,

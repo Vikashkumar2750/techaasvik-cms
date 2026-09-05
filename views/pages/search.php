@@ -1,4 +1,4 @@
-<!-- Search Results Page -->
+﻿<!-- Search Results Page -->
 <div class="container" style="padding-top:var(--space-10);padding-bottom:var(--space-16);">
 
   <h1 style="font-size:var(--text-3xl);margin-bottom:var(--space-6);">
@@ -40,7 +40,7 @@
       <p style="font-size:var(--text-sm);color:var(--text-secondary);margin:0;"><?= str_truncate($result['excerpt'], 180) ?></p>
       <?php endif; ?>
       <a href="<?= e(content_url($result)) ?>" style="font-size:var(--text-xs);color:var(--text-muted);margin-top:8px;display:inline-block;">
-        t1.techaasvik.com<?= content_url($result) ?>
+        www.techaasvik.com<?= content_url($result) ?>
       </a>
     </div>
     <?php endforeach; ?>

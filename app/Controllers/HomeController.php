@@ -51,7 +51,7 @@ class HomeController extends Controller
         $seo = $seoSvc->buildStatic(
             'TechAasvik — India\'s Digital Marketing Authority Platform',
             'India\'s most authoritative digital marketing knowledge platform. Expert guides on SEO, AEO, GEO, Google Ads, Meta Ads, Content Marketing, Analytics, and every aspect of modern digital marketing.',
-            'https://t1.techaasvik.com'
+            'https://www.techaasvik.com'
         );
 
         // Build schema
