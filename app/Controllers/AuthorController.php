@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -18,9 +18,9 @@ class AuthorController extends Controller
         );
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Our Expert Authors â€” Digital Marketing Specialists',
+            'Our Expert Authors — Digital Marketing Specialists',
             'Meet TechAasvik\'s team of certified digital marketing experts, SEO specialists, and content strategists who create authoritative guides and research.',
-            'https://www.techaasvik.com/authors'
+            'https://techaasvik.com/authors'
         );
         $this->view('authors-index', ['seo' => $seo, 'authors' => $authors]);
     }
@@ -44,9 +44,9 @@ class AuthorController extends Controller
         $seoSvc    = new SeoService();
         $schemaSvc = new SchemaService();
         $seo = $seoSvc->buildStatic(
-            $author['name'] . ' â€” Digital Marketing Expert at TechAasvik',
+            $author['name'] . ' — Digital Marketing Expert at TechAasvik',
             $author['short_bio'] ?? ('Articles and guides by ' . $author['name'] . ', digital marketing expert at TechAasvik.'),
-            'https://www.techaasvik.com/authors/' . $author['slug']
+            'https://techaasvik.com/authors/' . $author['slug']
         );
         $schemas = [
             $schemaSvc->person($author),

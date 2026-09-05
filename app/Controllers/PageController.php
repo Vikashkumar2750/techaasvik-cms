@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -9,7 +9,7 @@ use Services\SeoService;
 use Services\SchemaService;
 
 /**
- * PageController â€” handles all static pages: About, Contact, Services, Legal, etc.
+ * PageController — handles all static pages: About, Contact, Services, Legal, etc.
  */
 class PageController extends Controller
 {
@@ -17,9 +17,9 @@ class PageController extends Controller
     {
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'About TechAasvik â€” India\'s Digital Marketing Authority',
+            'About TechAasvik — India\'s Digital Marketing Authority',
             'TechAasvik is India\'s most authoritative digital marketing platform. We create research-backed guides, tools, and resources to help marketers, businesses, and agencies grow online.',
-            'https://www.techaasvik.com/about'
+            'https://techaasvik.com/about'
         );
         $this->view('about', ['seo' => $seo]);
     }
@@ -28,9 +28,9 @@ class PageController extends Controller
     {
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Contact TechAasvik â€” Get in Touch',
+            'Contact TechAasvik — Get in Touch',
             'Have a question, partnership proposal, or want a free digital marketing audit? Get in touch with the TechAasvik team.',
-            'https://www.techaasvik.com/contact'
+            'https://techaasvik.com/contact'
         );
         $this->view('contact', [
             'seo'    => $seo,
@@ -49,7 +49,7 @@ class PageController extends Controller
 
         if ($errors) {
             $seoSvc = new SeoService();
-            $seo = $seoSvc->buildStatic('Contact TechAasvik', '', 'https://www.techaasvik.com/contact');
+            $seo = $seoSvc->buildStatic('Contact TechAasvik', '', 'https://techaasvik.com/contact');
             $this->view('contact', ['seo' => $seo, 'flash' => null, 'errors' => $errors]);
             return;
         }
@@ -72,9 +72,9 @@ class PageController extends Controller
     {
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Digital Marketing Services â€” SEO, GEO, AI Marketing & More | TechAasvik',
+            'Digital Marketing Services — SEO, GEO, AI Marketing & More | TechAasvik',
             'Expert digital marketing services including SEO, GEO, AEO, AI Marketing, Google Ads, Meta Ads, content marketing, CRO, and video marketing for businesses in India and globally.',
-            'https://www.techaasvik.com/services'
+            'https://techaasvik.com/services'
         );
         $this->view('services', ['seo' => $seo]);
     }
@@ -83,9 +83,9 @@ class PageController extends Controller
     {
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Get a Free Digital Marketing Audit â€” TechAasvik',
+            'Get a Free Digital Marketing Audit — TechAasvik',
             'Request your free digital marketing audit. Our certified experts will analyse your SEO, GEO visibility, Google Ads, Meta Ads, and deliver a personalised 90-day action plan within 24 hours.',
-            'https://www.techaasvik.com/free-audit'
+            'https://techaasvik.com/free-audit'
         );
         $this->view('free-audit', ['seo' => $seo]);
     }
@@ -96,7 +96,7 @@ class PageController extends Controller
         $page = (new Content())->getBySlug($slug, 'page');
 
         if (!$page) {
-            // Static fallback â€” all 12 services (6 core + 6 emerging)
+            // Static fallback — all 12 services (6 core + 6 emerging)
             $staticServices = [
                 // Core
                 'seo', 'google-ads', 'meta-ads', 'social-media',
@@ -114,7 +114,7 @@ class PageController extends Controller
         $seoSvc = new SeoService();
         $seo    = $page
             ? $seoSvc->buildForContent($page)
-            : $seoSvc->buildStatic(ucwords(str_replace('-', ' ', $slug)) . ' Services | TechAasvik', '', 'https://www.techaasvik.com/services/' . $slug);
+            : $seoSvc->buildStatic(ucwords(str_replace('-', ' ', $slug)) . ' Services | TechAasvik', '', 'https://techaasvik.com/services/' . $slug);
 
         $this->view('service', ['seo' => $seo, 'page' => $page, 'slug' => $slug]);
     }
@@ -122,7 +122,7 @@ class PageController extends Controller
     public function htmlSitemap(array $params = []): void
     {
         $seoSvc = new SeoService();
-        $seo = $seoSvc->buildStatic('Site Map â€” TechAasvik', 'Complete site map of TechAasvik digital marketing platform.');
+        $seo = $seoSvc->buildStatic('Site Map — TechAasvik', 'Complete site map of TechAasvik digital marketing platform.');
         $allContent = $this->db->fetchAll(
             "SELECT type, title, slug FROM content WHERE status = 'published' ORDER BY type, title"
         );
@@ -131,33 +131,33 @@ class PageController extends Controller
 
     public function privacy(array $params = []): void {
         $seoSvc = new SeoService();
-        $seo = $seoSvc->buildStatic('Privacy Policy â€” TechAasvik', 'How TechAasvik collects, uses, and protects your personal information.');
+        $seo = $seoSvc->buildStatic('Privacy Policy — TechAasvik', 'How TechAasvik collects, uses, and protects your personal information.');
         $seo['noindex'] = true;
         $this->view('legal', ['seo' => $seo, 'pageType' => 'privacy', 'schemas' => []]);
     }
 
     public function terms(array $params = []): void {
         $seoSvc = new SeoService();
-        $seo = $seoSvc->buildStatic('Terms of Service â€” TechAasvik', 'Terms of service for using TechAasvik platform, tools, and services.');
+        $seo = $seoSvc->buildStatic('Terms of Service — TechAasvik', 'Terms of service for using TechAasvik platform, tools, and services.');
         $seo['noindex'] = true;
         $this->view('legal', ['seo' => $seo, 'pageType' => 'terms', 'schemas' => []]);
     }
 
     public function editorial(array $params = []): void {
         $seoSvc = new SeoService();
-        $seo = $seoSvc->buildStatic('Editorial Policy â€” TechAasvik', 'Our editorial standards, fact-checking process, author guidelines, and content integrity policy.');
+        $seo = $seoSvc->buildStatic('Editorial Policy — TechAasvik', 'Our editorial standards, fact-checking process, author guidelines, and content integrity policy.');
         $this->view('legal', ['seo' => $seo, 'pageType' => 'editorial', 'schemas' => []]);
     }
 
     public function disclaimer(array $params = []): void {
         $seoSvc = new SeoService();
-        $seo = $seoSvc->buildStatic('Disclaimer â€” TechAasvik', 'Important disclaimer about the information provided on TechAasvik.');
+        $seo = $seoSvc->buildStatic('Disclaimer — TechAasvik', 'Important disclaimer about the information provided on TechAasvik.');
         $seo['noindex'] = true;
         $this->view('legal', ['seo' => $seo, 'pageType' => 'disclaimer', 'schemas' => []]);
     }
 
     /**
-     * Unified legal() method â€” detects page type from request URI.
+     * Unified legal() method — detects page type from request URI.
      */
     public function legal(array $params = []): void
     {

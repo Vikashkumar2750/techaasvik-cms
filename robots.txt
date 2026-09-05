@@ -59,14 +59,14 @@ User-agent: cohere-ai
 Allow: /
 
 # ── Sitemaps ──────────────────────────────────────────────
-Sitemap: https://t1.techaasvik.com/sitemap.xml
-Sitemap: https://t1.techaasvik.com/sitemap-posts.xml
-Sitemap: https://t1.techaasvik.com/sitemap-pages.xml
-Sitemap: https://t1.techaasvik.com/sitemap-glossary.xml
-Sitemap: https://t1.techaasvik.com/sitemap-tools.xml
-Sitemap: https://t1.techaasvik.com/sitemap-courses.xml
+Sitemap: https://techaasvik.com/sitemap.xml
+Sitemap: https://techaasvik.com/sitemap-posts.xml
+Sitemap: https://techaasvik.com/sitemap-pages.xml
+Sitemap: https://techaasvik.com/sitemap-glossary.xml
+Sitemap: https://techaasvik.com/sitemap-tools.xml
+Sitemap: https://techaasvik.com/sitemap-courses.xml
 
 # ── LLM Content Files (https://llmstxt.org) ──────────────
 # These files help AI systems discover and index our content
-LLMs-Txt: https://t1.techaasvik.com/llms.txt
-LLMs-Full-Txt: https://t1.techaasvik.com/llms-full.txt
+LLMs-Txt: https://techaasvik.com/llms.txt
+LLMs-Full-Txt: https://techaasvik.com/llms-full.txt

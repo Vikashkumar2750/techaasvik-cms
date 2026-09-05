@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -8,7 +8,7 @@ use Services\SeoService;
 use Services\SchemaService;
 
 /**
- * Post Controller — Blog, Pillar Pages, Cluster Pages, News, Learn section.
+ * Post Controller � Blog, Pillar Pages, Cluster Pages, News, Learn section.
  */
 class PostController extends Controller
 {
@@ -24,7 +24,7 @@ class PostController extends Controller
         $this->schemaSvc = new SchemaService();
     }
 
-    // ── Blog Index ────────────────────────────────────────
+    // -- Blog Index ----------------------------------------
     public function index(array $params = []): void
     {
         $lang    = $this->request->get('lang', 'en');
@@ -36,9 +36,9 @@ class PostController extends Controller
         $total = $this->content->countPublished('post', $lang);
 
         $seo = $this->seoSvc->buildStatic(
-            'Digital Marketing Blog — Latest Articles & Guides',
+            'Digital Marketing Blog � Latest Articles & Guides',
             'Expert digital marketing articles covering SEO, Google Ads, Meta Ads, content marketing, analytics, and more. Written by certified marketing professionals.',
-            'https://www.techaasvik.com/blog'
+            'https://techaasvik.com/blog'
         );
 
         $this->view('blog-index', [
@@ -55,7 +55,7 @@ class PostController extends Controller
         ]);
     }
 
-    // ── Single Post ───────────────────────────────────────
+    // -- Single Post ---------------------------------------
     // Serves: /blog/{slug}, /case-studies/{slug}, /templates/{slug},
     //         /statistics/{slug}, /research/{slug}
     public function show(array $params = []): void
@@ -117,15 +117,15 @@ class PostController extends Controller
         ]);
     }
 
-    // ── Learn Index (Knowledge Center) ────────────────────
+    // -- Learn Index (Knowledge Center) --------------------
     public function learnIndex(array $params = []): void
     {
         $pillars = $this->content->getPublished('pillar', 50, 0, 'en');
 
         $seo = $this->seoSvc->buildStatic(
-            'Digital Marketing Knowledge Center — Learn Everything',
+            'Digital Marketing Knowledge Center � Learn Everything',
             'India\'s most comprehensive digital marketing knowledge center. Deep-dive guides on SEO, GEO, AEO, Google Ads, Meta Ads, analytics, and every digital marketing topic.',
-            'https://www.techaasvik.com/learn'
+            'https://techaasvik.com/learn'
         );
 
         $this->view('learn-index', [
@@ -138,7 +138,7 @@ class PostController extends Controller
         ]);
     }
 
-    // ── Pillar Page ───────────────────────────────────────
+    // -- Pillar Page ---------------------------------------
     public function pillar(array $params = []): void
     {
         $slug   = $params['topic'] ?? '';
@@ -207,7 +207,7 @@ class PostController extends Controller
         ]);
     }
 
-    // ── Cluster Page (Learn Sub-Topic) ─────────────────────
+    // -- Cluster Page (Learn Sub-Topic) ---------------------
     public function cluster(array $params = []): void
     {
         $topic  = $params['topic'] ?? '';
@@ -268,7 +268,7 @@ class PostController extends Controller
         ]);
     }
 
-    // ── News ──────────────────────────────────────────────
+    // -- News ----------------------------------------------
     public function news(array $params = []): void
     {
         $page    = $this->page();
@@ -277,9 +277,9 @@ class PostController extends Controller
         $total   = $this->content->countPublished('news_article');
 
         $seo = $this->seoSvc->buildStatic(
-            'Digital Marketing News — Latest Industry Updates',
+            'Digital Marketing News � Latest Industry Updates',
             'Stay updated with the latest digital marketing news, algorithm updates, platform changes, and industry trends.',
-            'https://www.techaasvik.com/news'
+            'https://techaasvik.com/news'
         );
 
         $this->view('news-index', [
@@ -321,7 +321,7 @@ class PostController extends Controller
         $this->view('post', ['seo' => $seo, 'post' => $post, 'related' => [], 'faqs' => [], 'schemas' => []]);
     }
 
-    // ── Extract FAQs from post content ───────────────────
+    // -- Extract FAQs from post content -------------------
     private function extractFaqs(string $content): array
     {
         $faqs = [];
@@ -336,21 +336,21 @@ class PostController extends Controller
         return $faqs;
     }
 
-    // ── Courses Index ─────────────────────────────────────
+    // -- Courses Index -------------------------------------
     public function coursesIndex(array $params = []): void
     {
         $courses = $this->db->fetchAll(
             "SELECT * FROM content WHERE type = 'course' AND status = 'published' ORDER BY menu_order, published_at DESC"
         );
         $seo = $this->seoSvc->buildStatic(
-            'Free Digital Marketing Courses — TechAasvik',
+            'Free Digital Marketing Courses � TechAasvik',
             'Free online courses on SEO, Google Ads, Meta Ads, GA4, content marketing, and AI marketing. Learn at your own pace.',
-            'https://www.techaasvik.com/courses'
+            'https://techaasvik.com/courses'
         );
         $this->view('courses-index', ['seo' => $seo, 'schemas' => [], 'courses' => $courses]);
     }
 
-    // ── Single Course ─────────────────────────────────────
+    // -- Single Course -------------------------------------
     public function course(array $params = []): void
     {
         $slug   = $params['slug'] ?? '';

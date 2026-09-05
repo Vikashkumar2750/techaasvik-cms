@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * TECHAASVIK.COM — Application Configuration
  * DO NOT commit this file to public repositories.
@@ -10,9 +10,9 @@ return [
     // ── Site ───────────────────────────────────────────────
     'site' => [
         'name'        => 'TechAasvik',
-        'tagline'     => 'India\'s Most Authoritative Digital Marketing Platform',
-        'url'         => 'https://www.techaasvik.com',
-        'admin_url'   => 'https://www.techaasvik.com/techaasvik_admin',
+        'tagline'     => 'AI-Driven Digital Marketing Platform',
+        'url'         => 'https://techaasvik.com',
+        'admin_url'   => 'https://techaasvik.com/techaasvik_admin',
         'email'       => 'hello@techaasvik.com',
         'language'    => 'en',
         'languages'   => ['en', 'hi'],

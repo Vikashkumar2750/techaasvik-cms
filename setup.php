@@ -3,7 +3,7 @@
  * TECHAASVIK.COM — ONE-TIME SETUP SCRIPT
  * ─────────────────────────────────────────────────────────────
  * Run this ONCE after uploading files to Hostinger.
- * Access via: https://t1.techaasvik.com/setup.php
+ * Access via: https://techaasvik.com/setup.php
  * DELETE THIS FILE immediately after running.
  * ─────────────────────────────────────────────────────────────
  */

@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -8,7 +8,7 @@ use Services\SeoService;
 use Services\SchemaService;
 
 /**
- * Glossary Controller â€” handles the /glossary/* routes.
+ * Glossary Controller — handles the /glossary/* routes.
  * 2,000+ digital marketing term definitions.
  */
 class GlossaryController extends Controller
@@ -29,9 +29,9 @@ class GlossaryController extends Controller
 
         $seoSvc = new SeoService();
         $seo    = $seoSvc->buildStatic(
-            'Digital Marketing Glossary â€” 2000+ Terms Explained',
-            'Complete digital marketing glossary with 2000+ terms explained in plain English. From A/B testing to Zero-click searches â€” every marketing term defined.',
-            'https://www.techaasvik.com/glossary'
+            'Digital Marketing Glossary — 2000+ Terms Explained',
+            'Complete digital marketing glossary with 2000+ terms explained in plain English. From A/B testing to Zero-click searches — every marketing term defined.',
+            'https://techaasvik.com/glossary'
         );
 
         $schemaSvc = new SchemaService();
@@ -64,7 +64,7 @@ class GlossaryController extends Controller
         $seo    = $seoSvc->buildStatic(
             "Digital Marketing Terms Starting with '$letter' | Glossary",
             "All digital marketing terms starting with the letter $letter. Definitions and explanations for every $letter-category marketing term.",
-            'https://www.techaasvik.com/glossary/' . strtolower($letter)
+            'https://techaasvik.com/glossary/' . strtolower($letter)
         );
 
         $this->view('glossary-letter', [
@@ -87,7 +87,7 @@ class GlossaryController extends Controller
         $seoSvc    = new SeoService();
         $schemaSvc = new SchemaService();
         $seo       = $seoSvc->buildForContent($term);
-        $termUrl   = 'https://www.techaasvik.com/glossary/term/' . $term['slug'];
+        $termUrl   = 'https://techaasvik.com/glossary/term/' . $term['slug'];
 
         $schemas = [
             $schemaSvc->definedTerm($term, $termUrl),

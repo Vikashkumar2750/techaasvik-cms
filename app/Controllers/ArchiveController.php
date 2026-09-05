@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -9,11 +9,11 @@ use Services\SeoService;
 use Services\SchemaService;
 
 /**
- * Archive Controller — category, tag, and resource archive pages.
+ * Archive Controller � category, tag, and resource archive pages.
  */
 class ArchiveController extends Controller
 {
-    // ── Category archive ────────────────────────────────
+    // -- Category archive --------------------------------
     public function category(array $params = []): void
     {
         $slug    = $params['slug'] ?? '';
@@ -34,9 +34,9 @@ class ArchiveController extends Controller
 
         $seoSvc = new SeoService();
         $seo    = $seoSvc->buildStatic(
-            ($cat['meta_title'] ?: $cat['name'] . ' — Digital Marketing Guides'),
+            ($cat['meta_title'] ?: $cat['name'] . ' � Digital Marketing Guides'),
             ($cat['meta_description'] ?: $cat['description'] ?? ''),
-            'https://www.techaasvik.com/category/' . $cat['slug']
+            'https://techaasvik.com/category/' . $cat['slug']
         );
 
         $schemaSvc = new SchemaService();
@@ -53,7 +53,7 @@ class ArchiveController extends Controller
         ]);
     }
 
-    // ── Tag archive ──────────────────────────────────────
+    // -- Tag archive --------------------------------------
     public function tag(array $params = []): void
     {
         $slug    = $params['slug'] ?? '';
@@ -67,16 +67,16 @@ class ArchiveController extends Controller
 
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            '#' . $tag['name'] . ' Articles — TechAasvik',
+            '#' . $tag['name'] . ' Articles � TechAasvik',
             'Browse all digital marketing content tagged with "' . $tag['name'] . '".',
-            'https://www.techaasvik.com/tag/' . $tag['slug']
+            'https://techaasvik.com/tag/' . $tag['slug']
         );
         $seo['noindex'] = true; // Tag archives are typically noindexed
 
         $this->view('tag', ['seo' => $seo, 'tag' => $tag, 'posts' => $posts, 'page' => $page, 'perPage' => $perPage]);
     }
 
-    // ── Topic archive (same as pillar redirect) ──────────
+    // -- Topic archive (same as pillar redirect) ----------
     public function topic(array $params = []): void
     {
         $slug = $params['slug'] ?? '';
@@ -84,19 +84,19 @@ class ArchiveController extends Controller
         View::redirect('/learn/' . $slug, 301);
     }
 
-    // ── Resource archives ─────────────────────────────────
+    // -- Resource archives ---------------------------------
 
 
-    // ── Course archive ───────────────────────────────────
+    // -- Course archive -----------------------------------
     public function courses(array $params = []): void
     {
         $content = new Content();
         $items   = $content->getPublished('course', 30, 0);
         $seoSvc  = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Free Digital Marketing Courses — Learn Online',
+            'Free Digital Marketing Courses � Learn Online',
             'Free online digital marketing courses covering SEO, Google Ads, Meta Ads, content marketing, analytics, and AI marketing tools. Certificates available.',
-            'https://www.techaasvik.com/courses'
+            'https://techaasvik.com/courses'
         );
         $schemaSvc = new SchemaService();
         $this->view('courses-index', [
@@ -105,7 +105,7 @@ class ArchiveController extends Controller
         ]);
     }
 
-    // ── Single course ────────────────────────────────────
+    // -- Single course ------------------------------------
     public function course(array $params = []): void
     {
         $slug   = $params['slug'] ?? '';
@@ -129,7 +129,7 @@ class ArchiveController extends Controller
         $this->view('course', ['seo' => $seo, 'course' => $course, 'modules' => $modules, 'schemas' => $schemas]);
     }
 
-    // ── Generic resource show ─────────────────────────────
+    // -- Generic resource show -----------------------------
     public function resourceShow(array $params = []): void
     {
         $type = $params['type'] ?? '';
@@ -142,7 +142,7 @@ class ArchiveController extends Controller
         $this->view('post', ['seo' => $seo, 'post' => $item, 'related' => [], 'faqs' => [], 'schemas' => []]);
     }
 
-    // ── Search ────────────────────────────────────────────
+    // -- Search --------------------------------------------
     public function search(array $params = []): void
     {
         $query   = trim($this->request->get('q', ''));
@@ -177,9 +177,9 @@ class ArchiveController extends Controller
 
         $seoSvc = new SeoService();
         $seo    = $seoSvc->buildStatic(
-            $query ? "Search: \"{$query}\" — TechAasvik" : 'Search — TechAasvik',
+            $query ? "Search: \"{$query}\" � TechAasvik" : 'Search � TechAasvik',
             '',
-            'https://www.techaasvik.com/search'
+            'https://techaasvik.com/search'
         );
         $seo['noindex'] = true;
 
@@ -194,7 +194,7 @@ class ArchiveController extends Controller
         ]);
     }
 
-    // ── Resource Archive Helper ───────────────────────────
+    // -- Resource Archive Helper ---------------------------
     private function resourceIndex(string $type, string $title, string $desc, string $icon, string $path): void
     {
         $page    = $this->page();
@@ -206,7 +206,7 @@ class ArchiveController extends Controller
         $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM content WHERE type = ? AND status = 'published' AND lang = 'en'", [$type]);
 
         $seoSvc = new SeoService();
-        $seo    = $seoSvc->buildStatic($title . ' — TechAasvik', $desc, 'https://www.techaasvik.com/' . $path);
+        $seo    = $seoSvc->buildStatic($title . ' � TechAasvik', $desc, 'https://techaasvik.com/' . $path);
 
         $this->view('resource-index', [
             'seo'     => $seo,
@@ -222,11 +222,11 @@ class ArchiveController extends Controller
         ]);
     }
 
-    public function templates(array $params = []): void   { $this->resourceIndex('template',        'Free Marketing Templates',  'Download professionally designed marketing templates.',  '📋', 'templates'); }
-    public function caseStudies(array $params = []): void { $this->resourceIndex('case_study',      'Digital Marketing Case Studies','Real campaign results from Indian businesses.',       '📊', 'case-studies'); }
-    public function statistics(array $params = []): void  { $this->resourceIndex('statistics',      'Marketing Statistics',       'Latest digital marketing statistics from India and globally.','📈', 'statistics'); }
-    public function research(array $params = []): void    { $this->resourceIndex('research_report', 'Research Reports',           'In-depth digital marketing research and industry reports.','🔬', 'research'); }
-    public function videos(array $params = []): void      { $this->resourceIndex('video',           'Video Library',              'Digital marketing tutorials and explainer videos.',      '🎬', 'videos'); }
-    public function news(array $params = []): void        { $this->resourceIndex('news_article',    'Digital Marketing News',     'Latest news and updates from the digital marketing world.','📰', 'news'); }
+    public function templates(array $params = []): void   { $this->resourceIndex('template',        'Free Marketing Templates',  'Download professionally designed marketing templates.',  '??', 'templates'); }
+    public function caseStudies(array $params = []): void { $this->resourceIndex('case_study',      'Digital Marketing Case Studies','Real campaign results from Indian businesses.',       '??', 'case-studies'); }
+    public function statistics(array $params = []): void  { $this->resourceIndex('statistics',      'Marketing Statistics',       'Latest digital marketing statistics from India and globally.','??', 'statistics'); }
+    public function research(array $params = []): void    { $this->resourceIndex('research_report', 'Research Reports',           'In-depth digital marketing research and industry reports.','??', 'research'); }
+    public function videos(array $params = []): void      { $this->resourceIndex('video',           'Video Library',              'Digital marketing tutorials and explainer videos.',      '??', 'videos'); }
+    public function news(array $params = []): void        { $this->resourceIndex('news_article',    'Digital Marketing News',     'Latest news and updates from the digital marketing world.','??', 'news'); }
 }
 

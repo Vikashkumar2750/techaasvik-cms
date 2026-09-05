@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -27,9 +27,9 @@ class SearchController extends Controller
 
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            $query ? "Search: \"$query\" â€” TechAasvik" : 'Search â€” TechAasvik',
+            $query ? "Search: \"$query\" — TechAasvik" : 'Search — TechAasvik',
             'Search across thousands of digital marketing guides, tutorials, glossary terms, tools, and resources on TechAasvik.',
-            'https://www.techaasvik.com/search'
+            'https://techaasvik.com/search'
         );
         $seo['noindex'] = true; // Search pages should not be indexed
 

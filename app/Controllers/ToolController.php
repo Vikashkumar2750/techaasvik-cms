@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 namespace Controllers;
 
 use Core\Controller;
@@ -8,7 +8,7 @@ use Services\SeoService;
 use Services\SchemaService;
 
 /**
- * Tool Controller â€” /tools/* and /calculators/* routes.
+ * Tool Controller — /tools/* and /calculators/* routes.
  * Powers all free SEO, content, and marketing tools.
  */
 class ToolController extends Controller
@@ -28,9 +28,9 @@ class ToolController extends Controller
         $schemaSvc = new SchemaService();
 
         $seo = $seoSvc->buildStatic(
-            'Free Digital Marketing Tools â€” SEO, Ads, Content Tools',
+            'Free Digital Marketing Tools — SEO, Ads, Content Tools',
             '50+ free digital marketing tools for SEO analysis, keyword research, ad copy generation, content optimization, schema markup, and more. No signup required.',
-            'https://www.techaasvik.com/tools'
+            'https://techaasvik.com/tools'
         );
 
         $schemas = [$schemaSvc->breadcrumbs([['name'=>'Home','url'=>'/'],['name'=>'Tools']])];
@@ -70,7 +70,7 @@ class ToolController extends Controller
 
     public function process(array $params = []): void
     {
-        // AJAX endpoint â€” each tool has its own JS; this handles server-side processing if needed
+        // AJAX endpoint — each tool has its own JS; this handles server-side processing if needed
         $slug = $params['slug'] ?? '';
         View::json(['error' => 'Tool processing not configured for: ' . $slug], 200);
     }
@@ -80,9 +80,9 @@ class ToolController extends Controller
         $calcs = $this->content->getPublished('calculator', 30, 0, 'en');
         $seoSvc = new SeoService();
         $seo = $seoSvc->buildStatic(
-            'Free Marketing Calculators â€” ROI, ROAS, CAC, LTV & More',
+            'Free Marketing Calculators — ROI, ROAS, CAC, LTV & More',
             'Free marketing calculators for ROI, ROAS, CAC, LTV, PPC budget, conversion rate, email revenue, and more. Make data-driven marketing decisions.',
-            'https://www.techaasvik.com/calculators'
+            'https://techaasvik.com/calculators'
         );
 
         $this->view('calculators-index', [

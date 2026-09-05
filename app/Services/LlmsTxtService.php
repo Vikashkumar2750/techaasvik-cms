@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace Services;
 
 use Core\Database;
@@ -27,10 +27,10 @@ class LlmsTxtService
         $config = (function($file) { return include $file; })($configFile);
         if (!is_array($config)) {
             // Fallback if config include fails
-            $config = ['site' => ['url' => 'https://www.techaasvik.com', 'name' => 'TechAasvik'], 'seo' => []];
+            $config = ['site' => ['url' => 'https://techaasvik.com', 'name' => 'TechAasvik'], 'seo' => []];
         }
         
-        $this->baseUrl  = rtrim($config['site']['url'] ?? 'https://www.techaasvik.com', '/');
+        $this->baseUrl  = rtrim($config['site']['url'] ?? 'https://techaasvik.com', '/');
         $this->siteName = $config['site']['name'] ?? 'TechAasvik';
         $this->siteDesc = $config['seo']['description'] ?? 'Digital Marketing Knowledge Platform — Expert Guides, Tools & Strategies';
         $this->cachePath = APP_ROOT . '/storage/cache';

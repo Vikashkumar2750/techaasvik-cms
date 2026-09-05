@@ -1,7 +1,7 @@
 <?php
 /**
  * TechAasvik CMS — Server Debugger
- * Access via: https://t1.techaasvik.com/debug.php
+ * Access via: https://techaasvik.com/debug.php
  */
 
 // Force display all errors
