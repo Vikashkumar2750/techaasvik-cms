@@ -47,19 +47,53 @@
   var pauseCanvas   = null;
 
   /* ═══════════════════════════════════════════════════════════
+     HELPER: Create billboard text sprite for Three.js
+     Camera-facing label positioned near orbital nodes.
+     Subtle, minimal — makes the 3D system understandable.
+     ═══════════════════════════════════════════════════════════ */
+  function createLabelSprite(text, color, size) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 64;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '500 24px Inter, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = color || 'rgba(165, 180, 252, 0.7)';
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    var texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+
+    var mat = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.65,
+      depthTest: false
+    });
+    var sprite = new THREE.Sprite(mat);
+    sprite.scale.set(size || 0.6, 0.15, 1);
+    return sprite;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
      1. THREE.JS HERO — AI MARKETING CORE
-     
+
      Premium, architectural visualization of connected marketing
-     intelligence. 5 orbital layers: Search, Content, Performance,
-     Data, Intelligence.
-     
+     intelligence. 5 orbital layers with readable labels:
+     SEO, AEO, GEO, Content, Ads.
+
      Design principles:
-       • Dark, sophisticated, minimal
+       • Dark hero section — optimized for dark background
        • Architectural / product-design oriented
-       • Subtle orbital rings with muted indigo palette
+       • Orbital rings with camera-facing node labels
        • No excessive particles, neon, or cyberpunk aesthetics
        • Gentle mouse parallax
-     
+       • Labels hidden on mobile (3D is hidden on mobile)
+
      Runs ONLY on desktop + non-reduced-motion.
      ═══════════════════════════════════════════════════════════ */
   HV2.initHeroCanvas = function () {
@@ -94,13 +128,13 @@
     var group = new THREE.Group();
     scene.add(group);
 
-    /* ── Core: Subtle wireframe icosahedron ── */
+    /* ── Core: Wireframe icosahedron ── */
     var coreGeo = new THREE.IcosahedronGeometry(0.5, 1);
     var coreMat = new THREE.MeshBasicMaterial({
       color: 0x818cf8,
       wireframe: true,
       transparent: true,
-      opacity: 0.08
+      opacity: 0.18
     });
     var core = new THREE.Mesh(coreGeo, coreMat);
     group.add(core);
@@ -110,21 +144,22 @@
     var ambientMat = new THREE.MeshBasicMaterial({
       color: 0x6366f1,
       transparent: true,
-      opacity: 0.025
+      opacity: 0.06
     });
     group.add(new THREE.Mesh(ambientGeo, ambientMat));
 
-    /* ── 5 Orbital rings ── */
+    /* ── 5 Orbital rings with labels ── */
     var layers = [
-      { radius: 0.9,  color: 0x6366f1, tilt: [0.4, 0,    0.1]  },
-      { radius: 1.2,  color: 0x818cf8, tilt: [0,   0.5,  0.15] },
-      { radius: 1.5,  color: 0xa5b4fc, tilt: [0.3, 0.2,  0]    },
-      { radius: 1.8,  color: 0x94a3b8, tilt: [0.1, 0,    0.4]  },
-      { radius: 2.1,  color: 0x64748b, tilt: [0,   0.3,  0.25] }
+      { radius: 0.9,  color: 0x6366f1, tilt: [0.4, 0,    0.1],  label: 'SEO'     },
+      { radius: 1.2,  color: 0x818cf8, tilt: [0,   0.5,  0.15], label: 'AEO'     },
+      { radius: 1.5,  color: 0xa5b4fc, tilt: [0.3, 0.2,  0],    label: 'GEO'     },
+      { radius: 1.8,  color: 0x94a3b8, tilt: [0.1, 0,    0.4],  label: 'Content' },
+      { radius: 2.1,  color: 0x64748b, tilt: [0,   0.3,  0.25], label: 'Ads'     }
     ];
 
     var rings = [];
     var nodes = [];
+    var labels = [];
 
     layers.forEach(function (layer, idx) {
       /* Ring curve */
@@ -141,19 +176,19 @@
       var ringMat = new THREE.LineBasicMaterial({
         color: layer.color,
         transparent: true,
-        opacity: 0.06 + idx * 0.01
+        opacity: 0.12 + idx * 0.02
       });
       var ring = new THREE.Line(ringGeo, ringMat);
       ring.rotation.set(layer.tilt[0], layer.tilt[1], layer.tilt[2]);
       group.add(ring);
       rings.push(ring);
 
-      /* Small node on ring */
-      var nodeGeo = new THREE.SphereGeometry(0.025, 8, 8);
+      /* Node on ring — larger for visibility */
+      var nodeGeo = new THREE.SphereGeometry(0.04, 12, 12);
       var nodeMat = new THREE.MeshBasicMaterial({
         color: layer.color,
         transparent: true,
-        opacity: 0.35
+        opacity: 0.55
       });
       var node = new THREE.Mesh(nodeGeo, nodeMat);
       var startAngle = (Math.PI * 2 / 5) * idx;
@@ -169,6 +204,20 @@
         angle: startAngle,
         speed: 0.06 + idx * 0.015
       });
+
+      /* Billboard label — camera-facing text */
+      var labelColors = [
+        'rgba(99, 102, 241, 0.75)',
+        'rgba(129, 140, 248, 0.7)',
+        'rgba(165, 180, 252, 0.65)',
+        'rgba(148, 163, 184, 0.6)',
+        'rgba(100, 116, 139, 0.55)'
+      ];
+      var sprite = createLabelSprite(layer.label, labelColors[idx], 0.55 + idx * 0.03);
+      sprite.position.copy(node.position);
+      sprite.position.y += 0.12;
+      ring.add(sprite);
+      labels.push({ sprite: sprite, nodeRef: nodes[nodes.length - 1] });
     });
 
     /* ── Mouse tracking ── */
@@ -199,16 +248,21 @@
       core.rotation.x = t * 0.02;
 
       /* Subtle ambient pulse */
-      ambientMat.opacity = 0.02 + Math.sin(t * 0.4) * 0.008;
+      ambientMat.opacity = 0.04 + Math.sin(t * 0.4) * 0.015;
 
-      /* Orbit nodes */
-      nodes.forEach(function (n) {
+      /* Orbit nodes + update label positions */
+      nodes.forEach(function (n, i) {
         n.angle += n.speed * 0.003;
         n.mesh.position.set(
           Math.cos(n.angle) * n.radius,
           Math.sin(n.angle) * n.radius,
           0
         );
+        /* Keep label above node */
+        if (labels[i]) {
+          labels[i].sprite.position.copy(n.mesh.position);
+          labels[i].sprite.position.y += 0.12;
+        }
       });
 
       /* Smooth mouse parallax */
@@ -274,29 +328,11 @@
       scrollTrigger: { trigger: '.hv2-evolved', start: 'top 75%' }
     });
 
-    /* ── Search Evolution — node illumination ── */
-    if (!isMobile) {
-      var searchTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: '.hv2-search',
-          start: 'top 30%',
-          end: 'bottom 60%',
-          scrub: 1,
-          pin: true,
-          pinSpacing: true
-        }
-      });
-      searchTl
-        .from('.hv2-search-node:nth-child(1)', { opacity: 0.15, scale: 0.95, duration: 1 })
-        .from('.hv2-search-node:nth-child(2)', { opacity: 0.15, scale: 0.95, duration: 1 }, '-=0.5')
-        .from('.hv2-search-node:nth-child(3)', { opacity: 0.15, scale: 0.95, duration: 1 }, '-=0.5')
-        .from('.hv2-search-node:nth-child(4)', { opacity: 0.15, scale: 0.95, duration: 1 }, '-=0.5');
-    } else {
-      gsap.from('.hv2-search-node', {
-        y: 20, opacity: 0, stagger: 0.12,
-        scrollTrigger: { trigger: '.hv2-search', start: 'top 80%' }
-      });
-    }
+    /* ── Search Evolution — stagger reveal ── */
+    gsap.from('.hv2-search-node', {
+      y: 20, opacity: 0, stagger: 0.12, duration: 0.6,
+      scrollTrigger: { trigger: '.hv2-search', start: 'top 75%' }
+    });
 
     /* ── Performance — card reveal ── */
     gsap.from('.hv2-perf-card', {
@@ -310,39 +346,52 @@
       scrollTrigger: { trigger: '.hv2-content-engine', start: 'top 75%' }
     });
 
-    /* ── AI Engine flywheel (CLIMAX) ── */
+    /* ── AI Engine — VISUAL CLIMAX ──
+       Desktop: short pin with sequential step illumination + feedback loop reveal.
+       Mobile: simple stagger. */
     if (!isMobile) {
-      /* Stages start semi-transparent, illuminate sequentially during scroll */
-      gsap.set('.hv2-flywheel-stage', { opacity: 0.3, scale: 0.97 });
+      gsap.set('.hv2-engine-step', { opacity: 0.15 });
+      gsap.set('.hv2-engine-loop', { opacity: 0 });
 
       var engineTl = gsap.timeline({
         scrollTrigger: {
           trigger: '.hv2-ai-engine',
-          start: 'top 15%',
-          end: '+=180%',
-          scrub: 1,
+          start: 'top 20%',
+          end: '+=100%',
+          scrub: 0.8,
           pin: true,
           pinSpacing: true
         }
       });
 
-      var stages = document.querySelectorAll('.hv2-flywheel-stage');
-      stages.forEach(function (stage, i) {
-        engineTl.to(stage, {
-          opacity: 1, scale: 1, duration: 1,
+      var steps = document.querySelectorAll('.hv2-engine-step');
+      steps.forEach(function (step, i) {
+        engineTl.to(step, {
+          opacity: 1, duration: 0.7,
           ease: 'power2.out'
-        }, i * 0.8);
+        }, i * 0.5);
       });
+
+      /* Feedback loop reveal after all stages */
+      engineTl.to('.hv2-engine-loop', {
+        opacity: 1, duration: 0.5,
+        ease: 'power2.out'
+      }, steps.length * 0.5);
+
     } else {
-      gsap.from('.hv2-flywheel-stage', {
+      gsap.from('.hv2-engine-step', {
         y: 30, opacity: 0, stagger: 0.12,
         scrollTrigger: { trigger: '.hv2-ai-engine', start: 'top 80%' }
       });
+      gsap.from('.hv2-engine-loop', {
+        y: 20, opacity: 0,
+        scrollTrigger: { trigger: '.hv2-engine-loop', start: 'top 90%' }
+      });
     }
 
-    /* ── Services — staggered reveal ── */
-    gsap.from('.hv2-service-card', {
-      y: 30, opacity: 0, scale: 0.97, stagger: 0.06,
+    /* ── Services — group reveal ── */
+    gsap.from('.hv2-service-group', {
+      y: 30, opacity: 0, stagger: 0.15,
       scrollTrigger: { trigger: '.hv2-services', start: 'top 80%' }
     });
 

@@ -1926,6 +1926,11 @@ h1, h2, h3, h4 {
   letter-spacing: -0.01em;
 }
 
+/* XL title variant for dark climax sections */
+.hv2-title-xl {
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
 .hv2-section-desc {
   font-size: var(--text-lg);
   color: var(--text-secondary);
@@ -1939,11 +1944,32 @@ h1, h2, h3, h4 {
 }
 
 
+/* ── HV2 Dark Utility ─────────────────────────────────────
+   Scoped dark variables for cinematic sections.
+   Applied to Hero, AI Engine, Case Studies, Final CTA.
+   These sections stay dark regardless of user theme toggle.
+   ───────────────────────────────────────────────────────── */
+.hv2-dark {
+  --hv2-bg: #080d16;
+  --hv2-bg-surface: #0f1629;
+  --hv2-text: #f1f5f9;
+  --hv2-text-secondary: #94a3b8;
+  --hv2-text-muted: #64748b;
+  --hv2-border: rgba(255,255,255,0.06);
+  --hv2-border-brand: rgba(99,102,241,0.4);
+  color: var(--hv2-text);
+}
+
+.hv2-dark .hv2-eyebrow { color: #818cf8; }
+.hv2-dark .hv2-section-title { color: var(--hv2-text); }
+.hv2-dark .hv2-section-desc { color: var(--hv2-text-secondary); }
+
+
 /* ═══════════════════════════════════════════════════════════
    ACT I — THE SHIFT
    ═══════════════════════════════════════════════════════════ */
 
-/* ── 1. HERO ──────────────────────────────────────────────── */
+/* ── 1. HERO — FORCED DARK ───────────────────────────────── */
 
 .hv2-hero {
   position: relative;
@@ -1951,7 +1977,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: linear-gradient(180deg, #050810 0%, var(--bg-base) 100%);
+  background: linear-gradient(180deg, #030509 0%, #080d16 50%, #0f1629 100%);
   padding: 120px 0 80px;
 }
 
@@ -1972,7 +1998,7 @@ h1, h2, h3, h4 {
   right: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(ellipse at 70% 30%, rgba(99, 102, 241, 0.07) 0%, transparent 60%);
+  background: radial-gradient(ellipse at 70% 30%, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -1987,33 +2013,32 @@ h1, h2, h3, h4 {
   align-items: center;
   gap: 8px;
   padding: 6px 16px;
-  background: rgba(99, 102, 241, 0.06);
-  border: 1px solid rgba(99, 102, 241, 0.12);
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 100px;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: var(--fw-medium);
-  color: var(--brand-400);
+  color: #a5b4fc;
   letter-spacing: 0.05em;
   margin-bottom: var(--space-6);
 }
 
 .hv2-hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: var(--fw-extrabold);
-  color: var(--text-primary);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: var(--fw-bold);
+  color: #f1f5f9;
+  line-height: var(--leading-tight);
   margin-bottom: var(--space-6);
+  letter-spacing: -0.02em;
 }
 
 .hv2-hero-subtitle {
   font-size: var(--text-lg);
-  color: var(--text-secondary);
+  color: #94a3b8;
   line-height: 1.7;
   margin-bottom: var(--space-8);
-  max-width: 520px;
 }
 
 .hv2-hero-actions {
@@ -2023,30 +2048,30 @@ h1, h2, h3, h4 {
 }
 
 
-/* ── 2. MARKETING EVOLVED ─────────────────────────────────── */
+/* ── 2. MARKETING EVOLVED — LIGHT ─────────────────────────── */
 
 .hv2-evolved {
   padding: 120px 0;
   background: var(--bg-base);
-  border-top: 1px solid var(--border-subtle);
 }
 
 .hv2-evolved-grid {
   display: grid;
-  grid-template-columns: 1fr 60px 1fr;
-  gap: var(--space-6);
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-8);
   align-items: start;
 }
 
 .hv2-compare-heading {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   font-weight: var(--fw-semibold);
-  margin-bottom: var(--space-6);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
 }
-
 .hv2-evolved-old .hv2-compare-heading { color: var(--text-muted); }
 .hv2-evolved-new .hv2-compare-heading { color: var(--brand-400); }
 
@@ -2123,7 +2148,7 @@ h1, h2, h3, h4 {
 }
 
 
-/* ── 3. SEARCH EVOLUTION ──────────────────────────────────── */
+/* ── 3. SEARCH EVOLUTION — LIGHT ─────────────────────────── */
 
 .hv2-search {
   padding: 120px 0;
@@ -2190,7 +2215,7 @@ h1, h2, h3, h4 {
    ACT II — THE ENGINE
    ═══════════════════════════════════════════════════════════ */
 
-/* ── 4. PERFORMANCE ───────────────────────────────────────── */
+/* ── 4. PERFORMANCE — LIGHT ──────────────────────────────── */
 
 .hv2-performance {
   padding: 120px 0;
@@ -2249,7 +2274,7 @@ h1, h2, h3, h4 {
 }
 
 
-/* ── 5. CONTENT ENGINE ────────────────────────────────────── */
+/* ── 5. CONTENT ENGINE — LIGHT ───────────────────────────── */
 
 .hv2-content-engine {
   padding: 120px 0;
@@ -2318,14 +2343,13 @@ h1, h2, h3, h4 {
 }
 
 
-/* ── 6. AI MARKETING ENGINE — VISUAL CLIMAX ───────────────── */
+/* ── 6. AI MARKETING ENGINE — FORCED DARK, VISUAL CLIMAX ── */
 
 .hv2-ai-engine {
-  padding: 140px 0;
-  background: linear-gradient(180deg, var(--bg-base) 0%, #050810 50%, var(--bg-base) 100%);
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 160px 0;
+  background: linear-gradient(180deg, #030509 0%, #080d16 40%, #0f1629 80%, #080d16 100%);
   position: relative;
+  overflow: hidden;
 }
 .hv2-ai-engine::before {
   content: '';
@@ -2333,87 +2357,112 @@ h1, h2, h3, h4 {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
-.hv2-flywheel {
-  display: grid;
-  grid-template-columns: 1fr 280px 1fr;
-  gap: var(--space-8);
-  align-items: center;
-  position: relative;
+/* Vertical flow layout */
+.hv2-engine-flow {
+  max-width: 580px;
+  margin: 0 auto;
 }
 
-.hv2-flywheel-center {
-  position: relative;
-  width: 280px; height: 280px;
+.hv2-engine-step {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+  transition: opacity 0.4s ease;
+}
+
+/* Marker column: number + connecting line */
+.hv2-engine-step-marker {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48px;
+}
+
+.hv2-engine-step-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: #818cf8;
+  transition: background 0.4s ease, border-color 0.4s ease;
 }
 
-.hv2-flywheel-svg {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-}
-
-.hv2-flywheel-core-label {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-.hv2-flywheel-core-label strong {
+/* Connecting line between stages */
+.hv2-engine-step-line {
   display: block;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.06) 100%);
+}
+
+/* Step body */
+.hv2-engine-step-body {
+  padding-bottom: var(--space-6);
+  padding-top: 8px;
+}
+
+.hv2-engine-step-body h4 {
   font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: var(--fw-bold);
-  color: var(--text-primary);
-}
-.hv2-flywheel-core-label span {
-  font-size: var(--text-xs);
-  color: var(--text-muted);
+  font-weight: var(--fw-semibold);
+  color: #f1f5f9;
+  margin-bottom: var(--space-2);
 }
 
-.hv2-flywheel-left,
-.hv2-flywheel-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+.hv2-engine-step-body p {
+  font-size: var(--text-sm);
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.65;
 }
 
-.hv2-flywheel-stage {
-  padding: var(--space-5);
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  transition: border-color 0.4s ease, opacity 0.4s ease, transform 0.4s ease, background 0.4s ease;
-}
-.hv2-flywheel-stage.is-active,
-.hv2-flywheel-stage:hover {
-  border-color: var(--border-brand);
-  background: rgba(99, 102, 241, 0.03);
+/* Active/illuminated step */
+.hv2-engine-step[style*="opacity: 1"] .hv2-engine-step-num,
+.hv2-engine-step:hover .hv2-engine-step-num {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.5);
 }
 
-.hv2-flywheel-stage-num {
+/* Feedback loop: connects stage 5 back to stage 1 */
+.hv2-engine-loop {
+  max-width: 580px;
+  margin: var(--space-6) auto 0;
+  text-align: center;
+  position: relative;
+}
+
+.hv2-engine-loop-line {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.08) 100%);
+  margin: 0 auto var(--space-4);
+}
+
+.hv2-engine-loop-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 100px;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--brand-400);
-  margin-bottom: var(--space-2);
-  opacity: 0.7;
-}
-.hv2-flywheel-stage h4 {
-  font-size: var(--text-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--text-primary);
-  margin-bottom: var(--space-1);
-}
-.hv2-flywheel-stage p {
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.5;
+  font-weight: var(--fw-medium);
+  color: #a5b4fc;
+  letter-spacing: 0.03em;
 }
 
 
@@ -2421,7 +2470,7 @@ h1, h2, h3, h4 {
    ACT III — THE ECOSYSTEM
    ═══════════════════════════════════════════════════════════ */
 
-/* ── 7. SERVICES ──────────────────────────────────────────── */
+/* ── 7. SERVICES — LIGHT, GROUPED ROWS ───────────────────── */
 
 .hv2-services {
   padding: 120px 0;
@@ -2430,11 +2479,29 @@ h1, h2, h3, h4 {
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.hv2-services-grid {
+/* Service group: label + cards */
+.hv2-service-group {
+  margin-bottom: var(--space-8);
+}
+.hv2-service-group:last-of-type { margin-bottom: 0; }
+
+.hv2-service-group-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand-400);
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-2);
+}
+
+.hv2-service-group-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
 }
+.hv2-service-group-cards--3 { grid-template-columns: repeat(3, 1fr); }
+.hv2-service-group-cards--2 { grid-template-columns: repeat(2, 1fr); }
 
 .hv2-service-card {
   display: block;
@@ -2481,12 +2548,11 @@ h1, h2, h3, h4 {
 }
 
 
-/* ── 8. PORTFOLIO ─────────────────────────────────────────── */
+/* ── 8. PORTFOLIO — FORCED DARK ──────────────────────────── */
 
 .hv2-portfolio {
   padding: 120px 0;
-  background: var(--bg-base);
-  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(180deg, #080d16 0%, #0f1629 100%);
 }
 
 .hv2-case-grid {
@@ -2497,13 +2563,15 @@ h1, h2, h3, h4 {
 
 .hv2-case-card {
   padding: var(--space-6);
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid rgba(99, 102, 241, 0.3);
   border-radius: 12px;
   transition: border-color 0.3s ease, transform 0.3s ease;
 }
 .hv2-case-card:hover {
-  border-color: var(--border-brand);
+  border-color: rgba(255, 255, 255, 0.1);
+  border-left-color: rgba(99, 102, 241, 0.6);
   transform: translateY(-4px);
 }
 
@@ -2512,19 +2580,19 @@ h1, h2, h3, h4 {
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: rgba(34, 197, 94, 0.06);
-  border: 1px solid rgba(34, 197, 94, 0.12);
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.15);
   border-radius: 100px;
   font-size: var(--text-xs);
   font-weight: var(--fw-medium);
-  color: var(--color-success);
+  color: #4ade80;
   margin-bottom: var(--space-4);
 }
 
 .hv2-case-card h3 {
   font-size: var(--text-base);
   font-weight: var(--fw-semibold);
-  color: var(--text-primary);
+  color: #f1f5f9;
   margin-bottom: var(--space-3);
   line-height: 1.4;
 }
@@ -2533,11 +2601,11 @@ h1, h2, h3, h4 {
   text-decoration: none;
   transition: color 0.2s;
 }
-.hv2-case-card h3 a:hover { color: var(--brand-400); }
+.hv2-case-card h3 a:hover { color: #a5b4fc; }
 
 .hv2-case-card p {
   font-size: var(--text-sm);
-  color: var(--text-muted);
+  color: #94a3b8;
   line-height: 1.6;
   margin-bottom: var(--space-4);
 }
@@ -2545,14 +2613,24 @@ h1, h2, h3, h4 {
 .hv2-case-card-link {
   font-size: var(--text-sm);
   font-weight: var(--fw-medium);
-  color: var(--brand-400);
+  color: #a5b4fc;
   text-decoration: none;
   transition: text-decoration 0.2s;
 }
 .hv2-case-card-link:hover { text-decoration: underline; }
 
+/* Portfolio CTA (reuse services-cta class) */
+.hv2-portfolio .hv2-services-cta .btn-secondary {
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+.hv2-portfolio .hv2-services-cta .btn-secondary:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.5);
+}
 
-/* ── 9. LEARNING HUB ──────────────────────────────────────── */
+
+/* ── 9. LEARNING HUB — LIGHT ────────────────────────────── */
 
 .hv2-learning {
   padding: 120px 0;
@@ -2655,7 +2733,7 @@ h1, h2, h3, h4 {
 }
 
 
-/* ── 10. EBOOK / KNOWLEDGE COMMERCE ───────────────────────── */
+/* ── 10. EBOOK / KNOWLEDGE COMMERCE — LIGHT ──────────────── */
 
 .hv2-ebook {
   padding: 100px 0;
@@ -2705,11 +2783,11 @@ h1, h2, h3, h4 {
    ACT IV — ACTION
    ═══════════════════════════════════════════════════════════ */
 
-/* ── 11. FINAL CTA ────────────────────────────────────────── */
+/* ── 11. FINAL CTA — FORCED DARK ─────────────────────────── */
 
 .hv2-final-cta {
-  padding: 120px 0;
-  background: linear-gradient(180deg, var(--bg-surface) 0%, #050810 100%);
+  padding: 140px 0;
+  background: linear-gradient(180deg, #0f1629 0%, #050810 100%);
   position: relative;
   overflow: hidden;
 }
@@ -2719,7 +2797,7 @@ h1, h2, h3, h4 {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 800px; height: 400px;
-  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -2732,14 +2810,14 @@ h1, h2, h3, h4 {
 }
 .hv2-cta-content h2 {
   font-family: var(--font-display);
-  font-size: clamp(1.875rem, 4vw, 2.5rem);
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
   font-weight: var(--fw-bold);
-  color: var(--text-primary);
+  color: #f1f5f9;
   margin-bottom: var(--space-4);
 }
 .hv2-cta-content > p {
   font-size: var(--text-lg);
-  color: var(--text-secondary);
+  color: #94a3b8;
   margin-bottom: var(--space-8);
   line-height: 1.7;
 }
@@ -2755,6 +2833,14 @@ h1, h2, h3, h4 {
   flex: 1;
   min-width: 180px;
   max-width: 220px;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+.hv2-audit-form .form-input::placeholder { color: #64748b; }
+.hv2-audit-form .form-input:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .hv2-audit-checks {
@@ -2767,15 +2853,15 @@ h1, h2, h3, h4 {
 
 .hv2-audit-check {
   font-size: var(--text-xs);
-  color: var(--text-muted);
+  color: #64748b;
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.hv2-audit-check-icon { color: var(--accent-400); }
+.hv2-audit-check-icon { color: #4ade80; }
 
 
-/* ── Newsletter section ── */
+/* ── Newsletter section — LIGHT ── */
 .hv2-newsletter {
   padding: 60px 0;
   background: var(--bg-surface);
@@ -2827,20 +2913,10 @@ h1, h2, h3, h4 {
 @media (max-width: 1024px) {
   .hv2-hero-canvas { width: 45%; opacity: 0.5; }
   .hv2-search-landscape { grid-template-columns: repeat(2, 1fr); }
-  .hv2-services-grid { grid-template-columns: repeat(3, 1fr); }
+  .hv2-service-group-cards--3 { grid-template-columns: repeat(3, 1fr); }
+  .hv2-service-group-cards--2 { grid-template-columns: repeat(2, 1fr); }
 
-  .hv2-flywheel {
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-  .hv2-flywheel-center { margin: 0 auto; }
-  .hv2-flywheel-left,
-  .hv2-flywheel-right {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .hv2-flywheel-stage { flex: 1; min-width: 200px; }
+  .hv2-engine-flow { max-width: 100%; }
 }
 
 
@@ -2872,6 +2948,7 @@ h1, h2, h3, h4 {
   .hv2-newsletter { padding: 48px 0; }
 
   .hv2-section-title { font-size: var(--text-3xl); }
+  .hv2-title-xl { font-size: clamp(1.75rem, 6vw, 2.25rem); }
 
   .hv2-evolved-grid {
     grid-template-columns: 1fr;
@@ -2897,11 +2974,17 @@ h1, h2, h3, h4 {
   }
   .hv2-pipeline-stage:last-child .hv2-pipeline-arrow { display: none; }
 
-  .hv2-services-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Services mobile */
+  .hv2-service-group-cards--3,
+  .hv2-service-group-cards--2 { grid-template-columns: repeat(2, 1fr); }
+
   .hv2-case-grid { grid-template-columns: 1fr; }
   .hv2-learning-grid { grid-template-columns: 1fr; }
 
-  .hv2-flywheel-center { width: 200px; height: 200px; }
+  /* Engine flow mobile — tighter spacing */
+  .hv2-engine-step-num { width: 40px; height: 40px; font-size: var(--text-xs); }
+  .hv2-engine-step-line { height: 36px; }
+  .hv2-engine-step-body h4 { font-size: var(--text-base); }
 
   .hv2-audit-form { flex-direction: column; }
   .hv2-audit-form .form-input { max-width: none; }
@@ -2934,7 +3017,9 @@ h1, h2, h3, h4 {
 
 @media (max-width: 420px) {
   .hv2-hero { padding: 80px 0 40px; }
-  .hv2-services-grid { grid-template-columns: 1fr; }
+
+  .hv2-service-group-cards--3,
+  .hv2-service-group-cards--2 { grid-template-columns: 1fr; }
 
   .hv2-hero-actions {
     flex-direction: column;
@@ -2960,12 +3045,15 @@ h1, h2, h3, h4 {
   .hv2-search-node,
   .hv2-perf-card,
   .hv2-pipeline-stage,
-  .hv2-flywheel-stage,
+  .hv2-engine-step,
   .hv2-service-card,
   .hv2-case-card,
   .hv2-learning-card {
     transition-duration: 0.01s !important;
+    opacity: 1 !important;
   }
+
+  .hv2-engine-loop { opacity: 1 !important; }
 
   .hv2-service-card:hover,
   .hv2-case-card:hover,

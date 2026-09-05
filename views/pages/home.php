@@ -18,7 +18,7 @@
      ╚══════════════════════════════════════════════════════════╝ -->
 
 <!-- ── 1. HERO ─────────────────────────────────────────────── -->
-<section class="hv2-hero" id="hv2-hero">
+<section class="hv2-hero hv2-dark" id="hv2-hero">
   <!-- 3D Canvas — desktop only, hidden on mobile + reduced-motion via CSS -->
   <div class="hv2-hero-canvas" id="hv2-hero-canvas" aria-hidden="true"></div>
   <!-- Mobile/reduced-motion fallback gradient -->
@@ -291,82 +291,77 @@
 
 
 <!-- ── 6. AI MARKETING ENGINE — VISUAL CLIMAX ──────────────── -->
-<section class="hv2-ai-engine" id="hv2-ai-engine">
+<section class="hv2-ai-engine hv2-dark" id="hv2-ai-engine">
   <div class="container">
     <div class="hv2-section-header hv2-section-header--centered">
       <span class="hv2-eyebrow">The Core</span>
-      <h2 class="hv2-section-title">The AI Marketing Engine</h2>
+      <h2 class="hv2-section-title hv2-title-xl">The AI Marketing Engine</h2>
       <p class="hv2-section-desc">
         Five interconnected stages that transform marketing from disconnected campaigns 
         into a continuously learning, self-optimizing system.
       </p>
     </div>
     
-    <div class="hv2-flywheel">
-      <!-- Left stages -->
-      <div class="hv2-flywheel-left">
-        <div class="hv2-flywheel-stage" data-stage="1">
-          <div class="hv2-flywheel-stage-num">01</div>
+    <div class="hv2-engine-flow">
+      <div class="hv2-engine-step" data-stage="1">
+        <div class="hv2-engine-step-marker">
+          <span class="hv2-engine-step-num">01</span>
+          <span class="hv2-engine-step-line" aria-hidden="true"></span>
+        </div>
+        <div class="hv2-engine-step-body">
           <h4>Data &amp; Intelligence</h4>
           <p>Customer sentiment analysis, competitor gap detection, and market signal processing</p>
         </div>
-        
-        <div class="hv2-flywheel-stage" data-stage="2">
-          <div class="hv2-flywheel-stage-num">02</div>
+      </div>
+      
+      <div class="hv2-engine-step" data-stage="2">
+        <div class="hv2-engine-step-marker">
+          <span class="hv2-engine-step-num">02</span>
+          <span class="hv2-engine-step-line" aria-hidden="true"></span>
+        </div>
+        <div class="hv2-engine-step-body">
           <h4>Predictive Strategy</h4>
           <p>Topical authority modeling, audience segmentation, and opportunity scoring</p>
         </div>
       </div>
       
-      <!-- Center flywheel diagram -->
-      <div class="hv2-flywheel-center">
-        <svg class="hv2-flywheel-svg" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <!-- Rings -->
-          <circle cx="140" cy="140" r="130" stroke="rgba(99,102,241,0.08)" stroke-width="1"/>
-          <circle cx="140" cy="140" r="100" stroke="rgba(99,102,241,0.06)" stroke-width="1"/>
-          <circle cx="140" cy="140" r="70"  stroke="rgba(99,102,241,0.05)" stroke-width="1"/>
-          <!-- Core -->
-          <circle cx="140" cy="140" r="40" stroke="rgba(99,102,241,0.12)" stroke-width="1" fill="rgba(99,102,241,0.02)"/>
-          <!-- 5 stage nodes positioned on outer ring -->
-          <circle cx="140" cy="10"  r="3.5" fill="rgba(99,102,241,0.35)"/>
-          <circle cx="264" cy="90"  r="3.5" fill="rgba(129,140,248,0.35)"/>
-          <circle cx="217" cy="247" r="3.5" fill="rgba(165,180,252,0.35)"/>
-          <circle cx="63"  cy="247" r="3.5" fill="rgba(148,163,184,0.35)"/>
-          <circle cx="16"  cy="90"  r="3.5" fill="rgba(100,116,139,0.35)"/>
-          <!-- Subtle arc connections -->
-          <path d="M140 10 Q264 10 264 90"   stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
-          <path d="M264 90 Q280 247 217 247"  stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
-          <path d="M217 247 Q140 290 63 247"  stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
-          <path d="M63 247 Q0 90 16 90"       stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
-          <path d="M16 90 Q16 10 140 10"      stroke="rgba(99,102,241,0.05)" stroke-width="0.8" fill="none"/>
-        </svg>
-        
-        <div class="hv2-flywheel-core-label">
-          <strong>AI Engine</strong>
-          <span>Continuous Learning</span>
+      <div class="hv2-engine-step" data-stage="3">
+        <div class="hv2-engine-step-marker">
+          <span class="hv2-engine-step-num">03</span>
+          <span class="hv2-engine-step-line" aria-hidden="true"></span>
         </div>
-      </div>
-      
-      <!-- Right stages -->
-      <div class="hv2-flywheel-right">
-        <div class="hv2-flywheel-stage" data-stage="3">
-          <div class="hv2-flywheel-stage-num">03</div>
+        <div class="hv2-engine-step-body">
           <h4>Omnichannel Execution</h4>
           <p>Coordinated deployment across AI search, automated ads, and content syndication</p>
         </div>
-        
-        <div class="hv2-flywheel-stage" data-stage="4">
-          <div class="hv2-flywheel-stage-num">04</div>
+      </div>
+      
+      <div class="hv2-engine-step" data-stage="4">
+        <div class="hv2-engine-step-marker">
+          <span class="hv2-engine-step-num">04</span>
+          <span class="hv2-engine-step-line" aria-hidden="true"></span>
+        </div>
+        <div class="hv2-engine-step-body">
           <h4>Measurement &amp; Attribution</h4>
           <p>GA4 data-driven models connecting marketing activity to CAC, LTV, and revenue</p>
         </div>
-        
-        <div class="hv2-flywheel-stage" data-stage="5">
-          <div class="hv2-flywheel-stage-num">05</div>
+      </div>
+      
+      <div class="hv2-engine-step" data-stage="5">
+        <div class="hv2-engine-step-marker">
+          <span class="hv2-engine-step-num">05</span>
+        </div>
+        <div class="hv2-engine-step-body">
           <h4>Continuous Learning</h4>
           <p>Machine learning feedback loops that automatically refine targeting, bidding, and content</p>
         </div>
       </div>
+    </div>
+    
+    <!-- Feedback loop indicator: connects stage 5 back to stage 1 -->
+    <div class="hv2-engine-loop">
+      <div class="hv2-engine-loop-line" aria-hidden="true"></div>
+      <span class="hv2-engine-loop-label">↺ Feeds back into Data &amp; Intelligence</span>
     </div>
   </div>
 </section>
@@ -392,54 +387,65 @@
       </p>
     </div>
     
-    <div class="hv2-services-grid">
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">🔍</div>
-        <h4>SEO</h4>
-        <p>Technical optimization, authority building, and organic growth</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">💬</div>
-        <h4>AEO</h4>
-        <p>Answer engine optimization for featured snippets and direct answers</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">🤖</div>
-        <h4>GEO</h4>
-        <p>Generative engine optimization for AI assistant visibility</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">📢</div>
-        <h4>Google Ads</h4>
-        <p>Search, Shopping, Display, and YouTube campaign management</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">📱</div>
-        <h4>Meta Ads</h4>
-        <p>Facebook and Instagram advertising strategy and execution</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">✍️</div>
-        <h4>Content Marketing</h4>
-        <p>Strategy, creation, distribution, and performance measurement</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">📊</div>
-        <h4>Analytics &amp; GA4</h4>
-        <p>Implementation, custom reporting, and attribution modeling</p>
-      </a>
-      
-      <a href="/services" class="hv2-service-card">
-        <div class="hv2-service-card-icon">⚡</div>
-        <h4>AI Marketing Strategy</h4>
-        <p>AI integration roadmap, automation, and prompt engineering</p>
-      </a>
+    <!-- Search Intelligence group -->
+    <div class="hv2-service-group">
+      <div class="hv2-service-group-label">Search Intelligence</div>
+      <div class="hv2-service-group-cards hv2-service-group-cards--3">
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">🔍</div>
+          <h4>SEO</h4>
+          <p>Technical optimization, authority building, and organic growth</p>
+        </a>
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">💬</div>
+          <h4>AEO</h4>
+          <p>Answer engine optimization for featured snippets and direct answers</p>
+        </a>
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">🤖</div>
+          <h4>GEO</h4>
+          <p>Generative engine optimization for AI assistant visibility</p>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Performance group -->
+    <div class="hv2-service-group">
+      <div class="hv2-service-group-label">Performance</div>
+      <div class="hv2-service-group-cards hv2-service-group-cards--2">
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">📢</div>
+          <h4>Google Ads</h4>
+          <p>Search, Shopping, Display, and YouTube campaign management</p>
+        </a>
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">📱</div>
+          <h4>Meta Ads</h4>
+          <p>Facebook and Instagram advertising strategy and execution</p>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Intelligence Layer group -->
+    <div class="hv2-service-group">
+      <div class="hv2-service-group-label">Intelligence Layer</div>
+      <div class="hv2-service-group-cards hv2-service-group-cards--3">
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">✍️</div>
+          <h4>Content Marketing</h4>
+          <p>Strategy, creation, distribution, and performance measurement</p>
+        </a>
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">📊</div>
+          <h4>Analytics &amp; GA4</h4>
+          <p>Implementation, custom reporting, and attribution modeling</p>
+        </a>
+        <a href="/services" class="hv2-service-card">
+          <div class="hv2-service-card-icon">⚡</div>
+          <h4>AI Marketing Strategy</h4>
+          <p>AI integration roadmap, automation, and prompt engineering</p>
+        </a>
+      </div>
     </div>
     
     <div class="hv2-services-cta">
@@ -451,7 +457,7 @@
 
 <!-- ── 8. PORTFOLIO / PROOF ────────────────────────────────── -->
 <?php if (!empty($caseStudies)): ?>
-<section class="hv2-portfolio" id="hv2-portfolio">
+<section class="hv2-portfolio hv2-dark" id="hv2-portfolio">
   <div class="container">
     <div class="hv2-section-header">
       <span class="hv2-eyebrow">Results</span>
@@ -613,7 +619,7 @@
      ╚══════════════════════════════════════════════════════════╝ -->
 
 <!-- ── 11. FINAL CTA — AI AUDIT ────────────────────────────── -->
-<section class="hv2-final-cta" id="hv2-final-cta">
+<section class="hv2-final-cta hv2-dark" id="hv2-final-cta">
   <div class="container">
     <div class="hv2-cta-content">
       <span class="hv2-eyebrow">Free Assessment</span>
