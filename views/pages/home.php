@@ -1,5 +1,7 @@
 <!-- ═══════════════════════════════════════════════════════════
-     HOMEPAGE V2 — TECHAASVIK AI MARKETING PLATFORM
+     HOMEPAGE V7.1 — TECHAASVIK CINEMATIC AI MARKETING ARCHITECTURE
+     
+     ONE PERSISTENT 3D CORE + KINETIC TYPOGRAPHY + SCROLL-DRIVEN TRANSFORMATION
      
      Data from HomeController (unchanged):
        $latestPosts, $pillars, $caseStudies, $tools, $topCategories
@@ -12,6 +14,9 @@
        Three.js r160, GSAP 3.12 + ScrollTrigger, homepage-v2.js
      ═══════════════════════════════════════════════════════════ -->
 
+<!-- PERSISTENT 3D CANVAS — Fixed behind all content, one Core throughout -->
+<div class="hv2-persistent-canvas" id="hv2-persistent-canvas" aria-hidden="true"></div>
+
 
 <!-- ╔══════════════════════════════════════════════════════════╗
      ║  ACT I — THE SHIFT                                      ║
@@ -19,18 +24,29 @@
 
 <!-- ── 1. HERO ─────────────────────────────────────────────── -->
 <section class="hv2-hero hv2-dark" id="hv2-hero">
-  <!-- 3D Canvas — desktop only, hidden on mobile + reduced-motion via CSS -->
-  <div class="hv2-hero-canvas" id="hv2-hero-canvas" aria-hidden="true"></div>
   <!-- Mobile/reduced-motion fallback gradient -->
   <div class="hv2-hero-gradient-bg" aria-hidden="true"></div>
   
   <div class="container hv2-hero-content">
     <div class="hv2-hero-badge">AI-Driven Digital Marketing</div>
     
-    <h1 class="hv2-hero-title">
-      Search. Content.<br>Performance.
-      <span class="hv2-gradient-text">Connected Through Intelligence.</span>
+    <!-- Cinematic title: word-level kinetic animation via JS -->
+    <h1 class="hv2-hero-title" id="hv2HeroTitle">
+      <span class="hv2-word" data-hero="h0">AI-Driven</span>
+      <span class="hv2-word" data-hero="h0">Digital</span>
+      <span class="hv2-word" data-hero="h0">Marketing</span>
+      <span class="hv2-word" data-hero="h0">Platform</span><br>
+      <span class="hv2-word hv2-word--capability" data-hero="h2">Search.</span>
+      <span class="hv2-word hv2-word--capability" data-hero="h3">Content.</span>
+      <span class="hv2-word hv2-word--capability" data-hero="h4">Performance.</span><br>
+      <span class="hv2-word hv2-word--resolve hv2-gradient-text" data-hero="h5">Connected.</span>
+      <span class="hv2-word hv2-word--resolve hv2-gradient-text" data-hero="h6">Through Intelligence.</span>
     </h1>
+    
+    <!-- Cinematic resolution: appears at H7 -->
+    <div class="hv2-hero-resolution" id="hv2HeroResolution">
+      <span class="hv2-resolution-text">ONE CONNECTED<br>MARKETING SYSTEM</span>
+    </div>
     
     <p class="hv2-hero-subtitle">
       Techaasvik builds the AI-assisted marketing platform where SEO, AEO, GEO, 
@@ -55,7 +71,12 @@
   <div class="container">
     <div class="hv2-section-header hv2-section-header--centered">
       <span class="hv2-eyebrow">The Evolution</span>
-      <h2 class="hv2-section-title">Marketing Has Evolved</h2>
+      <!-- T2 Morph: FRAGMENTED → CONNECTED → INTELLIGENT -->
+      <h2 class="hv2-section-title hv2-morph" id="hv2EvolvedMorph">
+        <span class="hv2-morph-state" data-morph="fragmented">FRAGMENTED</span>
+        <span class="hv2-morph-state" data-morph="connected">CONNECTED</span>
+        <span class="hv2-morph-state" data-morph="intelligent">INTELLIGENT</span>
+      </h2>
       <p class="hv2-section-desc">
         From fragmented tools and siloed campaigns to AI-assisted, 
         connected marketing workflows.
@@ -158,6 +179,17 @@
       </p>
     </div>
     
+    <!-- T3 Progressive Build: SEO + AEO + GEO + AI SEARCH -->
+    <div class="hv2-progressive-headline" id="hv2SearchBuild">
+      <span class="hv2-prog-item" data-stage="0">SEO</span>
+      <span class="hv2-prog-plus" data-stage="1">+</span>
+      <span class="hv2-prog-item" data-stage="1">AEO</span>
+      <span class="hv2-prog-plus" data-stage="2">+</span>
+      <span class="hv2-prog-item" data-stage="2">GEO</span>
+      <span class="hv2-prog-plus" data-stage="3">+</span>
+      <span class="hv2-prog-item" data-stage="3">AI SEARCH</span>
+    </div>
+    
     <div class="hv2-search-landscape">
       <div class="hv2-search-node" id="hv2-seo-node">
         <div class="hv2-search-node-icon">🔍</div>
@@ -207,7 +239,15 @@
       </p>
     </div>
     
-    <div class="hv2-perf-grid">
+    <div class="hv2-perf-grid" style="position:relative;">
+      <!-- Signal Track SVG: signal travels alongside cards -->
+      <div class="hv2-perf-signal-track" aria-hidden="true">
+        <svg viewBox="0 0 40 300" preserveAspectRatio="none">
+          <line class="hv2-signal-track-line" x1="20" y1="0" x2="20" y2="300" />
+          <circle class="hv2-signal-dot" id="hv2PerfSignalDot" r="6" cx="20" cy="6" />
+        </svg>
+      </div>
+      
       <div class="hv2-perf-card" id="perfCard1">
         <div class="hv2-perf-card-icon">📢</div>
         <h4>Google Performance Max</h4>
@@ -260,7 +300,7 @@
       </p>
     </div>
     
-    <div class="hv2-pipeline">
+    <div class="hv2-pipeline" style="position:relative;">
       <div class="hv2-pipeline-stage" id="contentStage1">
         <div class="hv2-pipeline-num">1</div>
         <h4>Semantic Topic Discovery</h4>
@@ -287,6 +327,11 @@
         <h4>Omnichannel Distribution</h4>
         <p>Automated publishing, syndication, and cross-platform content adaptation</p>
       </div>
+      
+      <!-- Content signal dot: travels across pipeline -->
+      <div class="hv2-content-signal-track" aria-hidden="true">
+        <div class="hv2-content-signal-dot" id="hv2ContentSignalDot"></div>
+      </div>
     </div>
     
     <div class="hv2-content-links">
@@ -310,12 +355,12 @@
     </div>
     
     <div class="hv2-engine-layout">
-      <!-- 3D AI Engine Canvas: Macro visualization of closed-loop core -->
+      <!-- V7.1: Canvas removed — persistent Core shows through transparent bg -->
       <div class="hv2-engine-canvas-wrap" id="hv2EngineCanvasWrap" aria-hidden="true">
-        <div class="hv2-engine-canvas" id="hv2-engine-canvas"></div>
+        <!-- Spatial caption HUD overlays the persistent canvas area -->
         <div class="hv2-engine-spatial-caption" id="hv2EngineCaption">
-          <span class="hv2-caption-pill" id="hv2CaptionPill">STAGE 01</span>
-          <span class="hv2-caption-text" id="hv2CaptionText">Data &amp; Intelligence Ingestion</span>
+          <span class="hv2-caption-pill" id="hv2CaptionPill">READY</span>
+          <span class="hv2-caption-text" id="hv2CaptionText">AI Marketing Engine</span>
         </div>
       </div>
 
@@ -395,6 +440,9 @@
             <span class="hv2-engine-loop-label" id="hv2LoopLabel">Learning feeds back into Data &amp; Intelligence</span>
           </div>
         </div>
+        
+        <!-- Cinematic Engine headline: appears at E6-E7 -->
+        <div class="hv2-engine-headline" id="hv2EngineHeadline" aria-hidden="true"></div>
       </div>
     </div>
   </div>

@@ -1871,17 +1871,187 @@ h1, h2, h3, h4 {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   HOMEPAGE V2 — AI MARKETING PLATFORM EXPERIENCE
+   HOMEPAGE V7.1 — CINEMATIC AI MARKETING ARCHITECTURE
    Namespace: .hv2-*   (isolated from existing styles)
 
-   Organized by narrative acts:
-   ACT I   — THE SHIFT     (Hero, Marketing Evolved, Search)
-   ACT II  — THE ENGINE    (Performance, Content, AI Engine)
-   ACT III — THE ECOSYSTEM (Services, Portfolio, Learning, Ebook)
-   ACT IV  — ACTION        (Final CTA)
+   ONE PERSISTENT 3D CORE + KINETIC TYPOGRAPHY + SCROLL-DRIVEN
+   TRANSFORMATION + MEANINGFUL SIGNALS + CINEMATIC CAMERA
 
-   Added: Phase 1 Homepage Redesign
+   Architecture:
+   - Fixed-position WebGL canvas behind all content
+   - 3D-active sections: transparent backgrounds (Core visible)
+   - Non-3D sections: opaque backgrounds (Core occluded)
    ═══════════════════════════════════════════════════════════════ */
+
+
+/* ── PERSISTENT CANVAS ────────────────────────────────────── */
+
+.hv2-persistent-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+.hv2-persistent-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* ── TYPOGRAPHY T1: KINETIC WORDS ─────────────────────────── */
+
+.hv2-word {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+  transition: none; /* JS-controlled */
+}
+.hv2-word--capability {
+  color: #c7d2fe;
+}
+.hv2-word--resolve {
+  display: inline-block;
+}
+
+
+/* ── TYPOGRAPHY T2: WORD MORPH ────────────────────────────── */
+
+.hv2-morph {
+  position: relative;
+  min-height: 1.3em;
+}
+.hv2-morph-state {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  will-change: transform, opacity, letter-spacing;
+  transition: none;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0;
+}
+.hv2-morph-state[data-morph="fragmented"] { color: #94a3b8; }
+.hv2-morph-state[data-morph="connected"]  { color: #a5b4fc; }
+.hv2-morph-state[data-morph="intelligent"] { color: #c7d2fe; }
+
+
+/* ── TYPOGRAPHY T3: PROGRESSIVE BUILD ─────────────────────── */
+
+.hv2-progressive-headline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-8);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  color: #e2e8f0;
+  letter-spacing: -0.01em;
+}
+.hv2-prog-item {
+  display: inline-block;
+  opacity: 0.05;
+  will-change: transform, opacity, filter;
+  transition: none;
+}
+.hv2-prog-plus {
+  opacity: 0.05;
+  color: #818cf8;
+  font-weight: var(--fw-medium);
+  will-change: transform, opacity;
+  transition: none;
+}
+
+
+/* ── HERO RESOLUTION ──────────────────────────────────────── */
+
+.hv2-hero-resolution {
+  margin-top: var(--space-6);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: var(--fw-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+.hv2-hero-resolution .hv2-resolution-text {
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+/* ── SIGNAL TRACKS (Performance + Content) ────────────────── */
+
+.hv2-perf-signal-track {
+  position: absolute;
+  left: -30px;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+}
+.hv2-perf-signal-track svg {
+  width: 100%;
+  height: 100%;
+}
+.hv2-signal-track-line {
+  stroke: rgba(99, 102, 241, 0.15);
+  stroke-width: 2;
+  fill: none;
+}
+.hv2-signal-dot {
+  fill: #818cf8;
+  filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.6));
+  transition: opacity 0.15s ease;
+}
+
+.hv2-content-signal-track {
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  pointer-events: none;
+}
+.hv2-content-signal-dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #818cf8;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  transition: opacity 0.15s ease;
+}
+
+
+/* ── ENGINE CINEMATIC HEADLINE ────────────────────────────── */
+
+.hv2-engine-headline {
+  text-align: center;
+  margin-top: var(--space-8);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.02em;
+  opacity: 0;
+  will-change: opacity;
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #e0e7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 
 /* ── HV2 Shared Utilities ─────────────────────────────────── */
@@ -1973,11 +2143,12 @@ h1, h2, h3, h4 {
 
 .hv2-hero {
   position: relative;
+  z-index: 1;
   min-height: 100vh;
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: linear-gradient(180deg, #030509 0%, #080d16 50%, #0f1629 100%);
+  background: linear-gradient(180deg, rgba(3,5,9,0.85) 0%, rgba(8,13,22,0.88) 50%, rgba(15,22,41,0.85) 100%);
   padding: 120px 0 80px;
 }
 
@@ -2006,6 +2177,7 @@ h1, h2, h3, h4 {
   position: relative;
   z-index: 2;
   max-width: 620px;
+  text-align: left;
 }
 
 .hv2-hero-badge {
@@ -2032,6 +2204,7 @@ h1, h2, h3, h4 {
   line-height: var(--leading-tight);
   margin-bottom: var(--space-6);
   letter-spacing: -0.02em;
+  text-align: left;
 }
 
 .hv2-hero-subtitle {
@@ -2051,7 +2224,10 @@ h1, h2, h3, h4 {
 /* ── 2. MARKETING EVOLVED — LIGHT ─────────────────────────── */
 
 .hv2-evolved {
+  position: relative;
+  z-index: 1;
   padding: 120px 0;
+  background: rgba(var(--bg-base-rgb, 255,255,255), 0.94);
   background: var(--bg-base);
 }
 
@@ -2151,6 +2327,8 @@ h1, h2, h3, h4 {
 /* ── 3. SEARCH EVOLUTION — LIGHT ─────────────────────────── */
 
 .hv2-search {
+  position: relative;
+  z-index: 1;
   padding: 120px 0;
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
@@ -2218,6 +2396,8 @@ h1, h2, h3, h4 {
 /* ── 4. PERFORMANCE — LIGHT ──────────────────────────────── */
 
 .hv2-performance {
+  position: relative;
+  z-index: 1;
   padding: 120px 0;
   background: var(--bg-base);
   border-bottom: 1px solid var(--border-subtle);
@@ -2277,6 +2457,8 @@ h1, h2, h3, h4 {
 /* ── 5. CONTENT ENGINE — LIGHT ───────────────────────────── */
 
 .hv2-content-engine {
+  position: relative;
+  z-index: 1;
   padding: 120px 0;
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
@@ -2347,8 +2529,9 @@ h1, h2, h3, h4 {
 
 .hv2-ai-engine {
   padding: 140px 0;
-  background: linear-gradient(180deg, #030509 0%, #080d16 40%, #0f1629 80%, #080d16 100%);
+  background: linear-gradient(180deg, rgba(3,5,9,0.82) 0%, rgba(8,13,22,0.85) 40%, rgba(15,22,41,0.82) 80%, rgba(8,13,22,0.85) 100%);
   position: relative;
+  z-index: 1;
   overflow: hidden;
 }
 .hv2-ai-engine::before {
@@ -2662,6 +2845,8 @@ h1, h2, h3, h4 {
 /* ── 7. SERVICES — LIGHT, GROUPED ROWS ───────────────────── */
 
 .hv2-services {
+  position: relative;
+  z-index: 2;
   padding: 120px 0;
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
@@ -2740,6 +2925,8 @@ h1, h2, h3, h4 {
 /* ── 8. PORTFOLIO — FORCED DARK ──────────────────────────── */
 
 .hv2-portfolio {
+  position: relative;
+  z-index: 2;
   padding: 120px 0;
   background: linear-gradient(180deg, #080d16 0%, #0f1629 100%);
 }
@@ -2822,6 +3009,8 @@ h1, h2, h3, h4 {
 /* ── 9. LEARNING HUB — LIGHT ────────────────────────────── */
 
 .hv2-learning {
+  position: relative;
+  z-index: 2;
   padding: 120px 0;
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
@@ -2976,8 +3165,9 @@ h1, h2, h3, h4 {
 
 .hv2-final-cta {
   padding: 140px 0;
-  background: linear-gradient(180deg, #0f1629 0%, #050810 100%);
+  background: linear-gradient(180deg, rgba(15,22,41,0.88) 0%, rgba(5,8,16,0.90) 100%);
   position: relative;
+  z-index: 1;
   overflow: hidden;
 }
 .hv2-final-cta::before {
@@ -3124,14 +3314,58 @@ h1, h2, h3, h4 {
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  /* Persistent canvas hidden on mobile — CSS/SVG narrative only */
+  .hv2-persistent-canvas { display: none !important; }
+
   .hv2-hero {
     min-height: auto;
     padding: 100px 0 60px;
+    background: linear-gradient(180deg, #030509 0%, #080d16 50%, #0f1629 100%);
   }
   .hv2-hero-canvas { display: none !important; }
   .hv2-hero-gradient-bg { display: block !important; }
   .hv2-hero-content { max-width: 100%; }
   .hv2-hero-title { font-size: clamp(2rem, 8vw, 2.5rem); }
+
+  /* Mobile: show all hero words immediately (no kinetic blur) */
+  .hv2-word {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+  .hv2-hero-resolution {
+    opacity: 0 !important;
+    display: none;
+  }
+
+  /* Progressive headline: stack vertically */
+  .hv2-progressive-headline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+  .hv2-prog-item, .hv2-prog-plus {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  /* Morph: show final state (INTELLIGENT) */
+  .hv2-morph-state { position: static; }
+  .hv2-morph-state[data-morph="fragmented"],
+  .hv2-morph-state[data-morph="connected"] { display: none; }
+  .hv2-morph-state[data-morph="intelligent"] {
+    opacity: 1 !important;
+    display: block;
+  }
+
+  /* Signal tracks hidden on mobile */
+  .hv2-perf-signal-track { display: none; }
+  .hv2-content-signal-track { display: none; }
+
+  /* Engine headline visible */
+  .hv2-engine-headline { opacity: 1 !important; }
 
   .hv2-evolved,
   .hv2-search,
@@ -3244,14 +3478,35 @@ h1, h2, h3, h4 {
 
 /* ═══════════════════════════════════════════════════════════
    REDUCED MOTION
-   All animations disabled. Content visible immediately.
-   WebGL canvases hidden (CSS) and skipped (JS).
+   All animations disabled. Content visible in final state.
+   Persistent canvas hidden. Typography shown statically.
    ═══════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
+  .hv2-persistent-canvas,
   .hv2-hero-canvas,
   .hv2-engine-canvas-wrap { display: none !important; }
   .hv2-hero-gradient-bg { display: block !important; }
+
+  /* Typography: all visible, no animation */
+  .hv2-word {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+  .hv2-hero-resolution { opacity: 0 !important; display: none; }
+  .hv2-morph-state { position: static; }
+  .hv2-morph-state[data-morph="fragmented"],
+  .hv2-morph-state[data-morph="connected"] { display: none; }
+  .hv2-morph-state[data-morph="intelligent"] { opacity: 1 !important; display: block; }
+  .hv2-prog-item, .hv2-prog-plus {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .hv2-engine-headline { opacity: 1 !important; }
+  .hv2-perf-signal-track,
+  .hv2-content-signal-track { display: none; }
 
   .hv2-search-node,
   .hv2-perf-card,
@@ -3277,3 +3532,4 @@ h1, h2, h3, h4 {
     to   { opacity: 1; transform: none; }
   }
 }
+
