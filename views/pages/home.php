@@ -208,29 +208,36 @@
     </div>
     
     <div class="hv2-perf-grid">
-      <div class="hv2-perf-card">
+      <div class="hv2-perf-card" id="perfCard1">
         <div class="hv2-perf-card-icon">📢</div>
         <h4>Google Performance Max</h4>
         <p>AI-optimized campaigns across Search, Shopping, Display, YouTube, and Discovery from a single campaign</p>
       </div>
       
-      <div class="hv2-perf-card">
+      <div class="hv2-perf-card" id="perfCard2">
         <div class="hv2-perf-card-icon">📱</div>
         <h4>Meta Advantage+</h4>
         <p>Machine learning-driven audience targeting, creative optimization, and automated placements across Facebook and Instagram</p>
       </div>
       
-      <div class="hv2-perf-card">
+      <div class="hv2-perf-card" id="perfCard3">
         <div class="hv2-perf-card-icon">🎯</div>
         <h4>Automated Creative Testing</h4>
         <p>AI-assisted creative generation and multivariate testing to identify high-performing ad combinations</p>
       </div>
       
-      <div class="hv2-perf-card">
+      <div class="hv2-perf-card" id="perfCard4">
         <div class="hv2-perf-card-icon">📊</div>
         <h4>Cross-Platform Attribution</h4>
         <p>Data-driven attribution models connecting advertising spend to conversions across channels</p>
       </div>
+    </div>
+
+    <!-- Attribution feedback loop: connects ad conversions to data intelligence -->
+    <div class="hv2-perf-attribution-loop" id="hv2PerfLoop" aria-hidden="true">
+      <span class="hv2-perf-loop-track"></span>
+      <span class="hv2-perf-loop-pulse" id="hv2PerfPulse"></span>
+      <span class="hv2-perf-loop-label">Attributed Conversion Signals ➔ Feed Central Marketing Core</span>
     </div>
     
     <div class="hv2-perf-links">
@@ -254,28 +261,28 @@
     </div>
     
     <div class="hv2-pipeline">
-      <div class="hv2-pipeline-stage">
+      <div class="hv2-pipeline-stage" id="contentStage1">
         <div class="hv2-pipeline-num">1</div>
         <h4>Semantic Topic Discovery</h4>
         <p>AI-assisted topic cluster analysis and content gap identification</p>
         <span class="hv2-pipeline-arrow" aria-hidden="true">→</span>
       </div>
       
-      <div class="hv2-pipeline-stage">
+      <div class="hv2-pipeline-stage" id="contentStage2">
         <div class="hv2-pipeline-num">2</div>
         <h4>AI First-Draft Generation</h4>
         <p>Structured draft creation with source citations and outline optimization</p>
         <span class="hv2-pipeline-arrow" aria-hidden="true">→</span>
       </div>
       
-      <div class="hv2-pipeline-stage">
+      <div class="hv2-pipeline-stage" id="contentStage3">
         <div class="hv2-pipeline-num">3</div>
         <h4>Human E-E-A-T Review</h4>
         <p>Expert fact-checking, experience verification, and authority validation</p>
         <span class="hv2-pipeline-arrow" aria-hidden="true">→</span>
       </div>
       
-      <div class="hv2-pipeline-stage">
+      <div class="hv2-pipeline-stage" id="contentStage4">
         <div class="hv2-pipeline-num">4</div>
         <h4>Omnichannel Distribution</h4>
         <p>Automated publishing, syndication, and cross-platform content adaptation</p>
@@ -302,66 +309,93 @@
       </p>
     </div>
     
-    <div class="hv2-engine-flow">
-      <div class="hv2-engine-step" data-stage="1">
-        <div class="hv2-engine-step-marker">
-          <span class="hv2-engine-step-num">01</span>
-          <span class="hv2-engine-step-line" aria-hidden="true"></span>
-        </div>
-        <div class="hv2-engine-step-body">
-          <h4>Data &amp; Intelligence</h4>
-          <p>Customer sentiment analysis, competitor gap detection, and market signal processing</p>
+    <div class="hv2-engine-layout">
+      <!-- 3D AI Engine Canvas: Macro visualization of closed-loop core -->
+      <div class="hv2-engine-canvas-wrap" id="hv2EngineCanvasWrap" aria-hidden="true">
+        <div class="hv2-engine-canvas" id="hv2-engine-canvas"></div>
+        <div class="hv2-engine-spatial-caption" id="hv2EngineCaption">
+          <span class="hv2-caption-pill" id="hv2CaptionPill">STAGE 01</span>
+          <span class="hv2-caption-text" id="hv2CaptionText">Data &amp; Intelligence Ingestion</span>
         </div>
       </div>
-      
-      <div class="hv2-engine-step" data-stage="2">
-        <div class="hv2-engine-step-marker">
-          <span class="hv2-engine-step-num">02</span>
-          <span class="hv2-engine-step-line" aria-hidden="true"></span>
+
+      <!-- Flow column: 5 structured stages + visible feedback loop -->
+      <div class="hv2-engine-flow-col">
+        <div class="hv2-engine-flow">
+          <div class="hv2-engine-step" data-stage="1" id="engineStep1">
+            <div class="hv2-engine-step-marker">
+              <span class="hv2-engine-step-num">01</span>
+              <span class="hv2-engine-step-line" aria-hidden="true"></span>
+            </div>
+            <div class="hv2-engine-step-body">
+              <h4>Data &amp; Intelligence</h4>
+              <p>Customer sentiment analysis, competitor gap detection, and market signal processing</p>
+            </div>
+          </div>
+          
+          <div class="hv2-engine-step" data-stage="2" id="engineStep2">
+            <div class="hv2-engine-step-marker">
+              <span class="hv2-engine-step-num">02</span>
+              <span class="hv2-engine-step-line" aria-hidden="true"></span>
+            </div>
+            <div class="hv2-engine-step-body">
+              <h4>Predictive Strategy</h4>
+              <p>Topical authority modeling, audience segmentation, and opportunity scoring</p>
+            </div>
+          </div>
+          
+          <div class="hv2-engine-step" data-stage="3" id="engineStep3">
+            <div class="hv2-engine-step-marker">
+              <span class="hv2-engine-step-num">03</span>
+              <span class="hv2-engine-step-line" aria-hidden="true"></span>
+            </div>
+            <div class="hv2-engine-step-body">
+              <h4>Omnichannel Execution</h4>
+              <p>Coordinated deployment across AI search, automated ads, and content syndication</p>
+            </div>
+          </div>
+          
+          <div class="hv2-engine-step" data-stage="4" id="engineStep4">
+            <div class="hv2-engine-step-marker">
+              <span class="hv2-engine-step-num">04</span>
+              <span class="hv2-engine-step-line" aria-hidden="true"></span>
+            </div>
+            <div class="hv2-engine-step-body">
+              <h4>Measurement &amp; Attribution</h4>
+              <p>GA4 data-driven models connecting marketing activity to CAC, LTV, and revenue</p>
+            </div>
+          </div>
+          
+          <div class="hv2-engine-step" data-stage="5" id="engineStep5">
+            <div class="hv2-engine-step-marker">
+              <span class="hv2-engine-step-num">05</span>
+            </div>
+            <div class="hv2-engine-step-body">
+              <h4>Continuous Learning</h4>
+              <p>Machine learning feedback loops that automatically refine targeting, bidding, and content</p>
+            </div>
+          </div>
         </div>
-        <div class="hv2-engine-step-body">
-          <h4>Predictive Strategy</h4>
-          <p>Topical authority modeling, audience segmentation, and opportunity scoring</p>
+        
+        <!-- Feedback loop indicator: connects stage 5 back to stage 1 -->
+        <div class="hv2-engine-loop" id="hv2EngineLoop">
+          <svg class="hv2-engine-loop-svg" viewBox="0 0 340 70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path class="hv2-loop-track" d="M 20 15 C 20 60, 320 60, 320 15" stroke="rgba(99, 102, 241, 0.25)" stroke-width="2" stroke-dasharray="4 4"/>
+            <path class="hv2-loop-pulse" id="hv2LoopPulse" d="M 20 15 C 20 60, 320 60, 320 15" stroke="url(#hv2LoopGrad)" stroke-width="3" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="hv2LoopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#8b5cf6"/>
+                <stop offset="50%" stop-color="#06b6d4"/>
+                <stop offset="100%" stop-color="#6366f1"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="hv2-engine-loop-content">
+            <span class="hv2-loop-symbol">↺</span>
+            <span class="hv2-engine-loop-label" id="hv2LoopLabel">Learning feeds back into Data &amp; Intelligence</span>
+          </div>
         </div>
       </div>
-      
-      <div class="hv2-engine-step" data-stage="3">
-        <div class="hv2-engine-step-marker">
-          <span class="hv2-engine-step-num">03</span>
-          <span class="hv2-engine-step-line" aria-hidden="true"></span>
-        </div>
-        <div class="hv2-engine-step-body">
-          <h4>Omnichannel Execution</h4>
-          <p>Coordinated deployment across AI search, automated ads, and content syndication</p>
-        </div>
-      </div>
-      
-      <div class="hv2-engine-step" data-stage="4">
-        <div class="hv2-engine-step-marker">
-          <span class="hv2-engine-step-num">04</span>
-          <span class="hv2-engine-step-line" aria-hidden="true"></span>
-        </div>
-        <div class="hv2-engine-step-body">
-          <h4>Measurement &amp; Attribution</h4>
-          <p>GA4 data-driven models connecting marketing activity to CAC, LTV, and revenue</p>
-        </div>
-      </div>
-      
-      <div class="hv2-engine-step" data-stage="5">
-        <div class="hv2-engine-step-marker">
-          <span class="hv2-engine-step-num">05</span>
-        </div>
-        <div class="hv2-engine-step-body">
-          <h4>Continuous Learning</h4>
-          <p>Machine learning feedback loops that automatically refine targeting, bidding, and content</p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Feedback loop indicator: connects stage 5 back to stage 1 -->
-    <div class="hv2-engine-loop">
-      <div class="hv2-engine-loop-line" aria-hidden="true"></div>
-      <span class="hv2-engine-loop-label">↺ Feeds back into Data &amp; Intelligence</span>
     </div>
   </div>
 </section>
